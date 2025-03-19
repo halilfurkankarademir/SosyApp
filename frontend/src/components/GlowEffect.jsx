@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from "react";
 
 const GlowEffect = () => {
-    //Pozisyon datasi
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+    // Pozisyon state'i
+    const [position, setPosition] = useState({
+        x: window.innerHeight / 2,
+        y: window.innerHeight / 2,
+    });
 
-    //Mouse hareketini takip et ve pozisyonu guncelle
+    // Rastgele pozisyon güncelleme fonksiyonu
+    const updatePosition = () => {
+        const x = Math.random() * window.innerWidth; // Ekran genişliği içinde rastgele x
+        const y = Math.random() * window.innerHeight; // Ekran yüksekliği içinde rastgele y
+        setPosition({ x, y });
+    };
+
+    // Belirli aralıklarla pozisyonu güncelle
     useEffect(() => {
-        const handleMouseMove = (e) => {
-            setPosition({ x: e.clientX, y: e.clientY });
-        };
+        const interval = setInterval(updatePosition, 4000); // Her 4 saniyede bir güncelle
 
-        window.addEventListener("mousemove", handleMouseMove);
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-        };
+        // Temizleme fonksiyonu
+        return () => clearInterval(interval);
     }, []);
 
     return (
         <div
-            className="absolute w-72 h-72 bg-gradient-to-r from-pink-500 to-blue-900 rounded-full blur-3xl opacity-40 pointer-events-none "
+            className="absolute w-72 h-72 bg-gradient-to-r from-pink-500 to-blue-900 rounded-full blur-3xl opacity-40 pointer-events-none transition-all duration-2000 ease-in-out"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,

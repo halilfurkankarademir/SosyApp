@@ -6,7 +6,7 @@ const Footer = () => {
             <div className="container mx-auto px-6 text-center">
                 {/* Logo */}
                 <p
-                    className="md:text-4xl text-2xl mb-4 select-none"
+                    className="md:text-2xl text-xl mb-4 select-none"
                     style={{
                         fontFamily: "Bagel Fat One",
                     }}
