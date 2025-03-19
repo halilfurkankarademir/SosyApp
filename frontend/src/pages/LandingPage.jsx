@@ -3,8 +3,16 @@ import PrimaryButton from "../components/buttons/PrimaryButton";
 import PrimaryButtonOutline from "../components/buttons/PrimaryButtonOutline";
 import GlowEffect from "../components/GlowEffect";
 import Footer from "../components/common/Footer";
+import { navigateToPage } from "../utils/helpers";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+    const navigate = useNavigate();
+
+    const handleClick = (path) => {
+        navigate(`/${path}`);
+    };
+
     return (
         <>
             <div className="min-h-screen flex items-center justify-center bg-neutral-900 py-12 px-8 sm:px-6 lg:px-24">
@@ -29,8 +37,14 @@ const LandingPage = () => {
                     </div>
                     {/* Butonlar */}
                     <div className="flex space-x-4">
-                        <PrimaryButton buttonText={"Kayıt Ol"} />
-                        <PrimaryButtonOutline buttonText={"Giriş Yap"} />
+                        <PrimaryButton
+                            buttonText={"Kayıt Ol"}
+                            handleClick={() => handleClick("register")}
+                        />
+                        <PrimaryButtonOutline
+                            buttonText={"Giriş Yap"}
+                            handleClick={() => handleClick("login")}
+                        />
                     </div>
                 </div>
                 {/* Sağ Tarafta Resim */}

@@ -1,2 +1,7 @@
-//Burada yardimci fonksiyonlar olacak.
-//Tarih formalama yonlendirme hesaplama random id olusturma vb.
+import { useNavigate } from "react-router-dom";
+
+// Yönlendirme Fonksiyonu
+export const navigateToPage = (path) => {
+    const navigate = useNavigate();
+    navigate(`/${path}`);
+};

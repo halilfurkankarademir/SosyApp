@@ -6,6 +6,9 @@ import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import PostPage from "./pages/PostPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 function App() {
     return (
@@ -18,6 +21,9 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/post/:postId" element={<PostPage />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes>
         </BrowserRouter>
     );
