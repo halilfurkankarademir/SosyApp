@@ -3,6 +3,7 @@ import PrimaryButton from "../components/buttons/PrimaryButton";
 import PrimaryButtonOutline from "../components/buttons/PrimaryButtonOutline";
 import GlowEffect from "../components/GlowEffect";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/common/Navbar";
 
 const LandingPage = () => {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ const LandingPage = () => {
     return (
         <>
             <div className="min-h-screen flex items-center justify-center  bg-neutral-900 py-12 px-8 sm:px-6 lg:px-24 z-10">
+                <Navbar isInAppPage={false} />
                 <GlowEffect />
                 {/* Sol Tarafta Metin ve Butonlar */}
                 <div className="max-w- w-full space-y-8">

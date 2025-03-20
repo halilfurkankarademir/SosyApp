@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../components/common/Navbar";
 
-const FriendsPage = () => {
+const SavedPage = () => {
     return (
         <>
             <Navbar isInAppPage={true} />
@@ -10,4 +10,4 @@ const FriendsPage = () => {
     );
 };
 
-export default FriendsPage;
+export default SavedPage;

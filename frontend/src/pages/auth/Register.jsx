@@ -3,6 +3,7 @@ import PrimaryButton from "../../components/buttons/PrimaryButton";
 import { useNavigate } from "react-router-dom";
 import GlowEffect from "../../components/GlowEffect";
 import { FaGoogle } from "react-icons/fa6";
+import Navbar from "../../components/common/Navbar";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -15,7 +16,8 @@ const RegisterPage = () => {
 
     return (
         <>
-            <div className="min-h-screen flex items-center justify-center bg-neutral-900 py-12 px-8 sm:px-6 lg:px-24 z-10">
+            <Navbar isInAppPage={false} />
+            <div className="min-h-screen flex items-center justify-center bg-neutral-900 py-24 px-8 sm:px-6 lg:px-24 z-10">
                 <GlowEffect />
                 {/* Kayıt Formu */}
                 <div className="max-w-md w-full space-y-8 z-10">
