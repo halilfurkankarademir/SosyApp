@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { FaHeart, FaComment, FaShare, FaRegSave, FaSave } from "react-icons/fa";
+import { FaHeart, FaComment, FaShare } from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { useNavigation } from "../../context/NavigationContext";
 import { BsFillPinAngleFill } from "react-icons/bs";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const PostCard = ({
     postId,
@@ -48,9 +50,10 @@ const PostCard = ({
             {/* Gönderi Medyası (Opsiyonel) */}
             {photo && (
                 <div className="mb-4">
-                    <img
+                    <LazyLoadImage
                         src={photo}
                         alt="Gönderi Medyası"
+                        effect="blur"
                         className="w-full rounded-lg"
                     />
                 </div>

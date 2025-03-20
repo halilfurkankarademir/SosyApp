@@ -3,6 +3,7 @@ import { FaImage, FaVideo, FaSmile } from "react-icons/fa";
 import PrimaryButton from "../buttons/PrimaryButton";
 import FeelingsCard from "../FeelingsCard";
 import { MdDelete } from "react-icons/md";
+import { fakeUserProfile } from "../../utils/constants";
 
 const NewPost = () => {
     const [postContent, setPostContent] = useState("");
@@ -57,7 +58,7 @@ const NewPost = () => {
                         // onClick={() => navigate("/profile")}
                     >
                         <img
-                            src="https://img.freepik.com/free-photo/portrait-handsome-serious-man_23-2149022626.jpg?semt=ais_hybrid"
+                            src={fakeUserProfile[0].profilePicture}
                             alt="Profil"
                             className="w-12 h-12 rounded-full object-cover"
                         />

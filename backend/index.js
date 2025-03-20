@@ -1,34 +1,17 @@
-// index.js
 const express = require("express");
 const app = express();
 const port = 3000;
 
-// Middleware: JSON verilerini işlemek için
-app.use(express.json());
+// Trust the first proxy (e.g., if you're behind Nginx, Apache, etc.)
+app.set("trust proxy", true);
 
-// Basit bir GET endpoint'i
 app.get("/", (req, res) => {
-    res.json({ message: "Merhaba, bu bir deneme API'sidir!" });
+    // req.ip will now return the client's IP address, even if behind a proxy
+    const clientIp = req.ip;
+    console.log(`Client IP: ${clientIp}`);
+    res.send(clientIp);
 });
 
-// Kullanıcıları listeleyen GET endpoint'i
-app.get("/users", (req, res) => {
-    const users = [
-        { id: 1, name: "Ahmet" },
-        { id: 2, name: "Mehmet" },
-        { id: 3, name: "Ayşe" },
-    ];
-    res.json(users);
-});
-
-// Yeni kullanıcı ekleyen POST endpoint'i
-app.post("/users", (req, res) => {
-    const newUser = req.body;
-    newUser.id = Date.now(); // Basit bir ID ataması
-    res.status(201).json(newUser);
-});
-
-// Sunucuyu başlatma
 app.listen(port, () => {
-    console.log(`API http://localhost:${port} adresinde çalışıyor...`);
+    console.log(`Example app listening on port ${port}`);
 });

@@ -1,18 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { CiSettings } from "react-icons/ci";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import { IoSettingsOutline } from "react-icons/io5";
+import { LuLogOut, LuSettings2 } from "react-icons/lu";
+import { MdLogout } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ isInAppPage }) => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
+    const [showSettings, setShowSettings] = useState(false);
 
+    // Menü ve buton için referanslar
+    const settingsRef = useRef(null);
+    const settingsButtonRef = useRef(null);
+
+    // Arama işlemi
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchQuery.trim()) {
             navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
         }
     };
+
+    // Menüyü kapatma işlemi
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Eğer tıklanan alan menü veya buton değilse, menüyü kapat
+            if (
+                settingsRef.current &&
+                !settingsRef.current.contains(event.target) &&
+                settingsButtonRef.current &&
+                !settingsButtonRef.current.contains(event.target)
+            ) {
+                setShowSettings(false);
+            }
+        };
+
+        // Tıklama olayını dinle
+        document.addEventListener("mousedown", handleClickOutside);
+
+        // Temizleme fonksiyonu
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
         <nav className="backdrop-blur-lg fixed w-full px-16 top-0 z-50 py-8">
@@ -43,7 +75,7 @@ const Navbar = ({ isInAppPage }) => {
                                     onChange={(e) =>
                                         setSearchQuery(e.target.value)
                                     }
-                                    className="w-full px-4 py-2 text-sm border-2 border-neutral-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                    className="w-72 px-4 py-2 text-sm border-2 border-neutral-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
                                 />
                                 <button
                                     type="submit"
@@ -74,10 +106,38 @@ const Navbar = ({ isInAppPage }) => {
                                 <IoMdNotificationsOutline size={24} />
                             </div>
                             {/* Ayarlar Butonu */}
-                            <div className="text-neutral-100 cursor-pointer hover:text-pink-500 transition duration-300">
-                                <IoSettingsOutline size={24} />
+                            <div
+                                ref={settingsButtonRef} // Buton referansı
+                                className="text-neutral-100 cursor-pointer hover:text-pink-500 transition duration-300 select-none"
+                                onClick={() => setShowSettings(!showSettings)}
+                            >
+                                <BsThreeDotsVertical size={24} />
                             </div>
                         </div>
+                        {showSettings && (
+                            <div
+                                ref={settingsRef} // Menü referansı
+                                className="flex flex-col gap-2 absolute w-56 top-20 right-20 bg-neutral-800 p-3 rounded-lg shadow-lg border border-neutral-700 animate-fade-in"
+                            >
+                                {/* Ayarlar Butonu */}
+                                <div className="flex flex-row gap-3 items-center p-2 text-neutral-100 hover:bg-neutral-700 rounded-md transition duration-200 cursor-pointer">
+                                    <LuSettings2
+                                        size={20}
+                                        className="text-neutral-400"
+                                    />
+                                    <span className="text-sm">Ayarlar</span>
+                                </div>
+
+                                {/* Çıkış Yap Butonu */}
+                                <div className="flex flex-row gap-3 items-center p-2 text-neutral-100 hover:bg-neutral-700 rounded-md transition duration-200 cursor-pointer">
+                                    <MdLogout
+                                        size={20}
+                                        className="text-neutral-400"
+                                    />
+                                    <span className="text-sm">Çıkış Yap</span>
+                                </div>
+                            </div>
+                        )}
                     </>
                 ) : null}
             </div>

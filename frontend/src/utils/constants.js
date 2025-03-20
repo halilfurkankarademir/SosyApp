@@ -1,3 +1,4 @@
+// Projede veritabani ve backend eklenene kadar fake olarak kullanilacak post bilgileri
 export const fakePosts = [
     {
         username: "alice",
@@ -40,7 +41,7 @@ export const fakePosts = [
         photo: null, // Fotoğraf yok
     },
 ];
-
+// Projede veritabani ve backend eklenene kadar fake olarak kullanilacak insan bilgileri
 export const fakePeople = [
     {
         name: "Derya Deniz",
@@ -59,5 +60,20 @@ export const fakePeople = [
         username: "janedoe",
         profilePic:
             "https://img.freepik.com/free-photo/young-beautiful-woman-pink-warm-sweater-natural-look-smiling-portrait-isolated-long-hair_285396-896.jpg?size=626&ext=jpg&ga=GA1.1.1413502914.1696896000&semt=ais",
+    },
+];
+// Projede veritabani ve backend eklenene kadar fake olarak kullanilacak profil bilgileri
+export const fakeUserProfile = [
+    {
+        userId: "5f4d8e7b2a1c3b9e",
+        email: "ayse.yilmaz@example.com",
+        username: "ayseyilmaz",
+        fullName: "Ayşe Yılmaz",
+        profilePicture:
+            "https://as2.ftcdn.net/v2/jpg/03/30/25/97/1000_F_330259751_tGPEAq5F5bjxkkliGrb97X2HhtXBDc9x.jpg",
+        bio: "Kitap okumayı ve doğa yürüyüşlerini severim. Hayat bir kez yaşanır, tadını çıkarın! 📚🌿",
+        followers: ["3a2b1c4d5e6f7g8h", "9i8j7k6l5m4n3o2p"],
+        following: ["1q2w3e4r5t6y7u8i", "9o8p7i6u5y4t3r2e"],
+        createdAt: "2022-05-15T09:30:00Z",
     },
 ];

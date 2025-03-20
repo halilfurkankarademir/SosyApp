@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PrimaryButton from "../components/buttons/PrimaryButton";
 import PrimaryButtonOutline from "../components/buttons/PrimaryButtonOutline";
 import GlowEffect from "../components/GlowEffect";
@@ -11,6 +11,16 @@ const LandingPage = () => {
     const handleClick = (path) => {
         navigate(`/${path}`);
     };
+
+    const denemeApi = async () => {
+        const response = await fetch("https://localhost:3000/users");
+        const data = await response.json();
+        console.log(data);
+    };
+
+    useEffect(() => {
+        denemeApi();
+    }, []);
 
     return (
         <>

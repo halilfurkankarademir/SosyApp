@@ -2,8 +2,8 @@ import React from "react";
 import { BsPeopleFill } from "react-icons/bs";
 import { FaFolderTree } from "react-icons/fa6";
 import { GoHeartFill, GoHomeFill } from "react-icons/go";
-import { LuLogOut } from "react-icons/lu";
 import { useNavigation } from "../../context/NavigationContext";
+import { fakeUserProfile } from "../../utils/constants";
 
 const Sidebar = () => {
     const { navigateToPage } = useNavigation();
@@ -16,15 +16,17 @@ const Sidebar = () => {
                 onClick={() => navigateToPage("profile")}
             >
                 <img
-                    src="https://img.freepik.com/free-photo/portrait-handsome-serious-man_23-2149022626.jpg?semt=ais_hybrid" // Kullanıcı resmi URL'si
+                    src={fakeUserProfile[0].profilePicture} // Kullanıcı resmi URL'si
                     alt="Kullanıcı Resmi"
                     className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="ml-3">
-                    <p className="text-sm font-semibold">Kullanıcı Adı</p>{" "}
+                    <p className="text-sm font-semibold">
+                        {fakeUserProfile[0].fullName}
+                    </p>{" "}
                     {/* Kullanıcı adı */}
                     <p className="text-xs text-neutral-400">
-                        @kullaniciadi
+                        {fakeUserProfile[0].username}
                     </p>{" "}
                     {/* Kullanıcı etiketi */}
                 </div>
