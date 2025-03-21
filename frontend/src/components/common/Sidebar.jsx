@@ -1,7 +1,7 @@
 import React from "react";
 import { BsPeopleFill } from "react-icons/bs";
-import { FaFolderTree } from "react-icons/fa6";
 import { GoHeartFill, GoHomeFill } from "react-icons/go";
+import { BiBookmark } from "react-icons/bi";
 import { useNavigation } from "../../context/NavigationContext";
 import { fakeUserProfile } from "../../utils/constants";
 
@@ -81,7 +81,7 @@ const Sidebar = () => {
                         className="flex items-center w-8 h-8 rounded-full p-2 text-white"
                         style={{ backgroundColor: "#30c454" }}
                     >
-                        <FaFolderTree className="text-lg" />
+                        <BiBookmark className="text-lg" />
                     </div>
                     <span>Kaydettiklerim</span>
                 </div>

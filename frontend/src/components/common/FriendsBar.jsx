@@ -23,7 +23,7 @@ const FriendsBar = () => {
                         alt="Kullanıcı Resmi"
                         className="w-10 h-10 rounded-full object-cover"
                         //todo burada ilgili kisinin id'si gozukecek
-                        onClick={() => navigateToPage("profile")}
+                        onClick={() => navigateToPage("profile/")}
                     />
                     <div
                         className="ml-3"

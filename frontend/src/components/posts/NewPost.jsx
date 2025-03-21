@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaImage, FaVideo, FaSmile } from "react-icons/fa";
-import PrimaryButton from "../buttons/PrimaryButton";
+import { FaSmile, FaCamera, FaLink, FaHashtag, FaPoll } from "react-icons/fa";
 import FeelingsCard from "../FeelingsCard";
 import { MdDelete } from "react-icons/md";
 import { fakeUserProfile } from "../../utils/constants";
+import { getFirstName } from "../../utils/helpers";
+import PrimaryButton from "../buttons/PrimaryButton";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const NewPost = () => {
     const [postContent, setPostContent] = useState("");
@@ -12,6 +14,8 @@ const NewPost = () => {
     const feelingsRef = useRef(null);
     const fileInputRef = useRef(null);
     const videoInputRef = useRef(null);
+
+    const handleClickShare = () => {};
 
     const handleClickEmoji = (value) => {
         setPostContent(value);
@@ -50,97 +54,82 @@ const NewPost = () => {
     }, []);
 
     return (
-        <div className="bg-neutral-800 p-6 rounded-lg shadow-lg text-white">
-            <form className="space-y-3">
-                <div className="flex flex-row items-center space-x-4 justify-center">
-                    <div
-                        className="cursor-pointer hover:opacity-80 transition duration-100 mb-4"
-                        // onClick={() => navigate("/profile")}
+        <div className="bg-neutral-800 rounded-xl p-3 md:p-4 mb-4 md:mb-6">
+            <div className="flex items-center space-x-2 md:space-x-3 mb-2 md:mb-3">
+                <LazyLoadImage
+                    src={fakeUserProfile[0].profilePicture}
+                    alt="Profil"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
+                />
+                <textarea
+                    value={postContent}
+                    onChange={(e) => setPostContent(e.target.value)}
+                    placeholder={`Ne düşünüyorsun, ${getFirstName(
+                        fakeUserProfile[0].fullName
+                    )}?`}
+                    className="bg-neutral-700 text-white rounded-full py-1.5 md:py-2 px-3 md:px-4 w-full text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    rows={1}
+                />
+            </div>
+            <div className="flex flex-wrap justify-between border-t border-neutral-700 pt-2 md:pt-3">
+                <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                    <button
+                        type="button"
+                        className="flex items-center space-x-1 text-gray-400 hover:text-blue-500 transition text-xs md:text-sm cursor-pointer"
+                        onClick={() => fileInputRef.current.click()}
                     >
-                        <img
-                            src={fakeUserProfile[0].profilePicture}
-                            alt="Profil"
-                            className="w-12 h-12 rounded-full object-cover"
-                        />
-                    </div>
-                    <textarea
-                        value={postContent}
-                        onChange={(e) => setPostContent(e.target.value)}
-                        placeholder="Aklından neler geçiyor? 🤔"
-                        className="w-full p-3 text-md bg-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
-                        rows={2}
+                        <FaCamera className="text-sm md:text-base" />
+                        <span className="hidden xs:inline">Fotoğraf</span>
+                    </button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        accept="image/*"
+                        onChange={handleFileChange}
                     />
+
+                    <button
+                        type="button"
+                        className="flex items-center space-x-1 text-gray-400 hover:text-green-500 transition text-xs md:text-sm cursor-pointer"
+                    >
+                        <FaPoll className="text-sm md:text-base" />
+                        <span className="hidden xs:inline">Anket</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        className="flex items-center space-x-1 text-gray-400 hover:text-yellow-500 transition text-xs md:text-sm cursor-pointer"
+                        onClick={() => setShowFeelings(!showFeelings)}
+                    >
+                        <FaSmile className="text-sm md:text-base" />
+                        <span className="hidden xs:inline">Hisler</span>
+                    </button>
+
+                    {showFeelings && (
+                        <div ref={feelingsRef} className="absolute mt-10 z-10">
+                            <FeelingsCard handleClickEmoji={handleClickEmoji} />
+                        </div>
+                    )}
                 </div>
-
-                <div className="flex flex-row items-center space-x-4 justify-between mt-4">
-                    <div className="flex items-center space-x-4 ">
-                        <button
-                            type="button"
-                            className="flex items-center text-md cursor-pointer space-x-2 text-gray-400 hover:text-pink-500 transition duration-300"
-                            onClick={() => fileInputRef.current.click()}
-                        >
-                            <FaImage className="text-md" />
-                        </button>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: "none" }}
-                            accept="image/*"
-                            onChange={handleFileChange}
-                        />
-
-                        <button
-                            type="button"
-                            className="flex items-center text-md  cursor-pointer space-x-2 text-gray-400 hover:text-pink-500 transition duration-300"
-                            onClick={() => videoInputRef.current.click()}
-                        >
-                            <FaVideo className="text-md" />
-                        </button>
-                        <input
-                            type="file"
-                            ref={videoInputRef}
-                            style={{ display: "none" }}
-                            accept="video/*"
-                            onChange={handleFileChange}
-                        />
-
-                        <button
-                            type="button"
-                            className="flex items-center text-md  cursor-pointer space-x-2 text-gray-400 hover:text-pink-500 transition duration-300"
-                            onClick={() => setShowFeelings(!showFeelings)}
-                        >
-                            <FaSmile className="text-md" />
-                        </button>
-
-                        {showFeelings && (
-                            <div ref={feelingsRef}>
-                                <FeelingsCard
-                                    handleClickEmoji={handleClickEmoji}
-                                />
-                            </div>
-                        )}
-                        {selectedFilePreview && (
-                            <div className="flex flex-row gap-2">
-                                <img
-                                    src={selectedFilePreview}
-                                    alt="Selected"
-                                    className="w-24 h-16 object-cover rounded-lg"
-                                />
-                                <button
-                                    type="button"
-                                    className="flex items-center text-md cursor-pointer space-x-2 text-gray-400 hover:text-pink-500 transition duration-300"
-                                    onClick={() => clearSelectedFile()}
-                                >
-                                    <MdDelete className="text-lg" />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                    <button className="w-2/12">
-                        <PrimaryButton buttonText="Paylaş" />
+                <PrimaryButton buttonText="Paylaş" handleClick={() => {}} />
+            </div>
+            {selectedFilePreview && (
+                <div className="mt-2 md:mt-3 flex items-center space-x-2">
+                    <LazyLoadImage
+                        src={selectedFilePreview}
+                        alt="Selected"
+                        className="w-20 h-14 md:w-24 md:h-16 object-cover rounded-lg"
+                    />
+                    <button
+                        type="button"
+                        className="text-gray-400 hover:text-red-500 transition"
+                        onClick={clearSelectedFile}
+                    >
+                        <MdDelete className="text-lg" />
                     </button>
                 </div>
-            </form>
+            )}
         </div>
     );
 };

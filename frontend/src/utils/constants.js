@@ -40,6 +40,36 @@ export const fakePosts = [
         shares: 2,
         photo: null, // Fotoğraf yok
     },
+    {
+        username: "ayseyilmaz",
+        profilePic:
+            "https://as2.ftcdn.net/v2/jpg/03/30/25/97/1000_F_330259751_tGPEAq5F5bjxkkliGrb97X2HhtXBDc9x.jpg",
+        content: "Bugün yeni bir tarif denedim, harika oldu! 🍰",
+        likes: 42,
+        comments: 9,
+        shares: 5,
+        photo: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+    },
+    {
+        username: "ayseyilmaz",
+        profilePic:
+            "https://as2.ftcdn.net/v2/jpg/03/30/25/97/1000_F_330259751_tGPEAq5F5bjxkkliGrb97X2HhtXBDc9x.jpg",
+        content: "Yoga yapmak ruhumu dinlendiriyor. 🧘‍♀️",
+        likes: 38,
+        comments: 4,
+        shares: 3,
+        photo: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1340&q=80",
+    },
+    {
+        username: "ayseyilmaz",
+        profilePic:
+            "https://as2.ftcdn.net/v2/jpg/03/30/25/97/1000_F_330259751_tGPEAq5F5bjxkkliGrb97X2HhtXBDc9x.jpg",
+        content: "Yeni bir şehir keşfetmek gibisi yok! 🌍",
+        likes: 50,
+        comments: 10,
+        shares: 6,
+        photo: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80",
+    },
 ];
 // Projede veritabani ve backend eklenene kadar fake olarak kullanilacak insan bilgileri
 export const fakePeople = [
@@ -71,9 +101,106 @@ export const fakeUserProfile = [
         fullName: "Ayşe Yılmaz",
         profilePicture:
             "https://as2.ftcdn.net/v2/jpg/03/30/25/97/1000_F_330259751_tGPEAq5F5bjxkkliGrb97X2HhtXBDc9x.jpg",
+        job: "Influencer",
         bio: "Kitap okumayı ve doğa yürüyüşlerini severim. Hayat bir kez yaşanır, tadını çıkarın! 📚🌿",
         followers: ["3a2b1c4d5e6f7g8h", "9i8j7k6l5m4n3o2p"],
         following: ["1q2w3e4r5t6y7u8i", "9o8p7i6u5y4t3r2e"],
         createdAt: "2022-05-15T09:30:00Z",
+        postsCount: 10,
+        verified: true,
+    },
+];
+
+// Arkadaşlar için örnek veriler
+export const allFriends = [
+    {
+        id: 1,
+        name: "Ahmet Yılmaz",
+        username: "ahmet_yilmaz",
+        profilePic: "https://randomuser.me/api/portraits/men/22.jpg",
+        mutualFriends: 15,
+        isOnline: true,
+        lastSeen: null,
+    },
+    {
+        id: 2,
+        name: "Ayşe Demir",
+        username: "ayse_demir",
+        profilePic: "https://randomuser.me/api/portraits/women/10.jpg",
+        mutualFriends: 8,
+        isOnline: false,
+        lastSeen: "3 saat önce",
+    },
+    {
+        id: 3,
+        name: "Mehmet Kaya",
+        username: "mehmet_kaya",
+        profilePic: "https://randomuser.me/api/portraits/men/41.jpg",
+        mutualFriends: 12,
+        isOnline: false,
+        lastSeen: "1 gün önce",
+    },
+    {
+        id: 4,
+        name: "Zeynep Çelik",
+        username: "zeynep_celik",
+        profilePic: "https://randomuser.me/api/portraits/women/65.jpg",
+        mutualFriends: 21,
+        isOnline: true,
+        lastSeen: null,
+    },
+    {
+        id: 5,
+        name: "Ali Öztürk",
+        username: "ali_ozturk",
+        profilePic: "https://randomuser.me/api/portraits/men/55.jpg",
+        mutualFriends: 4,
+        isOnline: true,
+        lastSeen: null,
+    },
+];
+
+// Arkadaş istekleri için örnek veriler
+export const friendRequests = [
+    {
+        id: 6,
+        name: "Selin Aktaş",
+        username: "selin_aktas",
+        profilePic: "https://randomuser.me/api/portraits/women/32.jpg",
+        mutualFriends: 6,
+        requestDate: "2 gün önce",
+    },
+    {
+        id: 7,
+        name: "Burak Güneş",
+        username: "burak_gunes",
+        profilePic: "https://randomuser.me/api/portraits/men/73.jpg",
+        mutualFriends: 9,
+        requestDate: "5 gün önce",
+    },
+];
+
+// Önerilen arkadaşlar için örnek veriler
+export const suggestedFriends = [
+    {
+        id: 8,
+        name: "İrem Yıldız",
+        username: "irem_yildiz",
+        profilePic: "https://randomuser.me/api/portraits/women/44.jpg",
+        mutualFriends: 18,
+    },
+    {
+        id: 9,
+        name: "Onur Şahin",
+        username: "onur_sahin",
+        profilePic: "https://randomuser.me/api/portraits/men/11.jpg",
+        mutualFriends: 7,
+    },
+    {
+        id: 10,
+        name: "Elif Koç",
+        username: "elif_koc",
+        profilePic: "https://randomuser.me/api/portraits/women/57.jpg",
+        mutualFriends: 12,
     },
 ];

@@ -75,6 +75,7 @@ const LoginPage = () => {
                             <PrimaryButton
                                 type="submit"
                                 buttonText={"Giriş Yap"}
+                                fullWidth={true}
                                 className="w-full"
                             />
                         </div>

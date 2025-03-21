@@ -2,7 +2,6 @@ import React from "react";
 import PrimaryButton from "../../components/buttons/PrimaryButton";
 import { useNavigate } from "react-router-dom";
 import GlowEffect from "../../components/GlowEffect";
-import { FaGoogle } from "react-icons/fa6";
 import Navbar from "../../components/common/Navbar";
 
 const RegisterPage = () => {
@@ -128,6 +127,7 @@ const RegisterPage = () => {
                             <PrimaryButton
                                 type="submit"
                                 buttonText={"Kayıt Ol"}
+                                fullWidth={true}
                                 className="w-full"
                             />
                         </div>

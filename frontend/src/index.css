@@ -11,6 +11,10 @@ body {
     overflow-y: scroll;
 }
 
+button {
+    cursor: pointer;
+}
+
 @keyframes fadeIn {
     0% {
         opacity: 0;

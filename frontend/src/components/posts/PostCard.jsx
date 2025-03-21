@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FaHeart, FaComment, FaShare } from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
+import { FaBookmark } from "react-icons/fa6";
 import { useNavigation } from "../../context/NavigationContext";
-import { BsFillPinAngleFill } from "react-icons/bs";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
@@ -20,17 +20,17 @@ const PostCard = ({
     const [showMore, setShowMore] = useState(false);
 
     return (
-        <div className="bg-neutral-800 p-6 rounded-lg shadow-lg text-white mb-6 cursor-pointer">
+        <div className="bg-neutral-800 p-4 md:p-6 rounded-lg shadow-lg text-white mb-4 md:mb-6 ">
             {/* Kullanıcı Bilgileri ve Zaman Bilgisi*/}
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+                <div className="flex items-center space-x-2 md:space-x-3 cursor-pointer">
                     <img
                         src={profilePic}
                         alt="Profil"
-                        className="w-10 h-10 rounded-full object-cover"
+                        className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
                     />
                     <div className="flex flex-col">
-                        <span className="text-md">{username}</span>
+                        <span className="text-sm md:text-md">{username}</span>
                         <span className="text-xs text-gray-400">1 saat</span>
                     </div>
                 </div>
@@ -43,13 +43,13 @@ const PostCard = ({
             </div>
 
             {/* Gönderi İçeriği */}
-            <div className="mb-4">
-                <p className="text-md">{content}</p>
+            <div className="mb-3 md:mb-4">
+                <p className="text-sm md:text-md">{content}</p>
             </div>
 
             {/* Gönderi Medyası (Opsiyonel) */}
             {photo && (
-                <div className="mb-4">
+                <div className="mb-3 md:mb-4">
                     <LazyLoadImage
                         src={photo}
                         alt="Gönderi Medyası"
@@ -60,17 +60,17 @@ const PostCard = ({
             )}
 
             {/* İstatistikler ve Butonlar */}
-            <div className="flex items-center justify-between text-sm text-gray-400">
-                <div className="flex items-center space-x-4">
-                    <div className="flex flex-row items-center justify-center gap-1 text-md">
+            <div className="flex items-center justify-between text-xs md:text-md text-gray-400">
+                <div className="flex items-center space-x-3 md:space-x-4">
+                    <div className="flex flex-row items-center justify-center gap-1 text-xs md:text-base">
                         <FaHeart className="" />
                         <span>{likes} </span>
                     </div>
-                    <div className="flex flex-row items-center justify-center gap-1 text-md">
+                    <div className="flex flex-row items-center justify-center gap-1 text-xs md:text-base">
                         <FaComment className="" />
                         <span>{comments} </span>
                     </div>
-                    <div className="flex flex-row items-center justify-center gap-1 text-md">
+                    <div className="flex flex-row items-center justify-center gap-1 text-xs md:text-base">
                         <FaShare className="" />
                         <span>{shares} </span>
                     </div>
@@ -78,22 +78,22 @@ const PostCard = ({
             </div>
 
             {/* Butonlar */}
-            <div className="flex items-center justify-around mt-4 border-t border-neutral-700 pt-4 text-sm">
-                <button className="flex items-center space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                    <FaHeart className="text-md" />
-                    <span>Beğen</span>
+            <div className="flex items-center justify-around mt-3 md:mt-4 border-t border-neutral-700 pt-3 md:pt-4 text-xs md:text-sm">
+                <button className="flex flex-col md:flex-row items-center md:space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
+                    <FaHeart className="text-md mb-1 md:mb-0" />
+                    <span className="hidden md:inline">Beğen</span>
                 </button>
-                <button className="flex items-center space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                    <FaComment className="text-md" />
-                    <span>Yorum Yap</span>
+                <button className="flex flex-col md:flex-row items-center md:space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
+                    <FaComment className="text-md mb-1 md:mb-0" />
+                    <span className="hidden md:inline">Yorum Yap</span>
                 </button>
-                <button className="flex items-center space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                    <BsFillPinAngleFill className="text-md" />
-                    <span>Kaydet</span>
+                <button className="flex flex-col md:flex-row items-center md:space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
+                    <FaBookmark className="text-md mb-1 md:mb-0" />
+                    <span className="hidden md:inline">Kaydet</span>
                 </button>
-                <button className="flex items-center space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                    <FaShare className="text-md" />
-                    <span>Paylaş</span>
+                <button className="flex flex-col md:flex-row items-center md:space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
+                    <FaShare className="text-md mb-1 md:mb-0" />
+                    <span className="hidden md:inline">Paylaş</span>
                 </button>
             </div>
         </div>

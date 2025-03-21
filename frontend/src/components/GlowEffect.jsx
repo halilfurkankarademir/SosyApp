@@ -16,7 +16,7 @@ const GlowEffect = () => {
 
     // Belirli aralıklarla pozisyonu güncelle
     useEffect(() => {
-        const interval = setInterval(updatePosition, 4000); // Her 4 saniyede bir güncelle
+        const interval = setInterval(updatePosition, 2000); // Her 2 saniyede bir güncelle
 
         // Temizleme fonksiyonu
         return () => clearInterval(interval);

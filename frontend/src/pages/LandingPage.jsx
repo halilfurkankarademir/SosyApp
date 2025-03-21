@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import PrimaryButton from "../components/buttons/PrimaryButton";
-import PrimaryButtonOutline from "../components/buttons/PrimaryButtonOutline";
 import GlowEffect from "../components/GlowEffect";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
@@ -12,14 +11,8 @@ const LandingPage = () => {
         navigate(`/${path}`);
     };
 
-    const denemeApi = async () => {
-        const response = await fetch("https://localhost:3000/users");
-        const data = await response.json();
-        console.log(data);
-    };
-
     useEffect(() => {
-        denemeApi();
+        window.scrollTo(0, 0);
     }, []);
 
     return (
@@ -48,12 +41,8 @@ const LandingPage = () => {
                     {/* Butonlar */}
                     <div className="flex space-x-4">
                         <PrimaryButton
-                            buttonText={"Kayıt Ol"}
+                            buttonText={"Hemen Kullanmaya Başla"}
                             handleClick={() => handleClick("register")}
-                        />
-                        <PrimaryButtonOutline
-                            buttonText={"Giriş Yap"}
-                            handleClick={() => handleClick("login")}
                         />
                     </div>
                 </div>
