@@ -65,6 +65,15 @@ const PostCard = ({ postData }) => {
                         alt="Gönderi Medyası"
                         effect="blur"
                         className="w-full rounded-lg"
+                        threshold={200}
+                        placeholderSrc={`${photo}?q=10&w=50`}
+                        srcSet={`
+                            ${photo}?q=75&w=500 500w,
+                            ${photo}?q=75&w=800 800w,
+                            ${photo}?q=75&w=1080 1080w,
+                            ${photo}?q=75&w=1200 1200w
+                        `}
+                        sizes="(max-width: 768px) 100vw, 800px"
                     />
                 </div>
             )}

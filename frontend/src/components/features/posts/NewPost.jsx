@@ -70,6 +70,9 @@ const NewPost = () => {
                     src={fakeUserProfile[0].profilePicture}
                     alt="Profil"
                     className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
+                    threshold={100}
+                    effect="blur"
+                    placeholderSrc={`${fakeUserProfile[0].profilePicture}?q=10&w=20`}
                 />
                 <textarea
                     value={postContent}
@@ -142,6 +145,9 @@ const NewPost = () => {
                         src={selectedFilePreview}
                         alt="Selected"
                         className="w-20 h-14 md:w-24 md:h-16 object-cover rounded-lg"
+                        threshold={100}
+                        effect="blur"
+                        placeholderSrc={`${selectedFilePreview}?q=10&w=20`}
                     />
                     <button
                         type="button"

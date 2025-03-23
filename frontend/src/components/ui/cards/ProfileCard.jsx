@@ -17,6 +17,14 @@ const ProfileCard = ({ profile, isOwnProfile }) => {
                         src={profile.profilePicture}
                         alt="Profil"
                         className="w-full h-full rounded-full object-cover border-4 border-neutral-800"
+                        threshold={100}
+                        effect="blur"
+                        placeholderSrc={`${profile.profilePicture}?q=10&w=20`}
+                        srcSet={`
+                            ${profile.profilePicture}?q=75&w=96 96w,
+                            ${profile.profilePicture}?q=75&w=128 128w
+                        `}
+                        sizes="(max-width: 768px) 96px, 128px"
                     />
                 </div>
 
