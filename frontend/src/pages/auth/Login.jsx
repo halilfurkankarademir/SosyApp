@@ -1,43 +1,29 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { GlowEffect } from "../../components/ui/effects";
 import { FaGoogle } from "react-icons/fa6";
 import { Navbar } from "../../components/common";
 import AuthForm from "../../components/features/auth/AuthForm";
+import { loginFields } from "../../utils/constants";
+import { useNavigation } from "../../context/NavigationContext";
+import { useAuth } from "../../context/AuthContext";
 
 const LoginPage = () => {
-    const navigate = useNavigate();
+    const { navigateToPage } = useNavigation();
+    const { isAuthenticated, setIsAuthenticated } = useAuth();
 
     const handleLogin = (e) => {
         e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
         // Giriş işlemleri burada yapılabilir
-        navigate("/home"); // Giriş başarılıysa yönlendirme
+        setIsAuthenticated(true);
+        navigateToPage("/");
     };
-
-    // Form alanları tanımı
-    const loginFields = [
-        {
-            id: "email",
-            name: "email",
-            type: "email",
-            autoComplete: "email",
-            required: true,
-            placeholder: "E-posta",
-        },
-        {
-            id: "password",
-            name: "password",
-            type: "password",
-            autoComplete: "current-password",
-            required: true,
-            placeholder: "Şifre",
-        },
-    ];
 
     return (
         <>
             <div className="min-h-screen flex items-center justify-center bg-neutral-900 py-12 px-8 sm:px-6 lg:px-24 z-10">
-                <Navbar isInAppPage={false} />
+                <Navbar />
                 <GlowEffect />
                 {/* Giriş Formu */}
                 <AuthForm
@@ -48,6 +34,7 @@ const LoginPage = () => {
                     onSubmit={handleLogin}
                     alternateLink="/register"
                     alternateLinkText="Hesabın yok mu?"
+                    forgotPasswordLink={"/forgot-password"}
                 />
 
                 {/* Sosyal Giris Butonlari */}

@@ -14,7 +14,9 @@ const Sidebar = () => {
             {/* Kullanıcı Bilgileri */}
             <div
                 className="flex items-center p-4 border-b border-neutral-700 cursor-pointer"
-                onClick={() => navigateToPage("profile")}
+                onClick={() =>
+                    navigateToPage(`profile/${fakeUserProfile[0].username}`)
+                }
             >
                 <img
                     src={fakeUserProfile[0].profilePicture} // Kullanıcı resmi URL'si
@@ -37,7 +39,7 @@ const Sidebar = () => {
                 {/* Ana Sayfa */}
                 <div
                     className="flex items-center text-md space-x-3 mb-1 p-2 hover:bg-neutral-700 transition-all duration-200 rounded-lg cursor-pointer"
-                    onClick={() => navigateToPage("home")}
+                    onClick={() => navigateToPage("/")}
                 >
                     <div
                         className="flex items-center w-8 h-8 rounded-full p-2 text-white"

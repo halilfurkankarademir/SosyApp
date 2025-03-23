@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { memo } from "react";
 
 const Footer = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const Footer = () => {
                                 color: "#f986f3",
                                 fontFamily: "Bagel Fat One",
                             }}
-                            onClick={() => navigate("/home")}
+                            onClick={() => navigate("/")}
                         >
                             SosyApp
                         </h1>
@@ -41,4 +42,4 @@ const Footer = () => {
     );
 };
 
-export default Footer;
+export default memo(Footer);

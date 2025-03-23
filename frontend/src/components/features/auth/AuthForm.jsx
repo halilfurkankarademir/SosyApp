@@ -14,6 +14,7 @@ const AuthForm = ({
     onSubmit,
     alternateLink,
     alternateLinkText,
+    forgotPasswordLink,
 }) => {
     const navigate = useNavigate();
 
@@ -61,6 +62,21 @@ const AuthForm = ({
                     />
                 </div>
             </form>
+
+            {forgotPasswordLink && (
+                <div className="text-center">
+                    <p className="text-md text-gray-400">
+                        <button
+                            onClick={() => navigate(forgotPasswordLink)}
+                            className="text-gray hover:text-pink-600  cursor-pointer"
+                        >
+                            Şifremi Unuttum
+                        </button>
+                    </p>
+                </div>
+            )}
+
+            <hr className="border-t border-white opacity-15" />
 
             {alternateLink && (
                 <div className="text-center">

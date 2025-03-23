@@ -4,9 +4,11 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { LuSettings2 } from "react-icons/lu";
 import { MdLogout, MdMenu, MdSearch, MdClose } from "react-icons/md";
 import { useNavigation } from "../../context/NavigationContext";
-import Notifications from "./Notifications";
+import Notifications from "../ui/dropdowns/NotificationsDropdown";
 import { colors, fakeNotifications } from "../../utils/constants";
 import { useAuth } from "../../context/AuthContext";
+import { memo } from "react";
+import NavSearchInput from "../ui/inputs/NavSearchInput";
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -16,14 +18,19 @@ const Navbar = () => {
     const [showMobileSearch, setShowMobileSearch] = useState(false);
 
     const { navigateToPage } = useNavigation();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, setIsAuthenticated } = useAuth();
 
     // Referanslar
     const settingsRef = useRef(null);
     const settingsButtonRef = useRef(null);
     const mobileMenuRef = useRef(null);
     const mobileMenuButtonRef = useRef(null);
-    const notificationsRef = useRef(null); // Notifications için referans
+    const notificationsRef = useRef(null);
+
+    const handleClickLogo = () => {
+        window.scrollTo(0, 0);
+        navigateToPage("/");
+    };
 
     // Arama işlemi
     const handleSearch = (e) => {
@@ -37,6 +44,7 @@ const Navbar = () => {
     // Çıkış Yapma işlemi
     const handleLogout = () => {
         localStorage.removeItem("token");
+        setIsAuthenticated(false);
         navigateToPage("/");
     };
 
@@ -81,8 +89,6 @@ const Navbar = () => {
         };
     }, []);
 
-    //todo backend baglanildiginda auth kontrolu ile uygulama icinde olup olmadigina bakilacak
-
     return (
         <nav className="backdrop-blur-lg fixed w-full top-0 z-50 py-4 md:py-6 px-8">
             <div className="container mx-auto flex items-center justify-between">
@@ -93,11 +99,7 @@ const Navbar = () => {
                         color: colors.pink,
                         fontFamily: "Bagel Fat One",
                     }}
-                    onClick={() =>
-                        isAuthenticated
-                            ? navigateToPage("/home")
-                            : navigateToPage("/")
-                    }
+                    onClick={handleClickLogo}
                 >
                     SosyApp
                 </h1>
@@ -105,63 +107,12 @@ const Navbar = () => {
                 {/* Uygulamaya giriş yapıldıysa göster */}
                 {isAuthenticated ? (
                     <>
-                        {/* Masaüstü Arama Çubuğu (Ortada) */}
-                        <div className="hidden md:flex ml-auto mr-6">
-                            <form onSubmit={handleSearch} className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="Dünyayı Keşfet.."
-                                    value={searchQuery}
-                                    onChange={(e) =>
-                                        setSearchQuery(e.target.value)
-                                    }
-                                    className="w-56 lg:w-72 px-4 py-2 text-sm border-2 border-neutral-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-neutral-800 bg-opacity-70"
-                                />
-                                <button
-                                    type="submit"
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer"
-                                >
-                                    <MdSearch className="h-5 w-5" />
-                                </button>
-                            </form>
-                        </div>
-
-                        {/* Mobil Arama Formu */}
-                        {showMobileSearch && (
-                            <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-                                <div className="bg-neutral-800 p-4 rounded-lg w-full max-w-md relative">
-                                    <button
-                                        onClick={() =>
-                                            setShowMobileSearch(false)
-                                        }
-                                        className="absolute right-3 top-3 text-white"
-                                    >
-                                        <MdClose size={24} />
-                                    </button>
-                                    <form
-                                        onSubmit={handleSearch}
-                                        className="mt-6"
-                                    >
-                                        <input
-                                            type="text"
-                                            placeholder="Dünyayı Keşfet.."
-                                            value={searchQuery}
-                                            onChange={(e) =>
-                                                setSearchQuery(e.target.value)
-                                            }
-                                            className="w-full px-4 py-3 text-sm border-2 border-neutral-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-neutral-800"
-                                            autoFocus
-                                        />
-                                        <button
-                                            type="submit"
-                                            className="w-full mt-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 rounded-lg"
-                                        >
-                                            Ara
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        )}
+                        {/* Masaüstü Arama Çubuğu */}
+                        <NavSearchInput
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            handleSearch={handleSearch}
+                        />
 
                         {/* Masaüstü Butonlar (Sağda) */}
                         <div className="hidden md:flex items-center space-x-4">
@@ -213,7 +164,9 @@ const Navbar = () => {
                         {/* Bildirimler Menüsü */}
                         {showNotifications && (
                             <div ref={notificationsRef}>
-                                <Notifications />
+                                <Notifications
+                                    notificationsData={fakeNotifications}
+                                />
                             </div>
                         )}
 
@@ -240,12 +193,17 @@ const Navbar = () => {
                         {/* Mobil Menü */}
                         {showMobileMenu && (
                             <div
-                                ref={mobileMenuRef}
                                 className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
                                 onClick={() => setShowMobileMenu(false)}
                             >
                                 <div
-                                    className="fixed inset-0 bg-neutral-800 shadow-xl p-4 transform transition-all duration-300"
+                                    ref={mobileMenuRef}
+                                    className="fixed top-0 right-0 bottom-0 w-64 bg-neutral-800 bg-opacity-95 shadow-xl p-4 z-50 transform transition-transform duration-300 ease-in-out"
+                                    style={{
+                                        transform: showMobileMenu
+                                            ? "translateX(0)"
+                                            : "translateX(100%)",
+                                    }}
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     <div className="flex justify-between items-center mb-6">
@@ -267,8 +225,9 @@ const Navbar = () => {
                                             <IoMdNotificationsOutline
                                                 size={20}
                                             />
-                                            <span>Bildirimler</span>
-                                            {/* Mobil bildirim noktası */}
+                                            <span className="text-sm">
+                                                Bildirimler
+                                            </span>
                                             {fakeNotifications.length > 0 && (
                                                 <div className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"></div>
                                             )}
@@ -276,12 +235,16 @@ const Navbar = () => {
 
                                         <div className="flex items-center space-x-3 p-3 hover:bg-neutral-700 rounded-lg cursor-pointer text-neutral-100">
                                             <LuSettings2 size={20} />
-                                            <span>Ayarlar</span>
+                                            <span className="text-sm">
+                                                Ayarlar
+                                            </span>
                                         </div>
 
                                         <div className="flex items-center space-x-3 p-3 hover:bg-neutral-700 rounded-lg cursor-pointer text-neutral-100">
                                             <MdLogout size={20} />
-                                            <span>Çıkış Yap</span>
+                                            <span className="text-sm">
+                                                Çıkış Yap
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -296,4 +259,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default memo(Navbar);

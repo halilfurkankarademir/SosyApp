@@ -8,7 +8,9 @@ export const AuthProvider = ({ children }) => {
     //todo backend baglanildiginda auth kontrolu ile uygulama icinde olup olmadigina bakilacak
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated }}>
+        <AuthContext.Provider
+            value={{ user, isAuthenticated, setIsAuthenticated }}
+        >
             {children}
         </AuthContext.Provider>
     );

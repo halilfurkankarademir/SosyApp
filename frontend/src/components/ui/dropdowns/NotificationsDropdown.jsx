@@ -1,11 +1,10 @@
 import React from "react";
-import { fakeNotifications } from "../../utils/constants";
 
-const Notifications = ({}) => {
+const NotificationsDropdown = ({ notificationsData }) => {
     return (
         <>
             <div className="fixed top-20 right-12 bg-neutral-800 h-auto w-96 overflow-y-auto p-4 rounded-2xl animate-fade-in z-50">
-                {fakeNotifications.map((notification) => (
+                {notificationsData.map((notification) => (
                     <div
                         key={notification.id}
                         className="flex items-center p-2 border-b border-gray-700"
@@ -30,4 +29,4 @@ const Notifications = ({}) => {
     );
 };
 
-export default Notifications;
+export default NotificationsDropdown;

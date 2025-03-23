@@ -17,18 +17,14 @@ const FriendsBar = () => {
                 <div
                     className="flex items-center p-4 cursor-pointer"
                     key={index}
+                    onClick={() => navigateToPage(`profile/${person.username}`)}
                 >
                     <img
                         src={person.profilePic} // Kullanıcı resmi URL'si
                         alt="Kullanıcı Resmi"
                         className="w-10 h-10 rounded-full object-cover"
-                        //todo burada ilgili kisinin id'si gozukecek
-                        onClick={() => navigateToPage("profile/")}
                     />
-                    <div
-                        className="ml-3"
-                        onClick={() => navigateToPage("profile")}
-                    >
+                    <div className="ml-3">
                         <p className="text-sm font-semibold">{person.name}</p>{" "}
                         {/* Kullanıcı adı */}
                         <p className="text-xs text-neutral-400">

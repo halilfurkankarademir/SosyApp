@@ -1,28 +1,39 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import GlowEffect from "../../components/ui/effects/GlowEffect";
 import Navbar from "../../components/common/Navbar";
 import PrimaryButton from "../../components/ui/buttons/PrimaryButton";
 import { useNavigation } from "../../context/NavigationContext";
+import { useAuth } from "../../context/AuthContext";
+import { userInfoFields } from "../../utils/constants";
+import FormInput from "../../components/ui/inputs/FormInput";
 
 const UserInfoPage = () => {
-    const { navigateToPage } = useNavigation();
     const [formData, setFormData] = useState({
         username: "",
         about: "",
-        job: "",
+        profession: "",
         location: "",
-        websiteUrl: "",
-        birthDate: "",
-        phoneNumber: "",
+        website: "",
+        birthdate: "",
+        phone: "",
     });
+
+    const { navigateToPage } = useNavigation();
+    const { setIsAuthenticated } = useAuth();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (formData.username) {
-            navigateToPage("/home");
-        }
         // Bilgiler kaydedildikten sonra yönlendirme
+        setIsAuthenticated(true);
+        navigateToPage("/");
     };
 
     return (
@@ -49,130 +60,26 @@ const UserInfoPage = () => {
 
                     {/* Form */}
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        {/* Kullanıcı Adı (Zorunlu) */}
-                        <div>
-                            <label
-                                htmlFor="username"
-                                className="block text-sm font-medium text-gray-300"
-                            >
-                                Kullanıcı Adı *
-                            </label>
-                            <input
-                                id="username"
-                                name="username"
-                                type="text"
-                                required
-                                className="mt-1 block w-full px-4 py-2 bg-neutral-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                placeholder="Kullanıcı Adı"
+                        {userInfoFields.map((field) => (
+                            <FormInput
+                                key={field.id}
+                                id={field.id}
+                                name={field.name}
+                                type={field.type}
+                                required={field.required}
+                                placeholder={field.placeholder}
+                                label={field.label}
+                                value={formData[field.name]}
+                                onChange={handleChange}
                             />
-                        </div>
-
-                        {/* Hakkında (İsteğe Bağlı) */}
-                        <div>
-                            <label
-                                htmlFor="about"
-                                className="block text-sm font-medium text-gray-300"
-                            >
-                                Hakkında
-                            </label>
-                            <textarea
-                                id="about"
-                                name="about"
-                                rows="3"
-                                className="mt-1 block w-full px-4 py-2 bg-neutral-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                placeholder="Kendinden bahset..."
-                            ></textarea>
-                        </div>
-
-                        {/* Meslek (İsteğe Bağlı) */}
-                        <div>
-                            <label
-                                htmlFor="profession"
-                                className="block text-sm font-medium text-gray-300"
-                            >
-                                Meslek
-                            </label>
-                            <input
-                                id="profession"
-                                name="profession"
-                                type="text"
-                                className="mt-1 block w-full px-4 py-2 bg-neutral-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                placeholder="Meslek"
-                            />
-                        </div>
-
-                        {/* Konum (İsteğe Bağlı) */}
-                        <div>
-                            <label
-                                htmlFor="location"
-                                className="block text-sm font-medium text-gray-300"
-                            >
-                                Konum
-                            </label>
-                            <input
-                                id="location"
-                                name="location"
-                                type="text"
-                                className="mt-1 block w-full px-4 py-2 bg-neutral-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                placeholder="Konum"
-                            />
-                        </div>
-
-                        {/* Website (İsteğe Bağlı) */}
-                        <div>
-                            <label
-                                htmlFor="website"
-                                className="block text-sm font-medium text-gray-300"
-                            >
-                                Website
-                            </label>
-                            <input
-                                id="website"
-                                name="website"
-                                type="url"
-                                className="mt-1 block w-full px-4 py-2 bg-neutral-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                placeholder="Website"
-                            />
-                        </div>
-
-                        {/* Doğum Tarihi (İsteğe Bağlı) */}
-                        <div>
-                            <label
-                                htmlFor="birthdate"
-                                className="block text-sm font-medium text-gray-300"
-                            >
-                                Doğum Tarihi
-                            </label>
-                            <input
-                                id="birthdate"
-                                name="birthdate"
-                                type="date"
-                                className="mt-1 block w-full px-4 py-2 bg-neutral-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                            />
-                        </div>
-
-                        {/* Telefon (İsteğe Bağlı) */}
-                        <div>
-                            <label
-                                htmlFor="phone"
-                                className="block text-sm font-medium text-gray-300"
-                            >
-                                Telefon
-                            </label>
-                            <input
-                                id="phone"
-                                name="phone"
-                                type="tel"
-                                className="mt-1 block w-full px-4 py-2 bg-neutral-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                placeholder="Telefon"
-                            />
-                        </div>
+                        ))}
 
                         {/* Kaydet Butonu */}
                         <div>
                             <PrimaryButton
                                 type="submit"
-                                buttonText={"Kaydet"}
+                                buttonText={"Kaydı Tamamla"}
+                                handleClick={handleSubmit}
                                 fullWidth={true}
                                 className="w-full"
                             />

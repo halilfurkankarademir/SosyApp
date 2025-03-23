@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
 import Sidebar from "../../components/common/Sidebar";
 import FriendsBar from "../../components/common/FriendsBar";
-import { BiBookmark } from "react-icons/bi";
 import { FaSearch, FaSearchMinus } from "react-icons/fa";
 
 const SearchPage = () => {

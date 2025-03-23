@@ -69,7 +69,7 @@ const PostPage = () => {
     if (!post) {
         return (
             <>
-                <Navbar isInAppPage={true} />
+                <Navbar />
                 <div className="flex min-h-screen justify-center bg-neutral-900 z-10 py-24 md:py-36">
                     <p className="text-white">Gönderi yükleniyor...</p>
                 </div>
@@ -79,7 +79,7 @@ const PostPage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={true} />
+            <Navbar />
             <div className="flex min-h-screen justify-center bg-neutral-900 z-10 py-24 md:py-36 px-4 md:px-0">
                 {/* Grid Layout */}
                 <div

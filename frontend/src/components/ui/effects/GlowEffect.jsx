@@ -34,7 +34,7 @@ const GlowEffect = () => {
 
     return (
         <div
-            className="absolute w-72 h-72 bg-gradient-to-r from-pink-500 to-blue-900 rounded-full blur-3xl opacity-40 pointer-events-none transition-all duration-2000 ease-in-out"
+            className="hidden md:block absolute w-72 h-72 bg-gradient-to-r from-pink-500 to-blue-900 rounded-full blur-3xl opacity-40 pointer-events-none transition-all duration-2000 ease-in-out"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,

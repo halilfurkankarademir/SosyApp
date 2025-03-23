@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-    FaSmile,
-    FaCamera,
-    FaLink,
-    FaHashtag,
-    FaPoll,
-    FaShareAlt,
-} from "react-icons/fa";
+import { FaSmile, FaCamera, FaPoll } from "react-icons/fa";
 import FeelingsCard from "../../ui/cards/FeelingsCard";
 import { MdDelete } from "react-icons/md";
 import { fakeUserProfile } from "../../../utils/constants";
@@ -15,6 +8,7 @@ import PrimaryButton from "../../ui/buttons/PrimaryButton";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import PollModal from "../../ui/modals/PollModal";
 import { LuShare } from "react-icons/lu";
+import { ShowToast } from "../../ui/toasts/ShowToast";
 
 const NewPost = () => {
     const [postContent, setPostContent] = useState("");
@@ -25,7 +19,9 @@ const NewPost = () => {
     const fileInputRef = useRef(null);
     const videoInputRef = useRef(null);
 
-    const handleClickShare = () => {};
+    const handleClickShare = () => {
+        ShowToast("success", "Gönderi başarıyla paylaşıldı.");
+    };
 
     const handleClickPoll = () => {
         setIsModalOpen(!isModalOpen);
@@ -136,7 +132,7 @@ const NewPost = () => {
                 </div>
                 <PrimaryButton
                     buttonText="Paylaş"
-                    handleClick={() => {}}
+                    handleClick={handleClickShare}
                     icon={<LuShare size={16} />}
                 />
             </div>

@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/common/Navbar";
 import Sidebar from "../../components/common/Sidebar";
-import {
-    BsPeopleFill,
-    BsFillPersonPlusFill,
-    BsPersonFillCheck,
-} from "react-icons/bs";
+import { BsPeopleFill } from "react-icons/bs";
 import { FaSearch, FaUserMinus } from "react-icons/fa";
 import { MdOutlineMessage } from "react-icons/md";
 import FriendsBar from "../../components/common/FriendsBar";
@@ -154,10 +150,6 @@ const FriendsPage = () => {
                                                         alt={friend.name}
                                                         className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
                                                     />
-                                                    {activeTab === "all" &&
-                                                        friend.isOnline && (
-                                                            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 md:w-3 md:h-3 bg-green-500 rounded-full border-2 border-neutral-700"></div>
-                                                        )}
                                                 </div>
                                                 <div>
                                                     <h3 className="text-white font-medium text-sm md:text-base">
@@ -166,31 +158,11 @@ const FriendsPage = () => {
                                                     <p className="text-xs md:text-sm text-neutral-400">
                                                         @{friend.username}
                                                     </p>
-                                                    {activeTab === "all" && (
-                                                        <p className="text-xs text-neutral-500 mt-0.5 md:mt-1">
-                                                            {friend.isOnline
-                                                                ? "Çevrimiçi"
-                                                                : `Son görülme: ${friend.lastSeen}`}
-                                                        </p>
-                                                    )}
-                                                    {activeTab ===
-                                                        "requests" && (
-                                                        <p className="text-xs text-neutral-500 mt-0.5">
-                                                            İstek gönderildi:{" "}
-                                                            {friend.requestDate}
-                                                        </p>
-                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex space-x-2 self-end md:self-center">
                                                 {activeTab === "all" && (
                                                     <>
-                                                        <button className="p-1.5 md:p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition">
-                                                            <MdOutlineMessage
-                                                                size={16}
-                                                                className="md:text-lg"
-                                                            />
-                                                        </button>
                                                         <button className="p-1.5 md:p-2 rounded-full bg-neutral-600 text-white hover:bg-red-600 transition">
                                                             <FaUserMinus
                                                                 size={16}
