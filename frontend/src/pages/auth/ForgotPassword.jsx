@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import GlowEffect from "../../components/GlowEffect";
+import GlowEffect from "../../components/ui/effects/GlowEffect";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");

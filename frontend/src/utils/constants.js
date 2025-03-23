@@ -9,6 +9,9 @@ export const fakePosts = [
         comments: 12,
         shares: 8,
         photo: "https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+        createdAt: new Date(
+            Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000)
+        ).toISOString(),
     },
     {
         username: "johndoe",
@@ -19,6 +22,9 @@ export const fakePosts = [
         comments: 5,
         shares: 3,
         photo: null,
+        createdAt: new Date(
+            Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000)
+        ).toISOString(),
     },
     {
         username: "janedoe",
@@ -29,6 +35,9 @@ export const fakePosts = [
         comments: 7,
         shares: 4,
         photo: "https://static1.squarespace.com/static/5d8d4da29b902c5fe9fb0d57/5d8d5df99a3b130ef0db9ca9/5d9834848c16fa7ad9bbd3d1/1590314274807/I+am+excited%21%21-4.png?format=1500w",
+        createdAt: new Date(
+            Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000)
+        ).toISOString(),
     },
     {
         username: "bob",
@@ -38,7 +47,10 @@ export const fakePosts = [
         likes: 34,
         comments: 6,
         shares: 2,
-        photo: null, // Fotoğraf yok
+        photo: null,
+        createdAt: new Date(
+            Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000)
+        ).toISOString(),
     },
     {
         username: "ayseyilmaz",
@@ -49,6 +61,9 @@ export const fakePosts = [
         comments: 9,
         shares: 5,
         photo: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+        createdAt: new Date(
+            Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000)
+        ).toISOString(),
     },
     {
         username: "ayseyilmaz",
@@ -59,6 +74,9 @@ export const fakePosts = [
         comments: 4,
         shares: 3,
         photo: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1340&q=80",
+        createdAt: new Date(
+            Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000)
+        ).toISOString(),
     },
     {
         username: "ayseyilmaz",
@@ -69,6 +87,9 @@ export const fakePosts = [
         comments: 10,
         shares: 6,
         photo: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80",
+        createdAt: new Date(
+            Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000)
+        ).toISOString(),
     },
 ];
 // Projede veritabani ve backend eklenene kadar fake olarak kullanilacak insan bilgileri
@@ -204,3 +225,102 @@ export const suggestedFriends = [
         mutualFriends: 12,
     },
 ];
+
+export const fakeNotifications = [
+    {
+        id: 1,
+        type: "follow",
+        user: {
+            name: "Ahmet Yılmaz",
+            username: "@ahmetyilmaz",
+            avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+        },
+        message: "Seni takip etmeye başladı.",
+        timestamp: "2 dakika önce",
+    },
+    {
+        id: 2,
+        type: "like",
+        user: {
+            name: "Ayşe Kaya",
+            username: "@aysekaya",
+            avatar: "https://randomuser.me/api/portraits/women/2.jpg",
+        },
+        message: "Gönderini beğendi.",
+        timestamp: "10 dakika önce",
+    },
+    {
+        id: 3,
+        type: "comment",
+        user: {
+            name: "Mehmet Demir",
+            username: "@mehmetdemir",
+            avatar: "https://randomuser.me/api/portraits/men/3.jpg",
+        },
+        message: "Gönderine yorum yaptı: 'Harika bir paylaşım!'",
+        timestamp: "1 saat önce",
+    },
+    {
+        id: 4,
+        type: "message",
+        user: {
+            name: "Zeynep Aktaş",
+            username: "@zeynepaktas",
+            avatar: "https://randomuser.me/api/portraits/women/4.jpg",
+        },
+        message: "Sana bir mesaj gönderdi: 'Merhaba, nasılsın?'",
+        timestamp: "3 saat önce",
+    },
+    {
+        id: 5,
+        type: "follow",
+        user: {
+            name: "Can Öztürk",
+            username: "@canozturk",
+            avatar: "https://randomuser.me/api/portraits/men/5.jpg",
+        },
+        message: "Seni takip etmeye başladı.",
+        timestamp: "5 saat önce",
+    },
+    {
+        id: 6,
+        type: "like",
+        user: {
+            name: "Elif Şahin",
+            username: "@elifsahin",
+            avatar: "https://randomuser.me/api/portraits/women/6.jpg",
+        },
+        message: "Gönderini beğendi.",
+        timestamp: "1 gün önce",
+    },
+    {
+        id: 7,
+        type: "comment",
+        user: {
+            name: "Burak Koç",
+            username: "@burakkoc",
+            avatar: "https://randomuser.me/api/portraits/men/7.jpg",
+        },
+        message: "Gönderine yorum yaptı: 'Çok güzel bir fotoğraf!'",
+        timestamp: "2 gün önce",
+    },
+    {
+        id: 8,
+        type: "message",
+        user: {
+            name: "Selin Yıldız",
+            username: "@selinyildiz",
+            avatar: "https://randomuser.me/api/portraits/women/8.jpg",
+        },
+        message: "Sana bir mesaj gönderdi: 'Toplantı saatini ayarlayalım mı?'",
+        timestamp: "3 gün önce",
+    },
+];
+
+export const colors = {
+    pink: "#f986f3",
+    blue: "#62c8ff",
+    purple: "#8c46ff",
+    red: "#fe4d4d",
+    green: "#30c454",
+};

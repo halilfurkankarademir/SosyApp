@@ -4,19 +4,26 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { LuSettings2 } from "react-icons/lu";
 import { MdLogout, MdMenu, MdSearch, MdClose } from "react-icons/md";
 import { useNavigation } from "../../context/NavigationContext";
+import Notifications from "./Notifications";
+import { colors, fakeNotifications } from "../../utils/constants";
+import { useAuth } from "../../context/AuthContext";
 
-const Navbar = ({ isInAppPage }) => {
+const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [showSettings, setShowSettings] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const [showMobileSearch, setShowMobileSearch] = useState(false);
-    const { navigateToPage } = useNavigation();
 
-    // Menü ve buton için referanslar
+    const { navigateToPage } = useNavigation();
+    const { isAuthenticated } = useAuth();
+
+    // Referanslar
     const settingsRef = useRef(null);
     const settingsButtonRef = useRef(null);
     const mobileMenuRef = useRef(null);
     const mobileMenuButtonRef = useRef(null);
+    const notificationsRef = useRef(null); // Notifications için referans
 
     // Arama işlemi
     const handleSearch = (e) => {
@@ -27,16 +34,16 @@ const Navbar = ({ isInAppPage }) => {
         }
     };
 
-    // Cikis Yapma islemi
+    // Çıkış Yapma işlemi
     const handleLogout = () => {
         localStorage.removeItem("token");
         navigateToPage("/");
     };
 
-    // Menüyü kapatma işlemi
+    // Dışarı tıklama olayını dinle
     useEffect(() => {
         const handleClickOutside = (event) => {
-            // Settings menu için tıklama kontrolü
+            // Settings menü için tıklama kontrolü
             if (
                 settingsRef.current &&
                 !settingsRef.current.contains(event.target) &&
@@ -46,7 +53,7 @@ const Navbar = ({ isInAppPage }) => {
                 setShowSettings(false);
             }
 
-            // Mobile menu için tıklama kontrolü
+            // Mobile menü için tıklama kontrolü
             if (
                 mobileMenuRef.current &&
                 !mobileMenuRef.current.contains(event.target) &&
@@ -54,6 +61,14 @@ const Navbar = ({ isInAppPage }) => {
                 !mobileMenuButtonRef.current.contains(event.target)
             ) {
                 setShowMobileMenu(false);
+            }
+
+            // Notifications için tıklama kontrolü
+            if (
+                notificationsRef.current &&
+                !notificationsRef.current.contains(event.target)
+            ) {
+                setShowNotifications(false);
             }
         };
 
@@ -66,6 +81,8 @@ const Navbar = ({ isInAppPage }) => {
         };
     }, []);
 
+    //todo backend baglanildiginda auth kontrolu ile uygulama icinde olup olmadigina bakilacak
+
     return (
         <nav className="backdrop-blur-lg fixed w-full top-0 z-50 py-4 md:py-6 px-8">
             <div className="container mx-auto flex items-center justify-between">
@@ -73,21 +90,22 @@ const Navbar = ({ isInAppPage }) => {
                 <h1
                     className="text-2xl md:text-3xl select-none cursor-pointer lg:ml-8"
                     style={{
-                        color: "#f986f3",
+                        color: colors.pink,
                         fontFamily: "Bagel Fat One",
                     }}
                     onClick={() =>
-                        isInAppPage
+                        isAuthenticated
                             ? navigateToPage("/home")
                             : navigateToPage("/")
                     }
                 >
                     SosyApp
                 </h1>
-                {/* Uygulamaya giris yapildiysa goster*/}
-                {isInAppPage ? (
+
+                {/* Uygulamaya giriş yapıldıysa göster */}
+                {isAuthenticated ? (
                     <>
-                        {/* Masaüstü Arama Çubuğu (Ortada) - sadece md ve üstü ekranlarda görünür */}
+                        {/* Masaüstü Arama Çubuğu (Ortada) */}
                         <div className="hidden md:flex ml-auto mr-6">
                             <form onSubmit={handleSearch} className="relative">
                                 <input
@@ -108,7 +126,7 @@ const Navbar = ({ isInAppPage }) => {
                             </form>
                         </div>
 
-                        {/* Mobil Arama Formu - sadece küçük ekranlarda ve showMobileSearch true ise görünür */}
+                        {/* Mobil Arama Formu */}
                         {showMobileSearch && (
                             <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
                                 <div className="bg-neutral-800 p-4 rounded-lg w-full max-w-md relative">
@@ -145,11 +163,20 @@ const Navbar = ({ isInAppPage }) => {
                             </div>
                         )}
 
-                        {/* Masaüstü Butonlar (Sağda) - sadece md ve üstü ekranlarda görünür */}
+                        {/* Masaüstü Butonlar (Sağda) */}
                         <div className="hidden md:flex items-center space-x-4">
                             {/* Bildirimler Butonu */}
-                            <div className="text-neutral-100 cursor-pointer hover:text-pink-500 transition duration-300">
+                            <div
+                                className="relative text-neutral-100 cursor-pointer hover:text-pink-500 transition duration-300 select-none"
+                                onClick={() =>
+                                    setShowNotifications(!showNotifications)
+                                }
+                            >
                                 <IoMdNotificationsOutline size={24} />
+                                {/* Bildirim noktası mobil olmayan cihazlar icin*/}
+                                {fakeNotifications.length > 0 && (
+                                    <div className="absolute -top-0 -right-0 bg-red-500 text-white text-xs rounded-full w-2 h-2 flex items-center justify-center"></div>
+                                )}
                             </div>
                             {/* Ayarlar Butonu */}
                             <div
@@ -161,7 +188,7 @@ const Navbar = ({ isInAppPage }) => {
                             </div>
                         </div>
 
-                        {/* Mobil Menü Butonu - sadece küçük ekranlarda görünür */}
+                        {/* Mobil Menü Butonu */}
                         <div className="flex md:hidden items-center space-x-4">
                             {/* Mobil Arama Butonu */}
                             <button
@@ -183,7 +210,14 @@ const Navbar = ({ isInAppPage }) => {
                             </button>
                         </div>
 
-                        {/* Ayarlar Menüsü - showSettings true ise görünür */}
+                        {/* Bildirimler Menüsü */}
+                        {showNotifications && (
+                            <div ref={notificationsRef}>
+                                <Notifications />
+                            </div>
+                        )}
+
+                        {/* Ayarlar Menüsü */}
                         {showSettings && (
                             <div
                                 ref={settingsRef}
@@ -203,7 +237,7 @@ const Navbar = ({ isInAppPage }) => {
                             </div>
                         )}
 
-                        {/* Mobil Menü - showMobileMenu true ise görünür */}
+                        {/* Mobil Menü */}
                         {showMobileMenu && (
                             <div
                                 ref={mobileMenuRef}
@@ -234,6 +268,10 @@ const Navbar = ({ isInAppPage }) => {
                                                 size={20}
                                             />
                                             <span>Bildirimler</span>
+                                            {/* Mobil bildirim noktası */}
+                                            {fakeNotifications.length > 0 && (
+                                                <div className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"></div>
+                                            )}
                                         </div>
 
                                         <div className="flex items-center space-x-3 p-3 hover:bg-neutral-700 rounded-lg cursor-pointer text-neutral-100">

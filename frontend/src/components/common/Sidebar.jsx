@@ -3,7 +3,8 @@ import { BsPeopleFill } from "react-icons/bs";
 import { GoHeartFill, GoHomeFill } from "react-icons/go";
 import { BiBookmark } from "react-icons/bi";
 import { useNavigation } from "../../context/NavigationContext";
-import { fakeUserProfile } from "../../utils/constants";
+import { colors, fakeUserProfile } from "../../utils/constants";
+import { FaLayerGroup } from "react-icons/fa";
 
 const Sidebar = () => {
     const { navigateToPage } = useNavigation();
@@ -40,7 +41,7 @@ const Sidebar = () => {
                 >
                     <div
                         className="flex items-center w-8 h-8 rounded-full p-2 text-white"
-                        style={{ backgroundColor: "#f986f3" }}
+                        style={{ backgroundColor: colors.pink }}
                     >
                         <GoHomeFill className="text-lg" />
                     </div>
@@ -53,11 +54,24 @@ const Sidebar = () => {
                 >
                     <div
                         className="flex items-center w-8 h-8 rounded-full p-2 text-white"
-                        style={{ backgroundColor: "#62c8ff" }}
+                        style={{ backgroundColor: colors.blue }}
                     >
                         <BsPeopleFill className="text-lg" />
                     </div>
                     <span>Arkadaşlarım</span>
+                </div>
+                {/* Gruplarım */}
+                <div
+                    className="flex items-center text-md space-x-3 mb-1  p-2 hover:bg-neutral-700 transition-all duration-200 rounded-lg cursor-pointer"
+                    onClick={() => navigateToPage("groups")}
+                >
+                    <div
+                        className="flex items-center w-8 h-8 rounded-full p-2 text-white"
+                        style={{ backgroundColor: colors.purple }}
+                    >
+                        <FaLayerGroup className="text-xl" />
+                    </div>
+                    <span>Gruplarım</span>
                 </div>
                 {/* Favorilerim */}
                 <div
@@ -66,7 +80,7 @@ const Sidebar = () => {
                 >
                     <div
                         className="flex items-center w-8 h-8 rounded-full p-2 text-white"
-                        style={{ backgroundColor: "#fe4d4d" }}
+                        style={{ backgroundColor: colors.red }}
                     >
                         <GoHeartFill className="text-lg" />
                     </div>
@@ -79,7 +93,7 @@ const Sidebar = () => {
                 >
                     <div
                         className="flex items-center w-8 h-8 rounded-full p-2 text-white"
-                        style={{ backgroundColor: "#30c454" }}
+                        style={{ backgroundColor: colors.green }}
                     >
                         <BiBookmark className="text-lg" />
                     </div>
