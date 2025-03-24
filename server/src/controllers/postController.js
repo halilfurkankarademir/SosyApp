@@ -1,0 +1,1 @@
+// gonderi islemleri icin controllerlar

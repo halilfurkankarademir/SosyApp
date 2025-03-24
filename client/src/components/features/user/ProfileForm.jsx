@@ -61,18 +61,6 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                 </div>
                 <div>
                     <label className="block text-sm text-gray-400 mb-1">
-                        Konum
-                    </label>
-                    <input
-                        type="text"
-                        name="location"
-                        value={formData.location || ""}
-                        onChange={onChange}
-                        className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm text-gray-400 mb-1">
                         E-posta
                     </label>
                     <input
@@ -82,18 +70,6 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                         onChange={onChange}
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                         required
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm text-gray-400 mb-1">
-                        Telefon
-                    </label>
-                    <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone || ""}
-                        onChange={onChange}
-                        className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                     />
                 </div>
             </div>

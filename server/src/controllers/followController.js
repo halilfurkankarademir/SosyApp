@@ -1,0 +1,1 @@
+// takip islemleri icin controllerlar

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "firebase": "^11.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "protobufjs": "^7.4.0"
+  }
+}

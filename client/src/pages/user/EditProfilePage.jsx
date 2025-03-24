@@ -17,8 +17,6 @@ const EditProfilePage = () => {
         email: fakeUserProfile[0].email,
         bio: fakeUserProfile[0].bio,
         job: fakeUserProfile[0].job,
-        location: "",
-        phone: "",
     });
 
     const handleChange = (e) => {
