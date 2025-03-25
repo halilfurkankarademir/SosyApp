@@ -17,6 +17,8 @@ const HomePage = () => {
         }, 2000); // 2 sn gecikme
     };
 
+    const handleX = () => {};
+
     // Ekran boyutunu izleme
     useEffect(() => {
         window.scrollTo(0, 0);
