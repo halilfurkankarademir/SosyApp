@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../../components/common/Navbar";
 import Sidebar from "../../components/common/Sidebar";
 import { useParams } from "react-router-dom";
-import { fakePosts } from "../../utils/constants";
 import {
     FaHeart,
     FaComment,
@@ -13,6 +12,7 @@ import {
 import { FiMoreHorizontal } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import FriendsBar from "../../components/common/SuggestionsCard";
+import { fakePosts } from "../../constants/fakeDatas";
 
 const PostPage = () => {
     const { postId } = useParams();
