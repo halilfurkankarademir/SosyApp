@@ -21,6 +21,7 @@ const HomePage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Ana Sayfa";
+        console.log(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
     }, []);
 
     return (

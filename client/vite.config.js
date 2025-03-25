@@ -7,6 +7,9 @@ export default defineConfig({
     plugins: [tailwindcss(), react()],
     mode: "development",
     define: {
-        "process.env": process.env,
+        "process.env.VITE_CLOUDINARY_CLOUD_NAME":
+            process.env.VITE_CLOUDINARY_CLOUD_NAME,
+        "process.env.VITE_CLOUDINARY_UPLOAD_PRESET":
+            process.envVITE_CLOUDINARY_UPLOAD_PRESET,
     },
 });
