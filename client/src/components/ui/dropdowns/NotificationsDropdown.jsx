@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 const NotificationsDropdown = ({ notificationsData }) => {
     return (
@@ -29,4 +29,4 @@ const NotificationsDropdown = ({ notificationsData }) => {
     );
 };
 
-export default NotificationsDropdown;
+export default memo(NotificationsDropdown);

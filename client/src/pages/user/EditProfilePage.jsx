@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { Navbar } from "../../components/common";
 import { useNavigate } from "react-router-dom";
-import { fakeUserProfile } from "../../utils/constants";
 import {
     ProfileForm,
     ProfileImageUploader,
 } from "../../components/features/user";
+import { fakeUserProfile } from "../../constants/fakeDatas";
 
 const EditProfilePage = () => {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ const EditProfilePage = () => {
         username: fakeUserProfile[0].username,
         email: fakeUserProfile[0].email,
         bio: fakeUserProfile[0].bio,
-        job: fakeUserProfile[0].job,
+        location: fakeUserProfile[0].location,
     });
 
     const handleChange = (e) => {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Sidebar, Navbar, FriendsBar } from "../../components/common";
+import { Sidebar, Navbar } from "../../components/common";
 import { NewPost, PostCard } from "../../components/features/posts";
-import { fakePosts } from "../../utils/constants";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { fakePosts } from "../../constants/fakeDatas";
 
 const HomePage = () => {
     const [posts, setPosts] = useState(fakePosts);
@@ -26,20 +26,11 @@ const HomePage = () => {
     return (
         <>
             <Navbar />
-            <div className="flex min-h-screen justify-center bg-neutral-900 z-10 pt-20 pb-16 px-4 md:py-36 md:px-6">
+            <div className="page-container md:py-36 md:px-6">
                 {/* Responsive Grid Layout */}
-                <div
-                    className="w-full grid grid-cols-1 md:grid-cols-4 gap-6"
-                    style={{ maxWidth: "84rem" }}
-                >
+                <div className="page-grid-layout">
                     {/* Sidebar - Mobilde gizli, md ve üzeri ekranlarda görünür */}
-                    <div className="hidden md:block md:col-span-1">
-                        <Sidebar />
-                        <div className="mt-4">
-                            <FriendsBar />
-                        </div>
-                    </div>
-
+                    <Sidebar />
                     {/* Post ekleme ve goruntileme kismi */}
                     <div className="col-span-1 md:col-span-3">
                         <NewPost />

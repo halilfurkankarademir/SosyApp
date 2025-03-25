@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import FriendsBar from "../../components/common/FriendsBar";
+import FriendsBar from "../../components/common/SuggestionsCard";
 
 const PostPage = () => {
     const { postId } = useParams();

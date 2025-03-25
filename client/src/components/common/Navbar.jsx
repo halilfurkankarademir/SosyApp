@@ -5,10 +5,11 @@ import { LuSettings2 } from "react-icons/lu";
 import { MdLogout, MdMenu, MdSearch, MdClose } from "react-icons/md";
 import { useNavigation } from "../../context/NavigationContext";
 import Notifications from "../ui/dropdowns/NotificationsDropdown";
-import { colors, fakeNotifications } from "../../utils/constants";
+import { colors } from "../../utils/constants";
 import { useAuth } from "../../context/AuthContext";
 import { memo } from "react";
 import NavSearchInput from "../ui/inputs/NavSearchInput";
+import { fakeNotifications } from "../../constants/fakeDatas";
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState("");

@@ -2,8 +2,18 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 const userRoutes = require("./routes/userRoutes");
+const cors = require("cors");
+
 //env degiskenleri icin dotenv cfg
 require("dotenv").config();
+
+// CORS ayarları
+app.use(
+    cors({
+        origin: "http://localhost:5173", // Frontend URL'iniz burasi yayinlaninca değişecek
+        credentials: true,
+    })
+);
 
 // JSON verilerini işlemek için
 app.use(express.json());

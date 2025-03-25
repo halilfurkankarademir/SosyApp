@@ -2,25 +2,68 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaSmile, FaCamera, FaPoll } from "react-icons/fa";
 import FeelingsCard from "../../ui/cards/FeelingsCard";
 import { MdDelete } from "react-icons/md";
-import { fakeUserProfile } from "../../../utils/constants";
 import { getFirstName } from "../../../utils/helpers";
 import PrimaryButton from "../../ui/buttons/PrimaryButton";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import PollModal from "../../ui/modals/PollModal";
 import { LuShare } from "react-icons/lu";
 import { ShowToast } from "../../ui/toasts/ShowToast";
+import { imageUpload } from "../../../api/imageUpload";
+import { fakeUserProfile } from "../../../constants/fakeDatas";
 
 const NewPost = () => {
+    const [image, setImage] = useState("");
     const [postContent, setPostContent] = useState("");
     const [showFeelings, setShowFeelings] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
     const [selectedFilePreview, setSelectedFilePreview] = useState(null);
     const feelingsRef = useRef(null);
     const fileInputRef = useRef(null);
     const videoInputRef = useRef(null);
 
-    const handleClickShare = () => {
-        ShowToast("success", "Gönderi başarıyla paylaşıldı.");
+    const handleShare = async () => {
+        try {
+            // 1. Validasyon: Gönderi içeriği veya resim kontrolü
+            if (!postContent.trim() && !image) {
+                ShowToast("warning", "Lütfen bir içerik veya resim ekleyin");
+                return;
+            }
+
+            // Paylasiliyor olarak ayarla
+            setIsSharing(true);
+
+            // 2. Resim yükleme (varsa)
+            let imageUrl = null;
+            if (image) {
+                imageUrl = await imageUpload(image);
+                console.log("Image URL:", imageUrl);
+
+                // Yükleme sonrası preview'i temizle
+                setSelectedFilePreview(null);
+            }
+
+            // 3. API isteği (örnek)
+            // await createPost({ content: postContent, imageUrl });
+
+            // 4. Başarılı durum
+            ShowToast("success", "Gönderi başarıyla paylaşıldı");
+        } catch (error) {
+            console.error("Paylaşım hatası:", error);
+
+            // Daha spesifik hata mesajları
+            const errorMessage =
+                error.response?.data?.message ||
+                "Gönderi paylaşılırken bir hata oluştu";
+
+            ShowToast("error", errorMessage);
+        } finally {
+            // Formu temizle
+            setPostContent("");
+            setImage(null);
+            setSelectedFilePreview(null);
+            setIsSharing(false);
+        }
     };
 
     const handleClickPoll = () => {
@@ -43,6 +86,7 @@ const NewPost = () => {
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
+        setImage(file);
         setSelectedFilePreview(URL.createObjectURL(file));
         if (file) {
             console.log("Selected file:", file);
@@ -134,8 +178,9 @@ const NewPost = () => {
                     )}
                 </div>
                 <PrimaryButton
-                    buttonText="Paylaş"
-                    handleClick={handleClickShare}
+                    buttonText={isSharing ? "Paylaşılıyor..." : "Paylaş"}
+                    disabled={isSharing}
+                    handleClick={handleShare}
                     icon={<LuShare size={16} />}
                 />
             </div>

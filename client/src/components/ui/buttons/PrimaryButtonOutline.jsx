@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 const PrimaryButtonOutline = ({ buttonText, handleClick, fullWidth, icon }) => {
     return (
@@ -13,4 +13,4 @@ const PrimaryButtonOutline = ({ buttonText, handleClick, fullWidth, icon }) => {
     );
 };
 
-export default PrimaryButtonOutline;
+export default memo(PrimaryButtonOutline);

@@ -1,35 +1,21 @@
 import React from "react";
-import Navbar from "../../components/common/Navbar";
-import FriendsBar from "../../components/common/FriendsBar";
-import Sidebar from "../../components/common/Sidebar";
-import {
-    FaLayerGroup,
-    FaPlus,
-    FaSearch,
-    FaSignInAlt,
-    FaUserAlt,
-} from "react-icons/fa";
+import { Navbar, Sidebar } from "../../components/common";
+import { FaLayerGroup, FaPlus, FaSearch, FaSignInAlt } from "react-icons/fa";
 import { FaRegFaceFrown } from "react-icons/fa6";
-import PrimaryButton from "../../components/ui/buttons/PrimaryButton";
-import { GiJoin } from "react-icons/gi";
-import PrimaryButtonOutline from "../../components/ui/buttons/PrimaryButtonOutline";
+import {
+    PrimaryButton,
+    PrimaryButtonOutline,
+} from "../../components/ui/buttons";
+import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
 
 const GroupsPage = () => {
     return (
         <>
             <Navbar isInAppPage={true} />
-            <div className="flex min-h-screen justify-center bg-neutral-900 z-10 py-24 md:py-36 px-4 md:px-0">
-                <div
-                    className="w-full md:grid md:grid-cols-4 md:gap-4"
-                    style={{ maxWidth: "84rem" }}
-                >
+            <div className="page-container py-24 md:py-36 px-4 md:px-0">
+                <div className="page-grid-layout">
                     {/* Sidebar - Mobilde gizli */}
-                    <div className="hidden md:block md:col-span-1">
-                        <Sidebar />
-                        <div className="mt-4">
-                            <FriendsBar />
-                        </div>
-                    </div>
+                    <Sidebar />
 
                     {/* Gruplar Bölümü */}
                     <div className="md:col-span-3">
@@ -58,19 +44,8 @@ const GroupsPage = () => {
                                 </div>
                             </div>
 
-                            {/* Arama */}
-                            <div className="relative w-full mb-4 md:mb-6">
-                                <input
-                                    type="text"
-                                    placeholder="Gruplarım içinde ara..."
-                                    ebounce
-                                    ile
-                                    bağlantılı
-                                    fonksiyon
-                                    className="w-full pl-9 pr-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
-                                />
-                                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
-                            </div>
+                            {/* Arama inputu */}
+                            <LargeSearchInput placeholderText="Gruplarım İçinde Ara.." />
 
                             {/* Sonuç yoksa */}
                             <div className="text-center py-8 md:py-10">

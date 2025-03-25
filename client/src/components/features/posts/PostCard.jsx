@@ -23,10 +23,6 @@ const PostCard = ({ postData }) => {
 
     const postDate = getDateDiff(createdAt);
 
-    useEffect(() => {
-        console.log(postData.entries);
-    }, []);
-
     return (
         <div className="bg-neutral-800 p-4 md:p-6 rounded-lg shadow-lg text-white mb-4 md:mb-6 ">
             {/* Kullanıcı Bilgileri ve Zaman Bilgisi*/}

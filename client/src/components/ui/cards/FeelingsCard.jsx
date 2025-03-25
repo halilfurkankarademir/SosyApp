@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 /**
  * Duygu ifadelerini gösteren emoji kartı bileşeni
@@ -45,4 +45,4 @@ const FeelingsCard = ({ handleClickEmoji }) => {
     );
 };
 
-export default FeelingsCard;
+export default memo(FeelingsCard);

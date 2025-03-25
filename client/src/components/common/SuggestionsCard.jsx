@@ -1,13 +1,13 @@
-import React from "react";
+import React, { memo } from "react";
 import { useNavigation } from "../../context/NavigationContext";
-import { fakePeople } from "../../utils/constants";
 import { BsPeopleFill, BsPersonAdd } from "react-icons/bs";
+import { fakePeople } from "../../constants/fakeDatas";
 
-const FriendsBar = () => {
+const SuggestionsCard = () => {
     const { navigateToPage } = useNavigation();
 
     return (
-        <div className="w-64 bg-neutral-800 h-auto text-white rounded-xl relative">
+        <div className="w-64 bg-neutral-800 h-auto text-white rounded-xl ">
             <div className="flex flex-row gap-2 p-4 text-sm">
                 <BsPeopleFill size={16} />
                 <h2 className="font-semibold">Tanıyor Olabilirsin</h2>
@@ -41,4 +41,4 @@ const FriendsBar = () => {
     );
 };
 
-export default FriendsBar;
+export default memo(SuggestionsCard);

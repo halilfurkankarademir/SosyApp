@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/common/Navbar";
-import Sidebar from "../../components/common/Sidebar";
-import { fakePosts } from "../../utils/constants";
-import FriendsBar from "../../components/common/FriendsBar";
+import { Navbar, Sidebar } from "../../components/common";
 import PostCard from "../../components/features/posts/PostCard";
 import { BiBookmark } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
+import { fakePosts } from "../../constants/fakeDatas";
+import { useDebounce } from "use-debounce";
 
 const SavedPage = () => {
     const [search, setSearch] = useState("");
+    // Örnek olarak her 3. gönderiyi kaydedilmiş gösteriyoruz
     const [savedPosts, setSavedPosts] = useState(
         fakePosts.filter((_, i) => i % 3 === 0)
-    ); // Örnek olarak her 3. gönderiyi kaydedilmiş gösteriyoruz
+    );
+    const [debouncedValue] = useDebounce(search, 300);
 
     const filteredPosts = savedPosts.filter((post) => {
         return (
-            post.content.toLowerCase().includes(search.toLowerCase()) ||
-            post.username.toLowerCase().includes(search.toLowerCase())
+            post.content.toLowerCase().includes(debouncedValue.toLowerCase()) ||
+            post.username.toLowerCase().includes(debouncedValue.toLowerCase())
         );
     });
 
@@ -28,19 +29,11 @@ const SavedPage = () => {
     return (
         <>
             <Navbar isInAppPage={true} />
-            <div className="flex min-h-screen justify-center bg-neutral-900 z-10 py-24 md:py-36 px-4 md:px-0">
+            <div className="page-container py-24 md:py-36 px-4 md:px-0">
                 {/* Grid Layout */}
-                <div
-                    className="w-full md:grid md:grid-cols-4 md:gap-4"
-                    style={{ maxWidth: "84rem" }}
-                >
+                <div className="page-grid-layout">
                     {/* Sidebar - Mobilde gizli */}
-                    <div className="hidden md:block md:col-span-1">
-                        <Sidebar />
-                        <div className="mt-4">
-                            <FriendsBar />
-                        </div>
-                    </div>
+                    <Sidebar />
 
                     {/* Kaydedilmiş Gönderiler Bölümü */}
                     <div className="md:col-span-3">

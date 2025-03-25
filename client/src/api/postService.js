@@ -23,3 +23,5 @@ export const fetchAllPosts = () => {};
 export const fetchPostById = (postId) => {};
 
 export const fetchPostsByUserId = (userId) => {};
+
+export const increasePostShareCount = (postId) => {};

@@ -49,12 +49,12 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                 </div>
                 <div>
                     <label className="block text-sm text-gray-400 mb-1">
-                        Meslek
+                        Konum
                     </label>
                     <input
                         type="text"
                         name="job"
-                        value={formData.job || ""}
+                        value={formData.location || ""}
                         onChange={onChange}
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                     />

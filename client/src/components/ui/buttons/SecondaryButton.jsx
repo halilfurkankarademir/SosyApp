@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 const SecondaryButton = ({ icon, buttonText, handleClick }) => {
     return (
@@ -12,4 +12,4 @@ const SecondaryButton = ({ icon, buttonText, handleClick }) => {
     );
 };
 
-export default SecondaryButton;
+export default memo(SecondaryButton);

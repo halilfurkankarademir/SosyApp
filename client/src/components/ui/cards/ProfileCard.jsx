@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { MdVerified } from "react-icons/md";
 import { PrimaryButton, SecondaryButton } from "../buttons";
@@ -109,4 +109,4 @@ const ProfileCard = ({ profile, isOwnProfile }) => {
     );
 };
 
-export default ProfileCard;
+export default memo(ProfileCard);

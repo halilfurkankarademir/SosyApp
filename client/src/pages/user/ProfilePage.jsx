@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import PostCard from "../../components/features/posts/PostCard";
-import { fakePosts, fakeUserProfile } from "../../utils/constants";
 import Navbar from "../../components/common/Navbar";
 import { useNavigation } from "../../context/NavigationContext";
 import { useParams } from "react-router-dom";
 import ProfileCard from "../../components/ui/cards/ProfileCard";
+import { fakePosts, fakeUserProfile } from "../../constants/fakeDatas";
 
 const ProfilePage = () => {
     // Kullanıcının kendi profili mi kontrolü için bir state (gerçek uygulamada auth ile kontrol edilir)
@@ -48,11 +48,8 @@ const ProfilePage = () => {
 
                             {/* Gönderiler */}
                             <div className="space-y-6">
-                                {posts.map((post) => (
-                                    <PostCard
-                                        key={post.postId}
-                                        postData={post}
-                                    />
+                                {posts.map((post, index) => (
+                                    <PostCard key={index} postData={post} />
                                 ))}
                             </div>
                         </div>

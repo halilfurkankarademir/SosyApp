@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
 import Sidebar from "../../components/common/Sidebar";
-import FriendsBar from "../../components/common/FriendsBar";
+import FriendsBar from "../../components/common/SuggestionsCard";
 import { FaSearch, FaSearchMinus } from "react-icons/fa";
 
 const SearchPage = () => {
@@ -11,28 +11,22 @@ const SearchPage = () => {
     const [searchResults, setSearchResults] = useState([]);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         const query = searchParams.get("q");
         if (query) {
             setSearchQuery(query);
+            document.title = query + " için sonuçlar";
         }
     }, [searchParams]);
 
     return (
         <>
             <Navbar isInAppPage={true} />
-            <div className="flex min-h-screen justify-center bg-neutral-900 z-10 py-24 md:py-36 px-4 md:px-0">
+            <div className="page-container py-24 md:py-36 px-4 md:px-0">
                 {/* Grid Layout */}
-                <div
-                    className="w-full md:grid md:grid-cols-4 md:gap-4"
-                    style={{ maxWidth: "84rem" }}
-                >
+                <div className="page-grid-layout">
                     {/* Sidebar - Mobilde gizli */}
-                    <div className="hidden md:block md:col-span-1">
-                        <Sidebar />
-                        <div className="mt-4">
-                            <FriendsBar />
-                        </div>
-                    </div>
+                    <Sidebar />
 
                     {/* Arama ve Sonuclar Bölümü */}
                     <div className="md:col-span-3">

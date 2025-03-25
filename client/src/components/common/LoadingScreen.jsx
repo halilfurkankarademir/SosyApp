@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import Navbar from "./Navbar";
 
 const LoadingScreen = () => {
@@ -12,4 +12,4 @@ const LoadingScreen = () => {
     );
 };
 
-export default LoadingScreen;
+export default memo(LoadingScreen);

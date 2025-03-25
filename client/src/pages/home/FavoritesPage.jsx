@@ -1,43 +1,36 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { debounce } from "lodash"; // Lodash'ten debounce fonksiyonunu import edin
-import Navbar from "../../components/common/Navbar";
-import Sidebar from "../../components/common/Sidebar";
-import { fakePosts } from "../../utils/constants";
+import React, { useState, useEffect, useMemo } from "react";
+import { Navbar, Sidebar } from "../../components/common";
 import { GoHeartFill } from "react-icons/go";
-import { FaHeartBroken, FaSearch } from "react-icons/fa";
-import FriendsBar from "../../components/common/FriendsBar";
+import { FaHeartBroken } from "react-icons/fa";
 import PostCard from "../../components/features/posts/PostCard";
+import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
+import { fakePosts } from "../../constants/fakeDatas";
+import { useDebounce } from "use-debounce";
 
 const FavoritesPage = () => {
     const [search, setSearch] = useState("");
-    const [filteredPosts, setFilteredPosts] = useState(
-        fakePosts.filter((_, i) => i % 1 === 0)
-    );
+    const [debouncedSearch] = useDebounce(search, 300);
 
-    // Debounce fonksiyonu oluşturma
-    const handleSearch = useCallback(
-        debounce((searchValue) => {
-            const filtered = fakePosts.filter((post) => {
-                return (
-                    post.content
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase()) ||
-                    post.username
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase())
-                );
-            });
-            setFilteredPosts(filtered);
-        }, 300), // 300ms gecikme ile arama yapiyoruz
+    // Başlangıçta favori gönderileri al (gerçek uygulamada API'den çekilir)
+    const initialPosts = useMemo(
+        () => fakePosts.filter((_, i) => i % 1 === 0),
         []
     );
 
-    // Arama inputu değiştiğinde tetiklenen fonksiyon
-    const onSearchChange = (e) => {
-        const searchValue = e.target.value;
-        setSearch(searchValue); // Input değerini güncelle
-        handleSearch(searchValue); // Debounce ile filtreleme işlemini tetikle
-    };
+    // Filtrelenmiş gönderileri hesapla
+    const filteredPosts = useMemo(() => {
+        if (!debouncedSearch) return initialPosts;
+
+        return initialPosts.filter(
+            (post) =>
+                post.content
+                    .toLowerCase()
+                    .includes(debouncedSearch.toLowerCase()) ||
+                post.username
+                    .toLowerCase()
+                    .includes(debouncedSearch.toLowerCase())
+        );
+    }, [debouncedSearch, initialPosts]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -47,18 +40,10 @@ const FavoritesPage = () => {
     return (
         <>
             <Navbar isInAppPage={true} />
-            <div className="flex min-h-screen justify-center bg-neutral-900 z-10 py-24 md:py-36 px-4 md:px-0">
-                <div
-                    className="w-full md:grid md:grid-cols-4 md:gap-4"
-                    style={{ maxWidth: "84rem" }}
-                >
+            <div className="page-container py-24 md:py-36 px-4 md:px-0">
+                <div className="page-grid-layout">
                     {/* Sidebar - Mobilde gizli */}
-                    <div className="hidden md:block md:col-span-1">
-                        <Sidebar />
-                        <div className="mt-4">
-                            <FriendsBar />
-                        </div>
-                    </div>
+                    <Sidebar />
 
                     {/* Favoriler Bölümü */}
                     <div className="md:col-span-3">
@@ -81,16 +66,11 @@ const FavoritesPage = () => {
                             </div>
 
                             {/* Arama */}
-                            <div className="relative w-full mb-4 md:mb-6">
-                                <input
-                                    type="text"
-                                    placeholder="Favoriler içinde ara..."
-                                    value={search}
-                                    onChange={onSearchChange} // Debounce ile bağlantılı fonksiyon
-                                    className="w-full pl-9 pr-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
-                                />
-                                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
-                            </div>
+                            <LargeSearchInput
+                                search={search}
+                                setSearch={setSearch}
+                                placeholderText="Favoriler içinde ara..."
+                            />
 
                             {/* Sonuç yoksa */}
                             {filteredPosts.length === 0 && (

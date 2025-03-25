@@ -1,4 +1,4 @@
-// sabit dosyalar
+// sabit degerler
 
 module.exports = {
     API_ENDPOINTS: {

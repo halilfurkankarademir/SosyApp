@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
 @import url("https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap");
+
 @import "tailwindcss";
 
 * {
@@ -14,6 +16,16 @@ body {
 
 button {
     cursor: pointer;
+}
+
+@layer components {
+    .page-container {
+        @apply flex min-h-screen justify-center bg-neutral-900 z-10 pt-20 pb-16 px-4;
+    }
+    .page-grid-layout {
+        @apply w-full md:grid md:grid-cols-4 md:gap-4;
+        max-width: 84rem;
+    }
 }
 
 @keyframes fadeIn {

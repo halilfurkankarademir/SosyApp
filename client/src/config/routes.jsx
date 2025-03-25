@@ -8,7 +8,7 @@ import ErrorPage from "../pages/public/ErrorPage";
 import { useAuth } from "../context/AuthContext";
 
 // Dinamik olarak yüklenecek sayfalar
-const FriendsPage = lazy(() => import("../pages/home/FriendsPage"));
+const FollowersPage = lazy(() => import("../pages/home/FollowersPage"));
 const ProfilePage = lazy(() => import("../pages/user/ProfilePage"));
 const EditProfilePage = lazy(() => import("../pages/user/EditProfilePage"));
 const PostPage = lazy(() => import("../pages/content/PostPage"));
@@ -43,7 +43,7 @@ export const AppRoutes = () => {
 
                     {/* Dinamik olarak yüklenen sayfalar */}
                     <Route path="/favorites" element={<FavoritesPage />} />
-                    <Route path="/friends" element={<FriendsPage />} />
+                    <Route path="/followers" element={<FollowersPage />} />
                     <Route path="/groups" element={<GroupsPage />} />
                     <Route path="/search" element={<SearchPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
