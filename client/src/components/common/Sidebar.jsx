@@ -3,11 +3,11 @@ import { NavigationPanel, SuggestionsCard } from "./";
 
 const Sidebar = () => {
     return (
-        <div className="hidden md:block md:col-span-1">
+        <div className="hidden md:block md:col-span-1 fixed">
             <NavigationPanel />
-            <div className="mt-4">
+            {/* <div className="mt-4">
                 <SuggestionsCard />
-            </div>
+            </div> */}
         </div>
     );
 };

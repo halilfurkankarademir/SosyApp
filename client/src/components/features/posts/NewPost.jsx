@@ -10,8 +10,9 @@ import { LuShare } from "react-icons/lu";
 import { ShowToast } from "../../ui/toasts/ShowToast";
 import { imageUpload } from "../../../api/imageUpload";
 import { fakeUserProfile } from "../../../constants/fakeDatas";
+import { createNewPost } from "../../../api/postService";
 
-const NewPost = () => {
+const NewPost = ({ onPostCreated }) => {
     const [image, setImage] = useState("");
     const [postContent, setPostContent] = useState("");
     const [showFeelings, setShowFeelings] = useState(false);
@@ -37,17 +38,20 @@ const NewPost = () => {
             let imageUrl = null;
             if (image) {
                 imageUrl = await imageUpload(image);
-                console.log("Image URL:", imageUrl);
 
                 // Yükleme sonrası preview'i temizle
                 setSelectedFilePreview(null);
             }
 
-            // 3. API isteği (örnek)
-            // await createPost({ content: postContent, imageUrl });
-
+            // 3. API gonderi olusturma isteği
+            await createNewPost({
+                userId: 1,
+                content: postContent,
+                media: imageUrl,
+            });
             // 4. Başarılı durum
             ShowToast("success", "Gönderi başarıyla paylaşıldı");
+            onPostCreated();
         } catch (error) {
             console.error("Paylaşım hatası:", error);
 

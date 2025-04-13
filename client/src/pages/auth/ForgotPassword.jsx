@@ -18,7 +18,8 @@ const ForgotPassword = () => {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen flex items-center justify-center bg-neutral-900 relative">
+            <GlowEffect />
+            <div className="page-container flex justify-center items-center">
                 <div className="bg-neutral-800 p-8 rounded-xl shadow-xl w-full max-w-md z-10 border border-neutral-700">
                     <h2 className="text-3xl font-bold mb-6 text-center text-white">
                         Şifreni mi Unuttun?

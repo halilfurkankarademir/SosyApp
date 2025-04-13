@@ -24,7 +24,7 @@ button {
     }
     .page-grid-layout {
         @apply w-full md:grid md:grid-cols-4 md:gap-4;
-        max-width: 84rem;
+        max-width: 85rem;
     }
 }
 

@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Sidebar, Navbar } from "../../components/common";
 import { NewPost, PostCard } from "../../components/features/posts";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { fakePosts } from "../../constants/fakeDatas";
+import { fetchAllPosts, removePost } from "../../api/postService";
+import { ShowToast } from "../../components/ui/toasts/ShowToast";
 
 const HomePage = () => {
-    const [posts, setPosts] = useState(fakePosts);
+    const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
 
     const loadMoreData = () => {
@@ -17,13 +18,32 @@ const HomePage = () => {
         }, 2000); // 2 sn gecikme
     };
 
-    const handleX = () => {};
+    const fetchPosts = async () => {
+        try {
+            const posts = await fetchAllPosts();
+            console.log(posts);
+            setPosts(posts);
+        } catch (error) {
+            console.error("Error fetching posts:", error);
+        }
+    };
+
+    const deletePost = async (postId) => {
+        try {
+            await removePost(postId);
+            setPosts(posts.filter((post) => post._id !== postId));
+            fetchPosts();
+            ShowToast("success", "Gönderi başarıyla silindi");
+        } catch (error) {
+            console.error("Error deleting post:", error);
+        }
+    };
 
     // Ekran boyutunu izleme
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Ana Sayfa";
-        console.log(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+        fetchPosts();
     }, []);
 
     return (
@@ -35,16 +55,16 @@ const HomePage = () => {
                     {/* Sidebar - Mobilde gizli, md ve üzeri ekranlarda görünür */}
                     <Sidebar />
                     {/* Post ekleme ve goruntileme kismi */}
-                    <div className="col-span-1 md:col-span-3">
-                        <NewPost />
+                    <div className="col-span-1 md:col-span-3 md:ml-72 w-full">
+                        <NewPost onPostCreated={fetchPosts} />
                         <InfiniteScroll
                             dataLength={posts.length}
                             hasMore={hasMore}
-                            loader={
-                                <div className="text-center text-white ">
-                                    Yükleniyor...
-                                </div>
-                            }
+                            // loader={
+                            //     <div className="text-center text-white ">
+                            //         Yükleniyor...
+                            //     </div>
+                            // }
                             next={loadMoreData}
                             endMessage={
                                 <p>Yukarıdan kucultmek icin tiklayin</p>
@@ -52,7 +72,11 @@ const HomePage = () => {
                         >
                             <div className="mt-4 space-y-4">
                                 {posts.map((post, index) => (
-                                    <PostCard key={index} postData={post} />
+                                    <PostCard
+                                        key={index}
+                                        postData={post}
+                                        handleRemove={deletePost}
+                                    />
                                 ))}
                             </div>
                         </InfiniteScroll>

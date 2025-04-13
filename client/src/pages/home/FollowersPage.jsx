@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Navbar, Sidebar } from "../../components/common";
 import { BsPeopleFill } from "react-icons/bs";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
-import FriendCard from "../../components/ui/cards/FriendCard";
 import { allFollowers } from "../../constants/fakeDatas";
 import { useDebounce } from "use-debounce";
+import { getAllUsers } from "../../api/userService";
+import FollowerCard from "../../components/ui/cards/FollowerCard";
 
 const FollowersPage = () => {
     const [search, setSearch] = useState("");
     const [debouncedSearch] = useDebounce(search, 300);
+    const [allUsers, setAllUsers] = useState([]);
 
     // Filtreleme
     const filteredFollowers = allFollowers.filter(
@@ -24,7 +26,17 @@ const FollowersPage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Takipçilerim";
+        fetchUsers();
     }, []);
+
+    const fetchUsers = async () => {
+        try {
+            const users = await getAllUsers();
+            setAllUsers(users);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
 
     return (
         <>
@@ -35,7 +47,7 @@ const FollowersPage = () => {
                     <Sidebar />
 
                     {/* Takipçiler Bölümü */}
-                    <div className="md:col-span-3">
+                    <div className="md:col-span-3  md:ml-72 w-full">
                         <div className="bg-neutral-800 p-4 md:p-6 rounded-lg mb-4 md:mb-6">
                             <div className="flex items-center mb-6">
                                 <div
@@ -73,8 +85,8 @@ const FollowersPage = () => {
                                         </p>
                                     </div>
                                 ) : (
-                                    filteredFollowers.map((follower, index) => (
-                                        <FriendCard
+                                    allUsers.map((follower, index) => (
+                                        <FollowerCard
                                             follower={follower}
                                             key={index}
                                         />

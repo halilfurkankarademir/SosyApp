@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FaHeart, FaComment, FaShare } from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { FaBookmark } from "react-icons/fa6";
@@ -7,21 +7,35 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { getDateDiff } from "../../../utils/helpers";
 
-const PostCard = ({ postData }) => {
+const PostCard = ({ postData, handleRemove }) => {
     const { navigateToPage } = useNavigation();
     const [showMore, setShowMore] = useState(false);
-    const {
-        profilePic,
-        username,
-        createdAt,
-        content,
-        likes,
-        comments,
-        shares,
-        photo,
-    } = postData;
+    const moreMenuRef = useRef(null);
+    const { id, user, createdAt, content, likes, comments, shares, media } =
+        postData;
 
     const postDate = getDateDiff(createdAt);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                moreMenuRef.current &&
+                !moreMenuRef.current.contains(event.target)
+            ) {
+                setShowMore(false);
+            }
+        };
+
+        if (showMore) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showMore]);
 
     return (
         <div className="bg-neutral-800 p-4 md:p-6 rounded-lg shadow-lg text-white mb-4 md:mb-6 ">
@@ -29,23 +43,44 @@ const PostCard = ({ postData }) => {
             <div className="flex items-center justify-between mb-3 md:mb-4">
                 <div className="flex items-center space-x-2 md:space-x-3 cursor-pointer">
                     <img
-                        src={profilePic}
+                        src={
+                            user.profilePicture ||
+                            "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
+                        }
                         alt="Profil"
                         className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
                     />
                     <div className="flex flex-col">
-                        <span className="text-sm md:text-md">{username}</span>
+                        <span className="text-sm md:text-md">
+                            {user.username || "username"}
+                        </span>
                         <span className="text-xs text-gray-400">
                             {postDate}
                         </span>
                     </div>
                 </div>
-                <button
-                    className="text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer"
-                    onClick={() => setShowMore(!showMore)}
-                >
-                    <FiMoreHorizontal className="text-lg" />
-                </button>
+                <div className="relative" ref={moreMenuRef}>
+                    <button
+                        className="text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer"
+                        onClick={() => setShowMore(!showMore)}
+                    >
+                        <FiMoreHorizontal className="text-lg" />
+                    </button>
+
+                    {showMore && (
+                        <div className="absolute right-0 top-8 bg-neutral-800 border-2 border-neutral-700 rounded-lg p-2 w-48 animate-fade-in z-50">
+                            <button
+                                className="w-full text-left px-2 py-1 hover:bg-neutral-700 rounded"
+                                onClick={() => {
+                                    handleRemove(postData.id);
+                                    setShowMore(false);
+                                }}
+                            >
+                                Gönderiyi Sil
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Gönderi İçeriği */}
@@ -54,20 +89,20 @@ const PostCard = ({ postData }) => {
             </div>
 
             {/* Gönderi Medyası (Opsiyonel) */}
-            {photo && (
+            {media && (
                 <div className="mb-3 md:mb-4">
                     <LazyLoadImage
-                        src={photo}
+                        src={media}
                         alt="Gönderi Medyası"
                         effect="blur"
-                        className="w-full rounded-lg"
+                        className="w-full rounded-lg object-cover"
                         threshold={200}
-                        placeholderSrc={`${photo}?q=10&w=50`}
+                        placeholderSrc={`${media}?q=10&w=50`}
                         srcSet={`
-                            ${photo}?q=75&w=500 500w,
-                            ${photo}?q=75&w=800 800w,
-                            ${photo}?q=75&w=1080 1080w,
-                            ${photo}?q=75&w=1200 1200w
+                            ${media}?q=75&w=500 500w,
+                            ${media}?q=75&w=800 800w,
+                            ${media}?q=75&w=1080 1080w,
+                            ${media}?q=75&w=1200 1200w
                         `}
                         sizes="(max-width: 768px) 100vw, 800px"
                     />
@@ -79,11 +114,11 @@ const PostCard = ({ postData }) => {
                 <div className="flex items-center space-x-3 md:space-x-4">
                     <div className="flex flex-row items-center justify-center gap-1 text-xs md:text-base">
                         <FaHeart className="" />
-                        <span>{likes} </span>
+                        <span>{likes.length} </span>
                     </div>
                     <div className="flex flex-row items-center justify-center gap-1 text-xs md:text-base">
                         <FaComment className="" />
-                        <span>{comments} </span>
+                        <span>{comments.length} </span>
                     </div>
                     <div className="flex flex-row items-center justify-center gap-1 text-xs md:text-base">
                         <FaShare className="" />

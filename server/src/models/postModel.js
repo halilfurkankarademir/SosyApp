@@ -1,52 +1,39 @@
-const {
-    firestore,
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    setDoc,
-    deleteDoc,
-    serverTimestamp,
-} = require("../config/firebase");
+import { DataTypes } from "@sequelize/core";
+import sequelize from "../config/sequelize.js";
 
-class Post {
-    constructor({
-        postId, // Benzersiz post idsi
-        userId, // Postu olusturan kullanici idsi
-        content, // Post icerigi yazi olarak
-        media, // Varsa fotograf urlsi
-        likes = [], // Postu begenen kullanici idleri
-        comments = [], // Posta yapilan yorum Idleri
-        shares, // Postun paylasilma sayisi
-        createdAt = serverTimestamp(), // Postun olusturulma tarihi
-    }) {
-        this.postId = postId;
-        this.userId = userId;
-        this.content = content;
-        this.media = media;
-        this.likes = likes;
-        this.comments = comments;
-        this.shares = shares;
-        this.createdAt = createdAt;
+const Post = sequelize.define(
+    "Post",
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true,
+        },
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        content: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        media: {
+            type: DataTypes.STRING(255),
+            allowNull: true,
+        },
+        likes: {
+            type: DataTypes.ARRAY(DataTypes.INTEGER),
+            defaultValue: [],
+        },
+        comments: {
+            type: DataTypes.ARRAY(DataTypes.INTEGER),
+            defaultValue: [],
+        },
+    },
+    {
+        timestamps: true,
     }
+);
 
-    // Todo post olusturma fonk
-
-    // Todo post editleme fonk
-
-    // Todo post silme fonk
-
-    // Todo post goruntuleme fonk (id ye gore)
-
-    // Todo posta begeni ekleme fonk (postId ve userId)
-
-    // Todo posta begeni silme fonk (postId ve userId)
-
-    // Todo posta yorum ekleme fonk (postId ve commentId)
-
-    // Todo post yorum silme fonk (postId ve commentId)
-
-    // Todo kullaniciya ait postlari getirme (userId)
-}
-
-module.exports = Post;
+export default Post;

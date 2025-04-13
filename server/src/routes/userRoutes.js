@@ -1,14 +1,18 @@
-const express = require("express");
+import express from "express";
+import { userController } from "../controllers/userController.js";
+
 const router = express.Router();
-const { userController } = require("../controllers/userController");
-const { API_ENDPOINTS } = require("../config/constants");
 
-// rotalar bir rotadaki ilgili islemin hangi fonksiyonu calistiracagini belirtmek icin kullanilir
+// Tüm kullanıcıları getirme
+router.get("/", userController.getAllUsers);
 
-// Tum kullanıcıları getirme
-router.get(API_ENDPOINTS.USERS, userController.getAllUsers);
+// Kullanıcıyı ID ile getirme
+router.get("/:userId", userController.getUserById);
 
-// Kullanici olusturma
-router.post(API_ENDPOINTS.USERS, userController.createUser);
+// Yeni kullanıcı oluşturma
+router.post("/", userController.createUser);
 
-module.exports = router;
+// Kullanıcı silme
+router.delete("/:userId", userController.deleteUser);
+
+export default router;

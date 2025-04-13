@@ -1,4 +1,6 @@
 // Kullanıcı Profili İşlemleri
+import axios from "axios";
+
 export const updateUserProfile = (userId, updatedData) => {
     // Kullanıcının profil bilgilerini günceller.
 };
@@ -64,4 +66,15 @@ export const getUserActivityLogs = (userId) => {
 
 export const reportUser = (userId, reportedUserId, reason) => {
     // Bir kullanıcıyı şikayet eder.
+};
+
+export const getAllUsers = async () => {
+    // Tüm kullanıcıları listeler.
+    return axios
+        .get("http://localhost:3000/api/users")
+        .then((response) => response.data)
+        .catch((error) => {
+            console.error("Error fetching users:", error);
+            throw error;
+        });
 };

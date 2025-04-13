@@ -29,7 +29,7 @@ const SearchPage = () => {
                     <Sidebar />
 
                     {/* Arama ve Sonuclar Bölümü */}
-                    <div className="md:col-span-3">
+                    <div className="md:col-span-3 md:ml-72 w-full">
                         <div className="bg-neutral-800 p-4 md:p-6 rounded-lg mb-4 md:mb-6">
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-6">
                                 <div className="flex items-center mb-4 md:mb-0">

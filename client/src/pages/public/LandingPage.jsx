@@ -3,6 +3,7 @@ import { PrimaryButton } from "../../components/ui/buttons";
 import { GlowEffect } from "../../components/ui/effects";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../../components/common";
+import landingImage from "../../assets/images/landing.jpg";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
@@ -62,12 +63,9 @@ const LandingPage = () => {
                 {/* Sağ Tarafta Resim */}
                 <div className="hidden md:block md:ml-12 lg:ml-20 z-10 mt-8 md:mt-0">
                     <LazyLoadImage
-                        src={
-                            "https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        }
-                        alt="Uygulama Resmi"
-                        className="rounded-lg shadow-2xl object-cover w-full max-w-md lg:max-w-lg"
-                        effect="blur"
+                        src={landingImage}
+                        alt="Landing Page"
+                        className="w-full h-96 rounded-lg"
                     />
                 </div>
             </div>

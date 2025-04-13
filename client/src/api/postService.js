@@ -1,27 +1,46 @@
-//todo buraya gonderiler  ile yapilacak islemler eklenecek
+import axios from "axios";
+
 //Orn. kullanicinin bir gonderiyi paylasmasi silmesi , yorum eklemesi gonderiye vb
-export const createNewPost = () => {};
+export const createNewPost = (postData) => {
+    try {
+        return axios
+            .post("http://localhost:3000/api/posts", postData)
+            .then((response) => response.data);
+    } catch (error) {
+        console.error("Error creating post:", error);
+    }
+};
 
-export const updatePost = (postId) => {};
+export const updatePost = (postId) => {
+    try {
+        return axios
+            .put(`http://localhost:3000/api/posts/${postId}`)
+            .then((response) => response.data);
+    } catch (error) {
+        console.error("Error updating post:", error);
+    }
+};
 
-export const removePost = (postId) => {};
+export const removePost = (postId) => {
+    try {
+        return axios
+            .delete(`http://localhost:3000/api/posts/${postId}`)
+            .then((response) => response.data);
+    } catch (error) {
+        console.error("Error deleting post:", error);
+    }
+};
 
-export const addLikeToPost = (postId, userId) => {};
-
-export const removeLikeFromPost = (postId, userId) => {};
-
-export const addCommentToPost = (postId, userId) => {};
-
-export const removeCommentFromPost = (commentId) => {};
-
-export const addPostToSaved = (postId, userId) => {};
-
-export const removePostFromSaved = (postId, userId) => {};
-
-export const fetchAllPosts = () => {};
+export const fetchAllPosts = () => {
+    try {
+        return axios.get("http://localhost:3000/api/posts").then((response) => {
+            return response.data;
+        });
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+    }
+};
 
 export const fetchPostById = (postId) => {};
 
 export const fetchPostsByUserId = (userId) => {};
-
-export const increasePostShareCount = (postId) => {};
