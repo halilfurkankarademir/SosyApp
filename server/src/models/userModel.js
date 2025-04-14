@@ -11,10 +11,16 @@ const User = sequelize.define(
             allowNull: false,
             primaryKey: true,
         },
-        firebaseUID: {
-            type: DataTypes.STRING(255),
+        uid: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             allowNull: false,
             unique: true,
+        },
+        // Hashlenmis şifre
+        password: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
         },
         username: {
             type: DataTypes.STRING(50),

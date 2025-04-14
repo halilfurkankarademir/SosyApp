@@ -33,9 +33,13 @@ export const removePost = (postId) => {
 
 export const fetchAllPosts = () => {
     try {
-        return axios.get("http://localhost:3000/api/posts").then((response) => {
-            return response.data;
-        });
+        return axios
+            .get("http://localhost:3000/api/posts", {
+                withCredentials: true,
+            })
+            .then((response) => {
+                return response.data;
+            });
     } catch (error) {
         console.error("Error fetching posts:", error);
     }

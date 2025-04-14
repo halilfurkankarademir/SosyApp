@@ -8,7 +8,8 @@ const userController = {
     // Tüm kullanıcıları getirme
     getAllUsers: async (req, res) => {
         try {
-            const users = await UserService.getAllUsers();
+            const ip = req.ip;
+            const users = await UserService.getAllUsers(ip);
             res.status(200).json(users);
         } catch (error) {
             console.error("Error getting users:", error);
@@ -19,7 +20,8 @@ const userController = {
     // ID'ye göre kullanıcı getirme
     getUserById: async (req, res) => {
         try {
-            const user = await UserService.getUserById(req.params.userId);
+            const ip = req.ip;
+            const user = await UserService.getUserById(req.params.userId, ip);
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
@@ -33,7 +35,8 @@ const userController = {
     // Kullanıcı oluşturma
     createUser: async (req, res) => {
         try {
-            const newUser = await UserService.createUser(req.body);
+            const ip = req.ip;
+            const newUser = await UserService.createUser(req.body, ip);
             res.status(201).json(newUser);
         } catch (error) {
             console.error("Error creating user:", error);
@@ -44,7 +47,8 @@ const userController = {
     // Kullanıcı silme
     deleteUser: async (req, res) => {
         try {
-            await UserService.deleteUser(req.params.userId);
+            const ip = req.ip;
+            await UserService.deleteUser(req.params.userId, ip);
             res.status(200).json({ message: "Kullanıcı başarıyla silindi" });
         } catch (error) {
             console.error("Error deleting user:", error);

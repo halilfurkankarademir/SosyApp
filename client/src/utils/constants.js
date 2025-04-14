@@ -10,20 +10,28 @@ export const colors = {
 
 export const registerFields = [
     {
-        id: "name",
-        name: "name",
+        id: "firstName",
+        name: "firstName",
         type: "text",
         autoComplete: "name",
         required: true,
         placeholder: "Ad",
     },
     {
-        id: "surname",
-        name: "surname",
+        id: "lastName",
+        name: "lastName",
         type: "text",
         autoComplete: "family-name",
         required: true,
         placeholder: "Soyad",
+    },
+    {
+        id: "username",
+        name: "username",
+        type: "text",
+        autoComplete: "username",
+        required: true,
+        placeholder: "Kullanıcı Adı",
     },
     {
         id: "email",

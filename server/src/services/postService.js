@@ -1,5 +1,4 @@
-import Post from "../models/postModel.js";
-import User from "../models/userModel.js";
+import postRepository from "../repositories/postRepository.js";
 import logger from "../utils/logger.js";
 
 const PostService = {
@@ -7,7 +6,7 @@ const PostService = {
     createPost: async (postData) => {
         try {
             logger.info("Creating post with data:", postData);
-            const newPost = await Post.create(postData);
+            const newPost = await postRepository.create(postData);
             return newPost;
         } catch (error) {
             logger.error("Error creating post:", error);
@@ -19,12 +18,7 @@ const PostService = {
     deletePost: async (postId) => {
         try {
             logger.info("Deleting post with ID:", postId);
-            const post = await Post.findByPk(postId);
-            if (!post) {
-                throw new Error("Post not found");
-            }
-            await post.destroy();
-            return { success: true };
+            await postRepository.delete(postId);
         } catch (error) {
             logger.error("Error deleting post:", error);
             throw new Error("Error deleting post");
@@ -34,15 +28,11 @@ const PostService = {
     // Tum gonderileri getirir
     getAllPosts: async () => {
         try {
-            const posts = await Post.findAll({
-                order: [["createdAt", "DESC"]],
-                include: [
-                    {
-                        model: User,
-                        attributes: ["id", "username", "profilePicture"],
-                    },
-                ],
-            });
+            const posts = await postRepository.getAll();
+            logger.info("Fetched all posts.");
+            if (!posts) {
+                throw new Error("No posts found");
+            }
             return posts;
         } catch (error) {
             logger.error("Error fetching posts:", error);
@@ -52,14 +42,18 @@ const PostService = {
 
     // Gonderi idsine gore gonderiyi getirir
     getPostById: (postId) => {
-        return Post.findByPk(postId);
+        return postRepository.getById(postId);
     },
 
     //Belli bir kullaniciya ait gonderileri getirir
     getPostByUserId: async (userId) => {
         try {
-            const posts = await Post.findAll({ where: { userId } });
-            return posts;
+            const post = await postRepository.getPostByUserId(userId);
+            logger.info("Fetched posts by user ID:", post);
+            if (!post) {
+                throw new Error("No posts found for this user");
+            }
+            return post;
         } catch (error) {
             logger.error("Error fetching posts by user ID:", error);
             throw new Error("Error getting posts by user ID");

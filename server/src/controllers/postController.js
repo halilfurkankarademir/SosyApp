@@ -28,6 +28,9 @@ const postController = {
     getAllPosts: async (req, res) => {
         try {
             const posts = await PostService.getAllPosts();
+            if (!posts) {
+                return res.status(404).json({ error: "No posts found" });
+            }
             res.status(200).json(posts);
         } catch (error) {
             console.error("Error getting posts:", error);

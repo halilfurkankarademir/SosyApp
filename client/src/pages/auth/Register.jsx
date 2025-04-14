@@ -4,14 +4,33 @@ import { Navbar } from "../../components/common";
 import { useNavigation } from "../../context/NavigationContext";
 import AuthForm from "../../components/features/auth/AuthForm";
 import { registerFields } from "../../utils/constants";
+import { register } from "../../api/authService";
 
 const RegisterPage = () => {
     const { navigateToPage } = useNavigation();
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
-        // Kayıt işlemleri burada yapılabilir
-        navigateToPage("/user-info"); // Kayıt başarılıysa yönlendirme
+        const formData = new FormData(e.target);
+        const email = formData.get("email");
+        const password = formData.get("password");
+        const username = formData.get("username");
+        const firstName = formData.get("firstName");
+        const lastName = formData.get("lastName");
+        const user = await register(
+            email.toString().trim(),
+            password.toString().trim(),
+            username.toString().trim(),
+            firstName.toString().trim(),
+            lastName.toString().trim()
+        );
+        if (!user) {
+            console.log("Kayıt işlemi başarısız!");
+            return;
+        }
+        console.log("Kayıt işlemi başarılı!", user);
+        // Kayıt başarılıysa yönlendirme
+        navigateToPage("/user-info");
     };
 
     return (

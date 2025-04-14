@@ -6,16 +6,21 @@ import AuthForm from "../../components/features/auth/AuthForm";
 import { loginFields } from "../../utils/constants";
 import { useNavigation } from "../../context/NavigationContext";
 import { useAuth } from "../../context/AuthContext";
+import { login } from "../../api/authService";
 
 const LoginPage = () => {
     const { navigateToPage } = useNavigation();
     const { isAuthenticated, setIsAuthenticated } = useAuth();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
-        // Giriş işlemleri burada yapılabilir
+        const user = await login(email, password);
+        if (!user) {
+            console.log("Giriş işlemi başarısız!");
+            return;
+        }
         setIsAuthenticated(true);
         navigateToPage("/");
     };

@@ -7,7 +7,7 @@ const SuggestionsCard = () => {
     const { navigateToPage } = useNavigation();
 
     return (
-        <div className="w-64 bg-neutral-800 h-auto text-white rounded-xl ">
+        <div className="w-64 bg-neutral-800 h-auto text-white rounded-xl fixed ">
             <div className="flex flex-row gap-2 p-4 text-sm">
                 <BsPeopleFill size={16} />
                 <h2 className="font-semibold">Tanıyor Olabilirsin</h2>

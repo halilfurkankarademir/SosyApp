@@ -51,6 +51,7 @@ const NewPost = ({ onPostCreated }) => {
             });
             // 4. Başarılı durum
             ShowToast("success", "Gönderi başarıyla paylaşıldı");
+            // 5. Post oluşturma sonrası ust bilesenden gelecek callback fonksiyonu çağır
             onPostCreated();
         } catch (error) {
             console.error("Paylaşım hatası:", error);

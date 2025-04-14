@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Sidebar, Navbar } from "../../components/common";
+import React, { useState, useEffect, useCallback } from "react";
+import { Sidebar, Navbar, SuggestionsCard } from "../../components/common";
 import { NewPost, PostCard } from "../../components/features/posts";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchAllPosts, removePost } from "../../api/postService";
@@ -18,15 +18,14 @@ const HomePage = () => {
         }, 2000); // 2 sn gecikme
     };
 
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
         try {
             const posts = await fetchAllPosts();
-            console.log(posts);
             setPosts(posts);
         } catch (error) {
             console.error("Error fetching posts:", error);
         }
-    };
+    }, []);
 
     const deletePost = async (postId) => {
         try {
@@ -43,6 +42,7 @@ const HomePage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Ana Sayfa";
+        // Sayfa yuklendiğinde gönderileri cek
         fetchPosts();
     }, []);
 
@@ -70,16 +70,25 @@ const HomePage = () => {
                                 <p>Yukarıdan kucultmek icin tiklayin</p>
                             }
                         >
-                            <div className="mt-4 space-y-4">
-                                {posts.map((post, index) => (
-                                    <PostCard
-                                        key={index}
-                                        postData={post}
-                                        handleRemove={deletePost}
-                                    />
-                                ))}
-                            </div>
+                            {posts ? (
+                                <div className="mt-4 space-y-4">
+                                    {posts.map((post, index) => (
+                                        <PostCard
+                                            key={index}
+                                            postData={post}
+                                            handleRemove={deletePost}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center text-white ">
+                                    Gönderi bulunamadı.
+                                </div>
+                            )}
                         </InfiniteScroll>
+                    </div>
+                    <div className="md: ml-72 ">
+                        <SuggestionsCard />
                     </div>
                 </div>
             </div>

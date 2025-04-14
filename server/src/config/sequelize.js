@@ -12,6 +12,11 @@ const sequelize = new Sequelize({
     host: "localhost",
     port: 5432,
     ssl: false,
+    define: {
+        timestamps: true,
+        charset: "utf8",
+        collate: "utf8_general_ci",
+    },
 });
 
 export default sequelize;
