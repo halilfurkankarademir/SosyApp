@@ -5,8 +5,15 @@ import PostService from "../services/postService.js";
 const postController = {
     createPost: async (req, res) => {
         try {
-            console.log("Creating post with data:");
-            const newPost = await PostService.createPost(req.body);
+            let postData = req.body;
+            postData = {
+                ...postData,
+                userId: req.user.id,
+            };
+            const newPost = await PostService.createPost(postData);
+            if (!newPost) {
+                return res.status(400).json({ error: "Post creation failed" });
+            }
             res.status(201).json(newPost);
         } catch (error) {
             console.log(req.body);

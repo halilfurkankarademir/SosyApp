@@ -6,7 +6,7 @@ import AuthForm from "../../components/features/auth/AuthForm";
 import { loginFields } from "../../utils/constants";
 import { useNavigation } from "../../context/NavigationContext";
 import { useAuth } from "../../context/AuthContext";
-import { login } from "../../api/authService";
+import { login } from "../../api/authApi";
 
 const LoginPage = () => {
     const { navigateToPage } = useNavigation();
@@ -17,6 +17,7 @@ const LoginPage = () => {
         const email = e.target.email.value;
         const password = e.target.password.value;
         const user = await login(email, password);
+        console.log("User:", user);
         if (!user) {
             console.log("Giriş işlemi başarısız!");
             return;

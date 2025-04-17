@@ -16,14 +16,15 @@ export const authenticateToken = async (req, res, next) => {
         // Token'ı doğrula
         const decoded = jwt.verify(token, process.env.JWT_SECRET_25);
 
-        // Kullanıcıyı bul
-        const user = await userRepository.getById(decoded.userId);
+        // UID ile Kullanıcıyı bul
+        const user = await userRepository.getByUserId(decoded.userId);
 
         if (!user) {
             return res.status(401).json({ error: "Geçersiz token" });
         }
 
         // Kullanıcı bilgisini request'e ekle
+        // Artik bir sonraki middleware'de req.user ile erişebiliriz
         req.user = user;
         next();
     } catch (error) {

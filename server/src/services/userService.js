@@ -1,25 +1,13 @@
+import { getUserByUsername } from "../../../client/src/api/userApi.js";
 import User from "../models/userModel.js";
 import userRepository from "../repositories/userRepository.js";
 import logger from "../utils/logger.js";
-import bcrypt from "bcrypt";
 
 const UserService = {
     createUser: async (userData) => {
         try {
             logger.debug("Creating user started", { userData });
 
-            // Şifre hashleme işlemi AuthService'de yapıldığı için tekrar yapılmaması gerekiyor
-            // Eğer userData içinde password hash edilmemiş olarak gelirse, hata oluşabilir
-            console.log(
-                "Creating user with password:",
-                userData.password?.substring(0, 10) + "..."
-            );
-            console.log(
-                "Password appears to be hashed:",
-                userData.password?.length > 30
-            );
-
-            // Password zaten hash edilmiş olmalı - tekrar hashleme yapmıyoruz
             const newUser = await User.create({
                 ...userData,
             });
@@ -40,11 +28,30 @@ const UserService = {
         }
     },
 
+    updateUser: async (userId, updates, ipAdress) => {
+        try {
+            logger.debug(`Ip ${ipAdress} Updating user`, { userId, updates });
+            const user = await userRepository.getByUserId(userId);
+            if (!user) {
+                logger.warn("User not found for update", { userId });
+                throw new Error("User not found");
+            }
+
+            await user.update(updates);
+
+            logger.info(`Ip ${ipAdress} User updated successfully`);
+        } catch (error) {
+            logger.error(`Ip ${ipAdress} User update failed`, {
+                error: error.message,
+            });
+            throw new Error("Could not update user");
+        }
+    },
+
     deleteUser: async (userId, ipAdress) => {
         try {
             logger.debug(`Ip ${ipAdress} Deleting user`, { userId });
-
-            const user = await userRepository.getById(userId);
+            const user = await userRepository.getByUserId(userId);
             if (!user) {
                 logger.warn("User not found for deletion", { userId });
                 throw new Error("User not found");
@@ -94,7 +101,7 @@ const UserService = {
         try {
             logger.debug(`Ip ${ipAdress} Fetching user by ID`, { userId });
 
-            const user = await userRepository.getById(userId);
+            const user = await userRepository.getByUserId(userId);
 
             if (!user) {
                 logger.warn("User not found", { userId });
@@ -121,13 +128,13 @@ const UserService = {
             console.log("Finding user by email:", email);
 
             // Doğrudan User modeli üzerinden sorgu yapalım
-            const user = await User.findOne({ where: { email } });
+            const user = await userRepository.getByEmail(email);
 
-            if (user) {
-                console.log("User found by email:", email);
-                console.log("User ID:", user.id);
-            } else {
-                console.log("No user found with email:", email);
+            console.log(user);
+
+            if (!user) {
+                console.warn("User not found by email:", email);
+                throw new Error("User not found");
             }
 
             return user;
@@ -140,6 +147,26 @@ const UserService = {
             });
             throw new Error(
                 "Could not retrieve user by email: " + error.message
+            );
+        }
+    },
+
+    getUserByUsername: async (username) => {
+        try {
+            const user = await userRepository.getByUsername(username);
+            if (!user) {
+                throw new Error("User not found");
+            }
+            return user;
+        } catch (error) {
+            console.error("Error fetching user by username:", error);
+            logger.error("Error fetching user by username", {
+                error: error.message,
+                operation: "getUserByUsername",
+                username,
+            });
+            throw new Error(
+                "Could not retrieve user by username: " + error.message
             );
         }
     },

@@ -30,7 +30,7 @@ export default {
                     {
                         model: User,
                         attributes: [
-                            "id",
+                            "uid",
                             "username",
                             "profilePicture",
                             "firstName",

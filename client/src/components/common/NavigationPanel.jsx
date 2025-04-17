@@ -1,32 +1,34 @@
 import React, { memo } from "react";
 import { useNavigation } from "../../context/NavigationContext";
 import { navigationItems } from "../../constants/navigationData";
-import { fakeUserProfile } from "../../constants/fakeDatas";
+import useUserStore from "../../hooks/useUserStore";
 
 const NavigationPanel = () => {
     const { navigateToPage } = useNavigation();
+    // Kullanıcı bilgilerini almak için useUserStore'u kullanıyoruz
+    const user = useUserStore((state) => state.user);
+
+    if (!user) {
+        return null;
+    }
 
     return (
         <div className="w-64 bg-neutral-800 h-auto text-white rounded-xl ">
             {/* Kullanıcı Bilgileri */}
             <div
                 className="flex items-center p-4 border-b border-neutral-700 cursor-pointer"
-                onClick={() =>
-                    navigateToPage(`profile/${fakeUserProfile[0].username}`)
-                }
+                onClick={() => navigateToPage(`profile/${user.username}`)}
             >
                 <img
-                    src={fakeUserProfile[0].profilePicture}
+                    src={user.profilePicture}
                     alt="Kullanıcı Resmi"
                     className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="ml-3">
                     <p className="text-sm font-semibold">
-                        {fakeUserProfile[0].fullName}
+                        {user.firstName} {user.lastName}
                     </p>
-                    <p className="text-xs text-neutral-400">
-                        {fakeUserProfile[0].username}
-                    </p>
+                    <p className="text-xs text-neutral-400">{user.username}</p>
                 </div>
             </div>
 

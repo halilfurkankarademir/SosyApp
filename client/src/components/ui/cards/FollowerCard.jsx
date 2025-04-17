@@ -1,16 +1,26 @@
 import { React, memo } from "react";
 import { FaUserTimes } from "react-icons/fa";
+import { useNavigation } from "../../../context/NavigationContext";
 
 const FollowerCard = ({ follower }) => {
+    const { navigateToPage } = useNavigation();
+
+    const handleClick = () => {
+        // Navigate to the user's profile page
+        navigateToPage(`/profile/${follower.username}`);
+        console.log(`Clicked on follower: ${follower.username}`);
+    };
+
     return (
         <div
             key={follower.id}
             className="flex items-center justify-between p-4 bg-neutral-700 rounded-lg hover:bg-neutral-600 transition duration-200 cursor-pointer"
+            onClick={handleClick}
         >
             <div className="flex items-center space-x-3">
                 <img
                     src={
-                        follower.profilePic ||
+                        follower.profilePicture ||
                         "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
                     }
                     alt={follower.name}

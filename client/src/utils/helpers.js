@@ -1,5 +1,3 @@
-//Kullanicinin tam isminden ilk ismini ayirmak icin kullanilan fonksiyon
-export const getFirstName = (name) => name.split(" ")[0];
 //Bir olayin ne kadar sure once yasandigini ceviren fonksiyon
 export const getDateDiff = (date) => {
     const now = new Date();

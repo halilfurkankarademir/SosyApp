@@ -2,10 +2,11 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import LandingPage from "../pages/public/LandingPage";
 import HomePage from "../pages/home/Homepage";
-import LoadingScreen from "../components/common/LoadingScreen";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "../pages/public/ErrorPage";
 import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
+import LoadingPage from "../pages/public/LoadingPage";
 
 // Dinamik olarak yüklenecek sayfalar
 const FollowersPage = lazy(() => import("../pages/home/FollowersPage"));
@@ -28,10 +29,33 @@ const GroupsPage = lazy(() => import("../pages/home/GroupsPage"));
 
 export const AppRoutes = () => {
     const { isAuthenticated } = useAuth();
+    // Sayfalarin yüklenmesini simule etmek için bir state
+    // Bu state, sayfa yüklenirken bir yükleme animasyonu göstermek için kullanılır
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Burada 1sn sonra yükleme durumu false yapılıyor
+    const loadingTimeout = () => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+    };
+
+    // Sayfa acildigi anda yukleme animasyonu başlatılıyor ve 1sn sonra durduruluyor
+    // Kullanici deneyimi icin onemli bir detay
+    useEffect(() => {
+        loadingTimeout();
+    }, []);
+
+    // Eğer sayfa yükleniyorsa, yükleme sayfasını göster
+    if (isLoading) {
+        return <LoadingPage />;
+    }
 
     return (
+        // ErrorBoundary, hata yakalama ve hata sayfası gösterme işlevi sağlar
+        // Suspense, dinamik olarak yüklenen bileşenlerin yüklenmesini bekler
         <ErrorBoundary fallback={<ErrorPage />}>
-            <Suspense fallback={<LoadingScreen />}>
+            <Suspense fallback={<LoadingPage />}>
                 <Routes>
                     {/* Statik olarak yüklenen sayfalar */}
                     <Route

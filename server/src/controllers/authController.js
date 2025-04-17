@@ -1,6 +1,7 @@
 import authService from "../services/authService.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import userDTO from "../dtos/userDTO.js";
 dotenv.config();
 
 const authController = {
@@ -26,10 +27,12 @@ const authController = {
                 lastName
             );
 
+            const userDTOInstance = new userDTO(user);
+
             // Token oluşturma işlemi
 
             const token = jwt.sign(
-                { userId: user.id },
+                { userId: user.uid },
                 process.env.JWT_SECRET_25,
                 { expiresIn: "30d" }
             );
@@ -38,17 +41,13 @@ const authController = {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                maxAge: 3600000,
+                maxAge: 30 * 24 * 60 * 60 * 1000,
             });
 
             // Return success response with user data
             res.status(201).json({
                 message: "User registered successfully",
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    username: user.username,
-                },
+                user: userDTOInstance,
             });
         } catch (error) {
             console.error("Error registering user:", error);
@@ -74,6 +73,7 @@ const authController = {
 
             // Authenticate user
             const user = await authService.login(email, password);
+            const userDTOInstance = new userDTO(user);
 
             if (!user) {
                 return res.status(401).json({ error: "Invalid credentials" });
@@ -83,14 +83,14 @@ const authController = {
 
             const accessToken = jwt.sign(
                 {
-                    userId: user.id,
+                    userId: user.uid,
                 },
                 process.env.JWT_SECRET_25,
                 { expiresIn: "30d" }
             );
 
             const refreshToken = jwt.sign(
-                { userId: user.id },
+                { userId: user.uid },
                 process.env.JWT_REFRESH_SECRET,
                 { expiresIn: "7d" }
             );
@@ -100,7 +100,7 @@ const authController = {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                maxAge: 3600000, // 1 hour
+                maxAge: 30 * 24 * 60 * 60 * 1000,
             });
 
             res.cookie("refresh_token", refreshToken, {
@@ -113,11 +113,7 @@ const authController = {
             // Return success response with user data
             res.status(200).json({
                 message: "Login successful",
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    username: user.username,
-                },
+                user: userDTOInstance,
             });
         } catch (error) {
             console.error("Error logging in user:", error);

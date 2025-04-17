@@ -10,6 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 import { memo } from "react";
 import NavSearchInput from "../ui/inputs/NavSearchInput";
 import { fakeNotifications } from "../../constants/fakeDatas";
+import { logout } from "../../api/authApi";
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -43,10 +44,15 @@ const Navbar = () => {
     };
 
     // Çıkış Yapma işlemi
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        setIsAuthenticated(false);
-        navigateToPage("/");
+    const handleLogout = async () => {
+        const response = await logout();
+        if (response.status === 200) {
+            setIsAuthenticated(false);
+            localStorage.removeItem("isAuthenticated");
+            navigateToPage("/login");
+        } else {
+            console.error("Logout failed:", response.data);
+        }
     };
 
     // Dışarı tıklama olayını dinle

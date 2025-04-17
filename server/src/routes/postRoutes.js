@@ -13,4 +13,7 @@ router.get("/:postId", postController.getPostById);
 // Yeni gönderi oluşturma - token doğrulama eklendi
 router.post("/", authenticateToken, postController.createPost);
 
+// Gonderiyi silme
+router.delete("/:postId", authenticateToken, postController.deletePost);
+
 export default router;

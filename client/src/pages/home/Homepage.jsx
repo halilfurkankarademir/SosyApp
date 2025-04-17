@@ -2,12 +2,15 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Sidebar, Navbar, SuggestionsCard } from "../../components/common";
 import { NewPost, PostCard } from "../../components/features/posts";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { fetchAllPosts, removePost } from "../../api/postService";
+import { fetchAllPosts, removePost } from "../../api/postApi";
 import { ShowToast } from "../../components/ui/toasts/ShowToast";
+import { getCurrentUser } from "../../api/userApi";
+import useUserStore from "../../hooks/useUserStore";
 
 const HomePage = () => {
     const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
+    const setUser = useUserStore((state) => state.setUser);
 
     const loadMoreData = () => {
         // Simüle edilmiş API çağrısı
@@ -27,6 +30,15 @@ const HomePage = () => {
         }
     }, []);
 
+    const fetchUser = async () => {
+        try {
+            const user = await getCurrentUser();
+            setUser(user);
+        } catch (error) {
+            console.error("Error fetching user:", error);
+        }
+    };
+
     const deletePost = async (postId) => {
         try {
             await removePost(postId);
@@ -44,6 +56,7 @@ const HomePage = () => {
         document.title = "Ana Sayfa";
         // Sayfa yuklendiğinde gönderileri cek
         fetchPosts();
+        fetchUser();
     }, []);
 
     return (

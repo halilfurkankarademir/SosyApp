@@ -49,12 +49,6 @@ const AuthService = {
                 throw new Error("User not found");
             }
 
-            console.log("User found. ID:", user.id);
-            console.log("Stored password:", user.password);
-            console.log("Stored password length:", user.password.length);
-            console.log("Input password:", passwordStr);
-            console.log("Input password length:", passwordStr.length);
-
             // Şifre doğrulama kontrolü
             let isPasswordValid = false;
 
@@ -68,18 +62,6 @@ const AuthService = {
 
                 // Hala başarısız ise, elle karşılaştırma deneyelim
                 if (!isPasswordValid) {
-                    console.error("Password mismatch - DEBUG INFO:");
-                    console.log("Input password:", passwordStr);
-                    console.log("Stored hash:", user.password);
-
-                    // TEST: Aynı şifreyi tekrar hash'le ve karşılaştır
-                    const testHash = await bcrypt.hash(passwordStr, 10);
-                    const testCompare = await bcrypt.compare(
-                        passwordStr,
-                        testHash
-                    );
-                    console.log("Test hash comparison:", testCompare); // true olmalı
-
                     throw new Error("Invalid credentials"); // Klasik hata mesajı
                 }
             } catch (bcryptError) {

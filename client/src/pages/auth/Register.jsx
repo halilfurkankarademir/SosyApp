@@ -4,7 +4,7 @@ import { Navbar } from "../../components/common";
 import { useNavigation } from "../../context/NavigationContext";
 import AuthForm from "../../components/features/auth/AuthForm";
 import { registerFields } from "../../utils/constants";
-import { register } from "../../api/authService";
+import { register } from "../../api/authApi";
 
 const RegisterPage = () => {
     const { navigateToPage } = useNavigation();
@@ -30,7 +30,7 @@ const RegisterPage = () => {
         }
         console.log("Kayıt işlemi başarılı!", user);
         // Kayıt başarılıysa yönlendirme
-        navigateToPage("/user-info");
+        navigateToPage("/");
     };
 
     return (

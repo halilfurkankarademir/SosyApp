@@ -7,6 +7,7 @@ import setupAssociations from "./models/associations.js";
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import likeRoutes from "./routes/likeRoutes.js";
 
 // 1. Uygulama ve temel konfigürasyon
 const app = express();
@@ -57,6 +58,7 @@ initializeDatabase()
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/likes", likeRoutes);
 
 // 6. Hata yönetimi (en sonda olmalı)
 app.use((err, req, res, next) => {

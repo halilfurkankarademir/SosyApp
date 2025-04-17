@@ -1,9 +1,9 @@
 import User from "../models/userModel.js";
 
 export default {
-    async getById(userId) {
+    async getByUserId(userId) {
         try {
-            return await User.findByPk(userId);
+            return await User.findOne({ where: { uid: userId } });
         } catch (error) {
             throw new Error(`User fetch failed: ${error.message}`);
         }
@@ -13,6 +13,9 @@ export default {
         return User.findOne({ where: { email } });
     },
 
+    async getByUsername(username) {
+        return User.findOne({ where: { username } });
+    },
     async create(userData) {
         return User.create(userData);
     },

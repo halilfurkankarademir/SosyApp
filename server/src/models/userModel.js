@@ -17,6 +17,11 @@ const User = sequelize.define(
             allowNull: false,
             unique: true,
         },
+        role: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            defaultValue: "user",
+        },
         // Hashlenmis şifre
         password: {
             type: DataTypes.STRING(255),
@@ -50,14 +55,18 @@ const User = sequelize.define(
         profilePicture: {
             type: DataTypes.STRING(255),
             allowNull: true,
+            defaultValue:
+                "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
         },
         bio: {
             type: DataTypes.STRING(500),
             allowNull: true,
+            defaultValue: "",
         },
         location: {
             type: DataTypes.STRING(100),
             allowNull: true,
+            defaultValue: "",
         },
     },
     {

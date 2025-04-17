@@ -4,7 +4,7 @@ import { BsPeopleFill } from "react-icons/bs";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
 import { allFollowers } from "../../constants/fakeDatas";
 import { useDebounce } from "use-debounce";
-import { getAllUsers } from "../../api/userService";
+import { getAllUsers } from "../../api/userApi";
 import FollowerCard from "../../components/ui/cards/FollowerCard";
 
 const FollowersPage = () => {
@@ -42,7 +42,7 @@ const FollowersPage = () => {
         <>
             <Navbar isInAppPage={true} />
             <div className="page-container py-24 md:py-36 px-4 md:px-0">
-                <div className="page-grid-layout">
+                <div className="page-grid-layout-other">
                     {/* Sidebar - Mobilde gizli */}
                     <Sidebar />
 

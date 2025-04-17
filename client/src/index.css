@@ -26,6 +26,10 @@ button {
         @apply w-full md:grid md:grid-cols-5 grid-rows-5 md:gap-8;
         max-width: 85rem;
     }
+    .page-grid-layout-other {
+        @apply w-full md:grid md:grid-cols-4  md:gap-8;
+        max-width: 85rem;
+    }
 }
 
 @keyframes fadeIn {

@@ -1,11 +1,22 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(true);
-    //todo backend baglanildiginda auth kontrolu ile uygulama icinde olup olmadigina bakilacak
+    const [isAuthenticated, setIsAuthenticated] = useState();
+
+    useEffect(() => {
+        checkAuth();
+    }, [isAuthenticated]);
+
+    const checkAuth = async () => {
+        // Local storagede eger giris yapilmis ise isAuthenticated true olur yoksa false olur
+        // Bu, kullanıcının giriş yapmış olup olmadığını kontrol etmek için kullanılır
+        localStorage.getItem("isAuthenticated") === "true"
+            ? setIsAuthenticated(true)
+            : setIsAuthenticated(false);
+    };
 
     return (
         <AuthContext.Provider

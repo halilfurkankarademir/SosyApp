@@ -1,10 +1,16 @@
 import axios from "axios";
 
-//Orn. kullanicinin bir gonderiyi paylasmasi silmesi , yorum eklemesi gonderiye vb
+// Post ile ilgili işlemleri gerçekleştiren fonksiyonlar
+// Bu fonksiyonlar, API ile etkileşimde bulunarak veri alır veya gönderir
 export const createNewPost = (postData) => {
+    // Gonderi verilerini alarak api/posts endpointine post isteği gonderen bir fonksiyon
+    // Bu istek, yeni bir gonderi oluşturur ve sunucudan gelen yanıtı döner
     try {
         return axios
-            .post("http://localhost:3000/api/posts", postData)
+            .post("http://localhost:3000/api/posts", postData, {
+                // Http only cookileri kullanabilmek icin gerekli ayar
+                withCredentials: true,
+            })
             .then((response) => response.data);
     } catch (error) {
         console.error("Error creating post:", error);
@@ -12,6 +18,8 @@ export const createNewPost = (postData) => {
 };
 
 export const updatePost = (postId) => {
+    // Gonderi id'sini alarak api/posts/:postId endpointine put isteği gonderen bir fonksiyon
+    // Bu istek, gonderiyi günceller ve sunucudan gelen yanıtı döner
     try {
         return axios
             .put(`http://localhost:3000/api/posts/${postId}`)
@@ -22,6 +30,8 @@ export const updatePost = (postId) => {
 };
 
 export const removePost = (postId) => {
+    // Gonderi id'sini alarak api/posts/:postId endpointine delete isteği gonderen bir fonksiyon
+    // Bu istek, gonderiyi siler ve sunucudan gelen yanıtı döner
     try {
         return axios
             .delete(`http://localhost:3000/api/posts/${postId}`)
@@ -32,6 +42,8 @@ export const removePost = (postId) => {
 };
 
 export const fetchAllPosts = () => {
+    // api/posts endpointine get isteği gonderen bir fonksiyon
+    // Bu istek, tum gonderileri alır ve sunucudan gelen yanıtı döner
     try {
         return axios
             .get("http://localhost:3000/api/posts", {

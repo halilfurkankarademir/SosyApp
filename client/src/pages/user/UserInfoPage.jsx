@@ -6,20 +6,17 @@ import { useNavigation } from "../../context/NavigationContext";
 import { useAuth } from "../../context/AuthContext";
 import { userInfoFields } from "../../utils/constants";
 import FormInput from "../../components/ui/inputs/FormInput";
+import { imageUpload } from "../../api/imageUpload";
+import { updateUserProfile } from "../../api/userApi";
 
 const UserInfoPage = () => {
-    const [formData, setFormData] = useState({
-        username: "",
-        about: "",
-        profession: "",
-        location: "",
-        website: "",
-        birthdate: "",
-        phone: "",
-    });
+    const [formData, setFormData] = useState({});
+    const [profileImage, setProfileImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { navigateToPage } = useNavigation();
-    const { setIsAuthenticated } = useAuth();
+    const { setIsAuthenticated, user } = useAuth();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,11 +26,45 @@ const UserInfoPage = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setProfileImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Bilgiler kaydedildikten sonra yönlendirme
-        setIsAuthenticated(true);
-        navigateToPage("/");
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+        try {
+            let updatedData = { ...formData };
+
+            if (profileImage) {
+                const profilePicture = await imageUpload(profileImage);
+                updatedData.profilePicture = profilePicture;
+            }
+
+            if (user?.id) {
+                updatedData.id = user.id;
+            }
+
+            const updatedUser = await updateUserProfile(updatedData);
+            if (updatedUser) {
+                setIsAuthenticated(true);
+                navigateToPage("/profile");
+            }
+        } catch (error) {
+            console.error("Error updating profile:", error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -58,28 +89,77 @@ const UserInfoPage = () => {
                         </p>
                     </div>
 
+                    {/* Profile Picture Upload */}
+                    <div className="flex flex-col items-center mb-6">
+                        <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-purple-400 mb-4">
+                            {previewImage ? (
+                                <img
+                                    src={previewImage}
+                                    alt="Profile preview"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-purple-900 flex items-center justify-center">
+                                    <svg
+                                        className="w-12 h-12 text-purple-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                        ></path>
+                                    </svg>
+                                </div>
+                            )}
+                        </div>
+                        <label className="cursor-pointer">
+                            <span className="text-purple-400 hover:text-purple-300 transition-colors">
+                                {previewImage
+                                    ? "Fotoğrafı Değiştir"
+                                    : "Fotoğraf Ekle"}
+                            </span>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="hidden"
+                            />
+                        </label>
+                    </div>
+
                     {/* Form */}
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        {userInfoFields.map((field) => (
-                            <FormInput
-                                key={field.id}
-                                id={field.id}
-                                name={field.name}
-                                type={field.type}
-                                required={field.required}
-                                placeholder={field.placeholder}
-                                label={field.label}
-                                value={formData[field.name]}
-                                onChange={handleChange}
-                            />
-                        ))}
+                        {userInfoFields
+                            .filter((field) => field.name !== "username")
+                            .map((field) => (
+                                <FormInput
+                                    key={field.id}
+                                    id={field.id}
+                                    name={field.name}
+                                    type={field.type}
+                                    required={field.required}
+                                    placeholder={field.placeholder}
+                                    label={field.label}
+                                    value={formData[field.name] || ""}
+                                    onChange={handleChange}
+                                />
+                            ))}
 
                         {/* Kaydet Butonu */}
                         <div>
                             <PrimaryButton
                                 type="submit"
-                                buttonText={"Kaydı Tamamla"}
-                                handleClick={handleSubmit}
+                                buttonText={
+                                    isSubmitting
+                                        ? "Kaydediliyor..."
+                                        : "Kaydı Tamamla"
+                                }
+                                disabled={isSubmitting}
                                 fullWidth={true}
                                 className="w-full"
                             />
