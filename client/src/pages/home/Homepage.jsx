@@ -10,6 +10,7 @@ import useUserStore from "../../hooks/useUserStore";
 const HomePage = () => {
     const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
+
     const setUser = useUserStore((state) => state.setUser);
 
     const loadMoreData = () => {
@@ -100,9 +101,9 @@ const HomePage = () => {
                             )}
                         </InfiniteScroll>
                     </div>
-                    <div className="md: ml-72 ">
+                    {/* <div className="md: ml-72 ">
                         <SuggestionsCard />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>

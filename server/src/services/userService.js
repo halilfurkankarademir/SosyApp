@@ -170,6 +170,25 @@ const UserService = {
             );
         }
     },
+
+    getRandomUsers: async (ipAdress) => {
+        try {
+            logger.debug(`Ip ${ipAdress} Fetching random users`);
+            const userLimit = 5;
+            const users = await userRepository.getRandomUsers(userLimit);
+            logger.info(`Ip ${ipAdress} Successfully retrieved random users`, {
+                count: users.length,
+                operation: "getRandomUsers",
+            });
+            return users;
+        } catch (error) {
+            logger.error(`Ip ${ipAdress} failed to fetch random users`, {
+                error: error.message,
+                operation: "getRandomUsers",
+            });
+            throw new Error("Could not retrieve random users");
+        }
+    },
 };
 
 export default UserService;

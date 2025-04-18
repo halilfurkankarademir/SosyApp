@@ -7,8 +7,8 @@ export default function setupAssociations() {
         // Posttaki eslestirilecek anahtar
         foreignKey: "userId",
         // User modeldeki hedef anahtar
-        sourceKey: "id",
+        sourceKey: "uid",
     });
 
-    Post.belongsTo(User, { foreignKey: "userId", targetKey: "id" });
+    Post.belongsTo(User, { foreignKey: "userId", targetKey: "uid" });
 }

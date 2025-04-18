@@ -4,21 +4,22 @@ import PostCard from "../../components/features/posts/PostCard";
 import Navbar from "../../components/common/Navbar";
 import { useParams } from "react-router-dom";
 import ProfileCard from "../../components/ui/cards/ProfileCard";
-import { fakePosts } from "../../constants/fakeDatas";
 import { getCurrentUser, getUserByUsername } from "../../api/userApi";
 import LoadingPage from "../public/LoadingPage";
+import { fetchPostsByUserId } from "../../api/postApi";
+import { FaHeartBroken, FaSadTear } from "react-icons/fa";
 
 const ProfilePage = () => {
     // Kullanıcının kendi profili mi kontrolü için bir state (gerçek uygulamada auth ile kontrol edilir)
     const [isOwnProfile, setIsOwnProfile] = useState(true);
-    const [posts, setPosts] = useState(fakePosts);
+    const [posts, setPosts] = useState([]);
     // Guncel profil sayfasinin bilgileri
     const [userProfile, setUserProfile] = useState(null);
 
     //Burada username parametresi aliniyor ve kullanıcı verileri cekiliyor.
     const { username } = useParams();
 
-    const fetchUser = async () => {
+    const fetchDatas = async () => {
         try {
             // Parametrelerden gelen kullanici adına gore kullanici bilgileri cekiliyor
             const fetchedUser = await getUserByUsername(username);
@@ -32,6 +33,10 @@ const ProfilePage = () => {
             // Kullanici bilgileri ile guncel kullanici bilgileri karsilastiriliyor
             // Eğer eşleşiyorsa kendi profilindeyiz demektir
             setIsOwnProfile(fetchedUser.username === currentUser.username);
+
+            // Kullanıcıya ait postlar cekiliyor
+            const fetchedPosts = await fetchPostsByUserId(fetchedUser.uid);
+            setPosts(fetchedPosts);
         } catch (error) {
             console.error("Error fetching user:", error);
         }
@@ -39,7 +44,7 @@ const ProfilePage = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        fetchUser();
+        fetchDatas();
     }, []);
 
     if (!userProfile) {
@@ -60,14 +65,26 @@ const ProfilePage = () => {
                         />
                         {/* Sağ Taraf - Gönderiler ve İçerik */}
                         <div className="md:w-2/3 md:pl-6 mt-6 md:mt-0">
-                            {/* Gönderi Oluşturma Alanı */}
-
-                            {/* Gönderiler */}
-                            <div className="space-y-6">
-                                {posts.map((post, index) => (
-                                    <PostCard key={index} postData={post} />
-                                ))}
-                            </div>
+                            {/*Kullaniciya ait gonderilerin listelenmesi*/}
+                            {posts && posts.length > 0 ? (
+                                <div>
+                                    {posts.map((post, index) => (
+                                        <PostCard key={index} postData={post} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 md:py-24">
+                                    <div className="flex justify-center ">
+                                        <FaSadTear className="text-5xl md:text-6xl text-neutral-600" />
+                                    </div>
+                                    <h3 className="text-lg md:text-xl font-semibold text-white ">
+                                        Gönderi bulunamadı
+                                    </h3>
+                                    <p className="text-sm md:text-base text-neutral-400">
+                                        Bu kullanıcıya ait gönderi bulunamadı.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

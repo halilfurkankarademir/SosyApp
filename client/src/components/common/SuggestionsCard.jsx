@@ -1,34 +1,51 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { useNavigation } from "../../context/NavigationContext";
 import { BsPeopleFill, BsPersonAdd } from "react-icons/bs";
 import { fakePeople } from "../../constants/fakeDatas";
+import { getRandomUsersForRecommendation } from "../../api/userApi";
 
 const SuggestionsCard = () => {
     const { navigateToPage } = useNavigation();
+    const [suggestions, setSuggestions] = useState([]);
+
+    const getSuggestions = async () => {
+        try {
+            const randomUsers = await getRandomUsersForRecommendation();
+            setSuggestions(randomUsers);
+        } catch (error) {
+            console.error("Error fetching suggestions:", error);
+        }
+    };
+
+    useEffect(() => {
+        getSuggestions();
+    }, []);
 
     return (
-        <div className="w-64 bg-neutral-800 h-auto text-white rounded-xl fixed ">
+        <div className="hidden md:block w-64 bg-neutral-800 h-auto text-white rounded-xl fixed ">
             <div className="flex flex-row gap-2 p-4 text-sm">
                 <BsPeopleFill size={16} />
                 <h2 className="font-semibold">Tanıyor Olabilirsin</h2>
             </div>
             {/* Kullanıcı Bilgileri */}
-            {fakePeople.map((person, index) => (
+            {suggestions.map((person, index) => (
                 <div
-                    className="flex items-center p-4 cursor-pointer"
+                    className="flex items-center p-3 cursor-pointer"
                     key={index}
                     onClick={() => navigateToPage(`profile/${person.username}`)}
                 >
                     <img
-                        src={person.profilePic} // Kullanıcı resmi URL'si
+                        src={person.profilePicture} // Kullanıcı resmi URL'si
                         alt="Kullanıcı Resmi"
                         className="w-10 h-10 rounded-full object-cover"
                     />
                     <div className="ml-3">
-                        <p className="text-sm font-semibold">{person.name}</p>{" "}
+                        <p className="text-sm font-semibold">
+                            {person.firstName + " " + person.lastName}
+                        </p>{" "}
                         {/* Kullanıcı adı */}
                         <p className="text-xs text-neutral-400">
-                            {person.username}
+                            @{person.username}
                         </p>{" "}
                         {/* Kullanıcı etiketi */}
                     </div>

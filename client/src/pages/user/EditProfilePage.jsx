@@ -6,57 +6,113 @@ import {
     ProfileForm,
     ProfileImageUploader,
 } from "../../components/features/user";
-import { fakeUserProfile } from "../../constants/fakeDatas";
+// API fonksiyonlarınızı ve bildirim kütüphanenizi import edin
+import { getCurrentUser, updateUserProfile } from "../../api/userApi"; // updateUserProfile ekledim (varsayım)
+import toast from "react-hot-toast"; // Bildirim için
+import LoadingPage from "../public/LoadingPage";
+import { ShowToast } from "../../components/ui/toasts/ShowToast";
 
 const EditProfilePage = () => {
     const navigate = useNavigate();
     const [previewProfileImage, setPreviewProfileImage] = useState(null);
-    const [formData, setFormData] = useState({
-        fullName: fakeUserProfile[0].fullName,
-        username: fakeUserProfile[0].username,
-        email: fakeUserProfile[0].email,
-        bio: fakeUserProfile[0].bio,
-        location: fakeUserProfile[0].location,
-    });
+    const [user, setUser] = useState(null); // Başlangıçta null veya boş obje olabilir
+    const [isLoading, setIsLoading] = useState(true); // Yüklenme durumu
+    const [isSaving, setIsSaving] = useState(false); // Kaydetme durumu
 
+    // Mevcut kullanıcı detaylarını çek
+    const getCurrentUserDetails = async () => {
+        setIsLoading(true);
+        try {
+            const userData = await getCurrentUser();
+            setUser({
+                firstName: userData.firstName || "",
+                lastName: userData.lastName || "",
+                username: userData.username || "",
+                email: userData.email || "",
+                bio: userData.bio || "",
+                location: userData.location || "",
+                profilePicture: userData.profilePicture || null,
+            });
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            toast.error("Kullanıcı bilgileri yüklenemedi.");
+            // Belki ana sayfaya yönlendir? navigate('/');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Form değişikliklerini handle eden fonksiyon (setUser kullanıyor)
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setUser((prevUser) => ({
+            ...prevUser,
             [name]: value,
-        });
+        }));
     };
 
-    const handleSubmit = (e) => {
+    // Formu gönderen fonksiyon (user state'ini kullanıyor)
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Burada API'ye kayıt işlemi yapılabilir
-        console.log("Form verileri:", formData);
-        alert("Profil başarıyla güncellendi!");
-        navigate("/profile");
+        setIsSaving(true);
+        console.log("Gönderilecek form verileri:", user);
+        try {
+            const updatedUser = await updateUserProfile(user);
+            console.log("Profil güncellendi:", updatedUser);
+            ShowToast("success", "Profiliniz başarıyla güncellendi.");
+        } catch (error) {
+            console.error("Profil güncellenemedi:", error);
+            ShowToast("error", "Profiliniz güncellenemedi.");
+        } finally {
+            setIsSaving(false);
+        }
     };
 
+    // İptal butonu
+    // Bir onceki sayfaya yönlendir
     const handleCancel = () => {
-        navigate("/profile");
+        navigate(-1);
     };
 
+    // Profil resmi değişikliği
     const handleProfileImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const imageUrl = URL.createObjectURL(file);
             setPreviewProfileImage(imageUrl);
+            // Resmi API'ye yükleme mantığını buraya ekleyebilirsiniz
+            // Veya handleSubmit içinde yapabilirsiniz
         }
     };
 
+    // İlk yüklemede veriyi çek
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Profili Düzenle";
+        getCurrentUserDetails();
     }, []);
+
+    // Yüklenme durumu
+    if (isLoading) {
+        return <LoadingPage />;
+    }
+
+    // Kullanıcı verisi yoksa (hata durumu)
+    if (!user) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-neutral-900 text-white">
+                Kullanıcı bilgileri yüklenemedi. Lütfen tekrar deneyin.
+            </div>
+        );
+    }
 
     return (
         <>
             <Navbar isInAppPage={true} />
             <div className="bg-neutral-900 min-h-screen text-white py-28 px-4 md:px-8 lg:px-20">
-                <div className="container mx-auto max-w-4xl">
+                <div className="container mx-auto max-w-4xl relative">
+                    {" "}
+                    {/* Kaydetme overlay'i için relative */}
                     <div className="bg-neutral-800 rounded-xl shadow-lg overflow-hidden">
                         {/* Başlık */}
                         <div className="flex items-center justify-between p-4 md:p-6 border-b border-neutral-700">
@@ -76,15 +132,14 @@ const EditProfilePage = () => {
                         {/* Profil Fotoğrafı */}
                         <ProfileImageUploader
                             currentImage={
-                                previewProfileImage ||
-                                fakeUserProfile[0].profilePicture
+                                previewProfileImage || user.profilePicture
                             }
                             onImageChange={handleProfileImageChange}
                         />
 
-                        {/* Form */}
+                        {/* Form - Doğru state ve handler'lar ile */}
                         <ProfileForm
-                            formData={formData}
+                            formData={user}
                             onChange={handleChange}
                             onSubmit={handleSubmit}
                             onCancel={handleCancel}

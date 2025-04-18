@@ -28,13 +28,28 @@ export const removeLikeFromPost = async (postId) => {
     }
 };
 
-export const checkLike = async (postId) => {
+export const getAllLikes = async (postId) => {
     // Gonderi id'sini alarak api/likes/:postId endpointine get isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi begeniyi kontrol eder ve sunucudan gelen yanıtı döner
+    // Bu istek, gonderiyi begenilerini alır ve sunucudan gelen yanıtı döner
     try {
         return await axios.get(`http://localhost:3000/api/likes/${postId}`, {
             withCredentials: true,
         });
+    } catch (error) {
+        console.error("Error getting likes:", error);
+    }
+};
+
+export const checkLike = async (postId) => {
+    // Gonderi id'sini alarak api/likes/:postId endpointine get isteği gonderen bir fonksiyon
+    // Bu istek, gonderiyi begeniyi kontrol eder ve sunucudan gelen yanıtı döner
+    try {
+        return await axios.get(
+            `http://localhost:3000/api/likes/${postId}/check`,
+            {
+                withCredentials: true,
+            }
+        );
     } catch (error) {
         console.error("Error checking like:", error);
     }

@@ -3,6 +3,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap");
 
 @import "tailwindcss";
+@plugin "./config/hero.js";
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 
 * {
     font-family: "Poppins", sans-serif;

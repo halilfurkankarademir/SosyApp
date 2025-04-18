@@ -4,13 +4,16 @@ import { BsPeopleFill } from "react-icons/bs";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
 import { allFollowers } from "../../constants/fakeDatas";
 import { useDebounce } from "use-debounce";
-import { getAllUsers } from "../../api/userApi";
+import { getAllUsers, getCurrentUser } from "../../api/userApi";
 import FollowerCard from "../../components/ui/cards/FollowerCard";
+import useUserStore from "../../hooks/useUserStore";
 
 const FollowersPage = () => {
     const [search, setSearch] = useState("");
     const [debouncedSearch] = useDebounce(search, 300);
     const [allUsers, setAllUsers] = useState([]);
+
+    const setUser = useUserStore((state) => state.setUser);
 
     // Filtreleme
     const filteredFollowers = allFollowers.filter(
@@ -32,7 +35,9 @@ const FollowersPage = () => {
     const fetchUsers = async () => {
         try {
             const users = await getAllUsers();
+            const currentUser = await getCurrentUser();
             setAllUsers(users);
+            setUser(currentUser);
         } catch (error) {
             console.error("Error fetching users:", error);
         }

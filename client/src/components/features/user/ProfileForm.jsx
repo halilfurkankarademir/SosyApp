@@ -11,15 +11,26 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
                     <label className="block text-sm text-gray-400 mb-1">
-                        Ad Soyad
+                        Ad
                     </label>
                     <input
                         type="text"
-                        name="fullName"
-                        value={formData.fullName || ""}
+                        name="firstName" // State key'i ile eşleşmeli
+                        value={formData.firstName || ""}
                         onChange={onChange}
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                        required
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-gray-400 mb-1">
+                        Soyad
+                    </label>
+                    <input
+                        type="text"
+                        name="lastName" // State key'i ile eşleşmeli
+                        value={formData.lastName || ""}
+                        onChange={onChange}
+                        className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                     />
                 </div>
                 <div>
@@ -35,30 +46,6 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                         required
                     />
                 </div>
-                <div className="md:col-span-2">
-                    <label className="block text-sm text-gray-400 mb-1">
-                        Hakkında
-                    </label>
-                    <textarea
-                        name="bio"
-                        value={formData.bio || ""}
-                        onChange={onChange}
-                        rows="3"
-                        className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white resize-none"
-                    ></textarea>
-                </div>
-                <div>
-                    <label className="block text-sm text-gray-400 mb-1">
-                        Konum
-                    </label>
-                    <input
-                        type="text"
-                        name="job"
-                        value={formData.location || ""}
-                        onChange={onChange}
-                        className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                    />
-                </div>
                 <div>
                     <label className="block text-sm text-gray-400 mb-1">
                         E-posta
@@ -71,6 +58,18 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                         required
                     />
+                </div>
+                <div className="md:col-span-2">
+                    <label className="block text-sm text-gray-400 mb-1">
+                        Hakkında
+                    </label>
+                    <textarea
+                        name="bio"
+                        placeholder="Kendiniz hakkında birkaç paragraf yazabilirsiniz."
+                        onChange={onChange}
+                        rows="3"
+                        className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white resize-none"
+                    ></textarea>
                 </div>
             </div>
 

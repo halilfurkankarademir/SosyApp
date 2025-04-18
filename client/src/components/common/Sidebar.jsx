@@ -1,13 +1,10 @@
 import React from "react";
-import { NavigationPanel, SuggestionsCard } from "./";
+import { NavigationPanel } from "./";
 
 const Sidebar = () => {
     return (
         <div className="hidden md:block md:col-span-1 fixed">
             <NavigationPanel />
-            {/* <div className="mt-4">
-                <SuggestionsCard />
-            </div> */}
         </div>
     );
 };

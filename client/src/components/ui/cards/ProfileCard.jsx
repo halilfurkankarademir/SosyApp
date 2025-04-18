@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { MdVerified } from "react-icons/md";
+import { MdBlock, MdVerified } from "react-icons/md";
 import { PrimaryButton, SecondaryButton } from "../buttons";
-import { FaCog, FaEdit, FaEnvelope, FaUserPlus } from "react-icons/fa";
+import { FaCog, FaEdit, FaUserPlus } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
 
 const ProfileCard = ({ user, isOwnProfile }) => {
@@ -91,8 +91,8 @@ const ProfileCard = ({ user, isOwnProfile }) => {
                                 icon={<FaUserPlus size={20} />}
                             />
                             <SecondaryButton
-                                icon={<FaEnvelope />}
-                                buttonText="Mesaj Gönder"
+                                icon={<MdBlock />}
+                                buttonText="Engelle"
                             />
                         </>
                     )}

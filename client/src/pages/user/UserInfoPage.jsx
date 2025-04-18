@@ -58,7 +58,7 @@ const UserInfoPage = () => {
             const updatedUser = await updateUserProfile(updatedData);
             if (updatedUser) {
                 setIsAuthenticated(true);
-                navigateToPage("/profile");
+                navigateToPage("/");
             }
         } catch (error) {
             console.error("Error updating profile:", error);

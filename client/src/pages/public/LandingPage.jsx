@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Navbar } from "../../components/common";
 import landingImage from "../../assets/images/landing.jpg";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
+import "react-lazy-load-image-component/src/effects/blur.css"; // Blur efekti için gerekli
 
 /**
  * Uygulamanın karşılama sayfası bileşeni
@@ -29,13 +29,24 @@ const LandingPage = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    // Resim için iskelet (placeholder) bileşeni
+    const ImageSkeleton = () => (
+        <div className="w-full h-96 rounded-lg bg-neutral-800 animate-pulse"></div>
+        // Boyutlar (w-full h-96 rounded-lg) gerçek resimle aynı olmalı
+        // bg-neutral-800 ve animate-pulse iskelet görünümünü ve animasyonunu sağlar
+    );
+
     return (
         <>
-            <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8 z-10">
-                <Navbar isInAppPage={false} />
-                <GlowEffect />
-                {/* Sol Tarafta Metin ve Butonlar */}
-                <div className="max-w-2xl w-full space-y-6 md:space-y-8 text-center md:text-left">
+            {/* Navbar ve GlowEffect'i ana container dışına almak daha mantıklı olabilir,
+                ancak mevcut yapıya göre devam ediyorum. */}
+            <Navbar isInAppPage={false} />
+            <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+                {/* GlowEffect'i container'ın içine ve belki arkasına almak daha iyi olabilir (z-0?) */}
+                <GlowEffect className="-z-10" />{" "}
+                {/* Glow'u arkaya almak için z-index ekledim */}
+                {/* Sol Tarafta Metin ve Butonlar (z-10 ekleyerek glow'un üzerinde kalmasını sağlayabiliriz) */}
+                <div className="max-w-2xl w-full space-y-6 md:space-y-8 text-center md:text-left z-10">
                     <div>
                         <h1
                             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6 md:mb-8 select-none"
@@ -60,12 +71,16 @@ const LandingPage = () => {
                         />
                     </div>
                 </div>
-                {/* Sağ Tarafta Resim */}
+                {/* Sağ Tarafta Resim (z-10 ekleyerek glow'un üzerinde kalmasını sağlayabiliriz) */}
                 <div className="hidden md:block md:ml-12 lg:ml-20 z-10 mt-8 md:mt-0">
                     <LazyLoadImage
                         src={landingImage}
-                        alt="Landing Page"
-                        className="w-full h-96 rounded-lg"
+                        alt="SosyApp Arayüzü" // Daha açıklayıcı bir alt metin
+                        className="w-full h-96 rounded-lg object-cover" // object-cover eklemek resmin orantısını korur
+                        effect="blur" // Yüklenirken bulanıklaştırma efekti
+                        placeholder={<ImageSkeleton />} // Özel iskelet bileşenimizi placeholder olarak verdik
+                        // threshold={100} // Resmin ne kadar görünür olduğunda yüklenmeye başlayacağını ayarlayabilirsiniz (opsiyonel)
+                        // wrapperClassName="w-full h-96" // Bazen boyutları sarmalayıcıya vermek gerekebilir
                     />
                 </div>
             </div>

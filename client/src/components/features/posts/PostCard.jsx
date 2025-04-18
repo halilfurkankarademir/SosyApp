@@ -14,33 +14,47 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import { getDateDiff } from "../../../utils/helpers";
 import {
     addLikePost,
-    checkLike,
+    getAllLikes,
     removeLikeFromPost,
 } from "../../../api/likeApi";
 import useLikeStatus from "../../../hooks/useLikeStatus";
+import { ShowToast } from "../../ui/toasts/ShowToast";
 
 const PostCard = ({ postData, handleRemove }) => {
     const { navigateToPage } = useNavigation();
     const [showMore, setShowMore] = useState(false);
     const [saved, setSaved] = useState(false);
     const moreMenuRef = useRef(null);
-
+    const [likeCount, setLikeCount] = useState(0);
     const { id, user, content, media, likes, comments, createdAt } =
         postData || {};
     const postDate = getDateDiff(createdAt);
-
     const { isLiked, setIsLiked } = useLikeStatus(id);
+
+    const getPostStats = async () => {
+        try {
+            if (!id) return;
+            const likes = await getAllLikes(id);
+            setLikeCount(likes.data.length);
+        } catch (error) {
+            console.error("Error getting post stats:", error);
+        }
+    };
+
+    console.log(postData);
 
     // Like işlemi
     const handleLike = async () => {
         try {
             // Eger gonderi begenilmis ise begeni iptal edilir aksi taktirde begenilir
-            if (isLiked) {
-                await removeLikeFromPost(id);
-                setIsLiked(false);
-            } else {
+            if (!isLiked) {
                 await addLikePost(id);
                 setIsLiked(true);
+                setLikeCount((prevCount) => prevCount + 1);
+            } else {
+                await removeLikeFromPost(id);
+                setIsLiked(false);
+                setLikeCount((prevCount) => prevCount - 1);
             }
         } catch (error) {
             console.error("Like error:", error);
@@ -54,7 +68,8 @@ const PostCard = ({ postData, handleRemove }) => {
 
     // Paylaş işlemi
     const handleShare = () => {
-        //
+        navigator.clipboard.writeText("http://localhost:3000/post/" + id);
+        ShowToast("success", "Gönderi linki panoya kopyalandı.");
     };
 
     // Kaydet işlemi
@@ -79,13 +94,17 @@ const PostCard = ({ postData, handleRemove }) => {
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        getPostStats();
+    }, []);
+
     return (
         <div className="bg-neutral-800 p-4 md:p-6 rounded-lg shadow-lg text-white mb-4 md:mb-6">
             {/* Kullanıcı Bilgileri ve Zaman Bilgisi */}
             <div className="flex items-center justify-between mb-3 md:mb-4">
                 <div
                     className="flex items-center space-x-2 md:space-x-3 cursor-pointer"
-                    onClick={() => navigateToPage(`/profile/${user?.id}`)}
+                    onClick={() => navigateToPage(`/profile/${user?.username}`)}
                 >
                     <img
                         src={user?.profilePicture}
@@ -93,7 +112,7 @@ const PostCard = ({ postData, handleRemove }) => {
                         className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
                     />
                     <div className="flex flex-col">
-                        <span className="text-sm md:text-md">
+                        <span className="text-sm md:text-md font-semibold">
                             {user?.firstName} {user?.lastName}
                         </span>
                         <span className="text-xs text-gray-400">
@@ -126,7 +145,7 @@ const PostCard = ({ postData, handleRemove }) => {
             </div>
 
             {/* Gönderi İçeriği */}
-            <div className="mb-3 md:mb-4">
+            <div className="mb-3 md:mb-4 md:mt-4">
                 <p className="text-sm md:text-base">{content}</p>
             </div>
 
@@ -146,9 +165,15 @@ const PostCard = ({ postData, handleRemove }) => {
 
             {/* İstatistikler */}
             <div className="flex items-center justify-between text-xs md:text-sm text-gray-400">
-                <div className="flex items-center space-x-3 md:space-x-4">
-                    <span>{likes.length + (isLiked ? 1 : 0)} beğeni</span>
-                    <span>{comments.length} yorum</span>
+                <div className="flex items-center gap-3 ">
+                    <div className="flex flex-row gap-2">
+                        <FaHeart className="mt-0.5" />
+                        <span>{likeCount}</span>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                        <FaComment className="mt-0.5" />
+                        <span>{comments?.length}</span>
+                    </div>
                 </div>
             </div>
 
@@ -164,7 +189,7 @@ const PostCard = ({ postData, handleRemove }) => {
                     }`}
                     aria-label={isLiked ? "Beğeniyi kaldır" : "Beğen"}
                 >
-                    {isLiked ? <FaHeart /> : <FaRegHeart />}
+                    <FaHeart />
                     <span className="hidden md:inline text-xs md:text-sm">
                         {isLiked ? "Beğeniyi geri al" : "Beğen"}
                     </span>

@@ -30,7 +30,7 @@ const RegisterPage = () => {
         }
         console.log("Kayıt işlemi başarılı!", user);
         // Kayıt başarılıysa yönlendirme
-        navigateToPage("/");
+        navigateToPage("/user-info");
     };
 
     return (

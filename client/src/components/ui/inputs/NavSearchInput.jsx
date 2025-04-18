@@ -10,7 +10,7 @@ const NavSearchInput = ({ searchQuery, setSearchQuery, handleSearch }) => {
                     placeholder="Dünyayı Keşfet.."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-56 lg:w-72 px-3 py-2 text-sm border-2 border-neutral-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-neutral-800 bg-opacity-70"
+                    className="w-56 lg:w-96 px-3 py-2 text-sm border-2 border-neutral-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-neutral-800 bg-opacity-70"
                 />
                 <button
                     type="submit"

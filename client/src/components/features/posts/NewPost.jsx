@@ -15,7 +15,6 @@ const NewPost = ({ onPostCreated }) => {
     const [image, setImage] = useState(null);
     const [postContent, setPostContent] = useState("");
     const [showFeelings, setShowFeelings] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
     const [selectedFilePreview, setSelectedFilePreview] = useState(null);
     const feelingsRef = useRef(null);
@@ -57,10 +56,6 @@ const NewPost = ({ onPostCreated }) => {
         } finally {
             setIsSharing(false);
         }
-    };
-
-    const handleClickPoll = () => {
-        setIsModalOpen(!isModalOpen);
     };
 
     const handleClickEmoji = (value) => {
@@ -141,22 +136,6 @@ const NewPost = ({ onPostCreated }) => {
                         accept="image/*"
                         onChange={handleFileChange}
                     />
-
-                    <button
-                        type="button"
-                        className="flex items-center space-x-1 text-gray-400 hover:text-green-500 transition text-xs md:text-sm cursor-pointer"
-                        onClick={handleClickPoll}
-                    >
-                        <FaPoll className="text-sm md:text-base" />
-                        <span className="hidden xs:inline">Anket</span>
-                    </button>
-
-                    {isModalOpen && (
-                        <PollModal
-                            isOpen={isModalOpen}
-                            onRequestClose={() => setIsModalOpen(false)}
-                        />
-                    )}
 
                     <button
                         type="button"

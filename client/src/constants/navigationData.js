@@ -24,12 +24,12 @@ export const navigationItems = [
         icon: BsPeopleFill,
         color: colors.blue,
     },
-    {
-        name: "Gruplarım",
-        route: "/groups",
-        icon: FaLayerGroup,
-        color: colors.purple,
-    },
+    // {
+    //     name: "Gruplarım",
+    //     route: "/groups",
+    //     icon: FaLayerGroup,
+    //     color: colors.purple,
+    // },
     {
         name: "Favorilerim",
         route: "/favorites",

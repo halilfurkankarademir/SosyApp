@@ -10,6 +10,9 @@ router.get("/", authenticateToken, postController.getAllPosts);
 // Gönderiyi ID ile getirme
 router.get("/:postId", postController.getPostById);
 
+// Kullaniciya ait gonderileri getirme
+router.get("/user/:userId", authenticateToken, postController.getPostByUserId);
+
 // Yeni gönderi oluşturma - token doğrulama eklendi
 router.post("/", authenticateToken, postController.createPost);
 

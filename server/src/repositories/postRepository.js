@@ -55,10 +55,23 @@ export default {
 
     async getPostByUserId(userId) {
         try {
-            return await Post.findAll({
+            const posts = await Post.findAll({
                 where: { userId },
                 order: [["createdAt", "DESC"]],
+                include: [
+                    {
+                        model: User,
+                        attributes: [
+                            "uid",
+                            "username",
+                            "profilePicture",
+                            "firstName",
+                            "lastName",
+                        ],
+                    },
+                ],
             });
+            return posts;
         } catch (error) {
             throw new Error(`Post fetch failed: ${error.message}`);
         }

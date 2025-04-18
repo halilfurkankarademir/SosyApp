@@ -59,4 +59,16 @@ export const fetchAllPosts = () => {
 
 export const fetchPostById = (postId) => {};
 
-export const fetchPostsByUserId = (userId) => {};
+export const fetchPostsByUserId = (userId) => {
+    try {
+        return axios
+            .get(`http://localhost:3000/api/posts/user/${userId}`, {
+                withCredentials: true,
+            })
+            .then((response) => {
+                return response.data;
+            });
+    } catch (error) {
+        console.error("Error fetching posts by user ID:", error);
+    }
+};

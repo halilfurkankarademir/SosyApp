@@ -6,9 +6,10 @@ const postController = {
     createPost: async (req, res) => {
         try {
             let postData = req.body;
+            console.log(req.user);
             postData = {
                 ...postData,
-                userId: req.user.id,
+                userId: req.user.uid,
             };
             const newPost = await PostService.createPost(postData);
             if (!newPost) {
@@ -55,6 +56,22 @@ const postController = {
         } catch (error) {
             console.error("Error getting post:", error);
             res.status(500).json({ error: "Error getting post" });
+        }
+    },
+
+    getPostByUserId: async (req, res) => {
+        try {
+            const userId = req.params.userId;
+            const posts = await PostService.getPostByUserId(userId);
+            if (!posts) {
+                return res
+                    .status(404)
+                    .json({ error: "No posts found for this user" });
+            }
+            res.status(200).json(posts);
+        } catch (error) {
+            console.error("Error getting posts by user ID:", error);
+            res.status(500).json({ error: "Error getting posts by user ID" });
         }
     },
 };

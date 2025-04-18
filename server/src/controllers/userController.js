@@ -109,12 +109,6 @@ const userController = {
                 req.body,
                 ip
             );
-
-            if (!updatedUser) {
-                return res
-                    .status(400)
-                    .json({ error: "User cannot be updated" });
-            }
             res.status(200).json(updatedUser);
         } catch (error) {
             console.error("Error updating user:", error);
@@ -130,6 +124,18 @@ const userController = {
             res.status(200).json({ message: "Kullanıcı başarıyla silindi" });
         } catch (error) {
             console.error("Error deleting user:", error);
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    getRandomUsers: async (req, res) => {
+        try {
+            const ip = req.ip;
+            const users = await UserService.getRandomUsers(ip);
+            const usersDTOInstance = users.map((user) => new userDTO(user));
+            res.status(200).json(usersDTOInstance);
+        } catch (error) {
+            console.error("Error getting users:", error);
             res.status(500).json({ error: error.message });
         }
     },

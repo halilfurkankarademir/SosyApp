@@ -116,3 +116,17 @@ export const updateUserProfile = async (updatedData) => {
             throw error;
         });
 };
+
+export const getRandomUsersForRecommendation = async () => {
+    return axios
+        .get("http://localhost:3000/api/users/random", {
+            withCredentials: true,
+        })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            console.error("Error fetching random users:", error);
+            throw error;
+        });
+};

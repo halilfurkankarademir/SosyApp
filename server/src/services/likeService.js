@@ -17,6 +17,15 @@ const likeService = {
         }
     },
 
+    async getAllLikes(postId) {
+        try {
+            const likes = await Like.findAll({ where: { postId } });
+            return likes;
+        } catch (error) {
+            throw new Error("Error getting likes: " + error.message);
+        }
+    },
+
     async checkLike(userId, postId) {
         try {
             const like = await Like.findOne({ where: { userId, postId } });
