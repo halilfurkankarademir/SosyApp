@@ -13,15 +13,6 @@ const HomePage = () => {
 
     const setUser = useUserStore((state) => state.setUser);
 
-    const loadMoreData = () => {
-        // Simüle edilmiş API çağrısı
-        setTimeout(() => {
-            const newPosts = [...posts, ...fakePosts]; // Yeni gönderiler ekleyin
-            setPosts(newPosts);
-            setHasMore(newPosts.length < 100); // Örnek: 100 gönderi sınırı
-        }, 2000); // 2 sn gecikme
-    };
-
     const fetchPosts = useCallback(async () => {
         try {
             const posts = await fetchAllPosts();
@@ -79,7 +70,7 @@ const HomePage = () => {
                             //         Yükleniyor...
                             //     </div>
                             // }
-                            next={loadMoreData}
+
                             endMessage={
                                 <p>Yukarıdan kucultmek icin tiklayin</p>
                             }

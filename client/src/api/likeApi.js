@@ -32,9 +32,12 @@ export const getAllLikes = async (postId) => {
     // Gonderi id'sini alarak api/likes/:postId endpointine get isteği gonderen bir fonksiyon
     // Bu istek, gonderiyi begenilerini alır ve sunucudan gelen yanıtı döner
     try {
-        return await axios.get(`http://localhost:3000/api/likes/${postId}`, {
-            withCredentials: true,
-        });
+        return await axios.get(
+            `http://localhost:3000/api/likes/post/${postId}`,
+            {
+                withCredentials: true,
+            }
+        );
     } catch (error) {
         console.error("Error getting likes:", error);
     }
@@ -52,5 +55,21 @@ export const checkLike = async (postId) => {
         );
     } catch (error) {
         console.error("Error checking like:", error);
+    }
+};
+
+export const getLikesByUserId = async () => {
+    // Kullanıcı id'sini alarak api/likes/user/:userId endpointine get isteği gonderen bir fonksiyon
+    // Bu istek, kullanıcının begenilerini alır ve sunucudan gelen yanıtı döner
+    try {
+        const response = await axios.get(
+            "http://localhost:3000/api/likes/user",
+            {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error getting likes by user:", error);
     }
 };

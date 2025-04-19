@@ -11,16 +11,19 @@ const Like = sequelize.define(
             primaryKey: true,
         },
         userId: {
-            type: DataTypes.STRING(255),
+            type: DataTypes.UUID,
             allowNull: false,
+            // İlişkiler associations.js'de tanımlanacak
         },
         postId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            // İlişkiler associations.js'de tanımlanacak
         },
     },
     {
         tableName: "likes",
+        timestamps: true,
     }
 );
 

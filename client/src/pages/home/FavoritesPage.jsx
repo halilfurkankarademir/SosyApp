@@ -6,35 +6,28 @@ import PostCard from "../../components/features/posts/PostCard";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
 import { fakePosts } from "../../constants/fakeDatas";
 import { useDebounce } from "use-debounce";
+import { getLikesByUserId } from "../../api/likeApi";
 
 const FavoritesPage = () => {
     const [search, setSearch] = useState("");
+    const [favorites, setFavorites] = useState([]);
     const [debouncedSearch] = useDebounce(search, 300);
 
-    // Başlangıçta favori gönderileri al (gerçek uygulamada API'den çekilir)
-    const initialPosts = useMemo(
-        () => fakePosts.filter((_, i) => i % 1 === 0),
-        []
-    );
-
-    // Filtrelenmiş gönderileri hesapla
-    const filteredPosts = useMemo(() => {
-        if (!debouncedSearch) return initialPosts;
-
-        return initialPosts.filter(
-            (post) =>
-                post.content
-                    .toLowerCase()
-                    .includes(debouncedSearch.toLowerCase()) ||
-                post.username
-                    .toLowerCase()
-                    .includes(debouncedSearch.toLowerCase())
-        );
-    }, [debouncedSearch, initialPosts]);
+    const fetchPosts = async () => {
+        {
+            try {
+                const fetchedFavorites = await getLikesByUserId();
+                setFavorites(fetchedFavorites);
+            } catch (error) {
+                console.log("Error fetching posts:", error);
+            }
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Favorilerim";
+        fetchPosts();
     }, []);
 
     return (
@@ -61,7 +54,7 @@ const FavoritesPage = () => {
                                     </h1>
                                 </div>
                                 <div className="text-xs md:text-sm text-neutral-400">
-                                    {filteredPosts.length} gönderi
+                                    0 gönderi
                                 </div>
                             </div>
 
@@ -73,7 +66,7 @@ const FavoritesPage = () => {
                             />
 
                             {/* Sonuç yoksa */}
-                            {filteredPosts.length === 0 && (
+                            {fakePosts.length === 0 && (
                                 <div className="text-center py-8 md:py-10">
                                     <div className="flex justify-center mb-3 md:mb-4">
                                         <FaHeartBroken className="text-5xl md:text-6xl text-neutral-600" />
@@ -90,11 +83,18 @@ const FavoritesPage = () => {
                         </div>
 
                         {/* Favori Gönderiler Listesi */}
-                        <div className="space-y-3 md:space-y-4">
-                            {filteredPosts.map((post, index) => (
-                                <PostCard key={index} postData={post} />
-                            ))}
-                        </div>
+                        {favorites && (
+                            <div className="space-y-3 md:space-y-4">
+                                {favorites.map((favorite, index) => {
+                                    return (
+                                        <PostCard
+                                            key={index}
+                                            postData={favorite.post}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

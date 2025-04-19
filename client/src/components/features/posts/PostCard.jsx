@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
     FaHeart,
-    FaRegHeart,
     FaComment,
     FaShare,
     FaBookmark,
@@ -26,8 +25,7 @@ const PostCard = ({ postData, handleRemove }) => {
     const [saved, setSaved] = useState(false);
     const moreMenuRef = useRef(null);
     const [likeCount, setLikeCount] = useState(0);
-    const { id, user, content, media, likes, comments, createdAt } =
-        postData || {};
+    const { id, post, user, content, media, createdAt } = postData || {};
     const postDate = getDateDiff(createdAt);
     const { isLiked, setIsLiked } = useLikeStatus(id);
 
@@ -40,8 +38,6 @@ const PostCard = ({ postData, handleRemove }) => {
             console.error("Error getting post stats:", error);
         }
     };
-
-    console.log(postData);
 
     // Like işlemi
     const handleLike = async () => {
@@ -146,19 +142,21 @@ const PostCard = ({ postData, handleRemove }) => {
 
             {/* Gönderi İçeriği */}
             <div className="mb-3 md:mb-4 md:mt-4">
-                <p className="text-sm md:text-base">{content}</p>
+                <p className="text-sm md:text-base">
+                    {content || post.content}
+                </p>
             </div>
 
             {/* Gönderi Medyası */}
             {media && (
                 <div className="mb-3 md:mb-4">
                     <LazyLoadImage
-                        src={media}
+                        src={media || post.media}
                         alt="Gönderi Medyası"
                         effect="blur"
                         className="w-full rounded-lg object-cover"
                         threshold={200}
-                        placeholderSrc={`${media}?q=10&w=50`}
+                        placeholderSrc={`${media || post.media}?q=10&w=50`}
                     />
                 </div>
             )}
@@ -172,7 +170,7 @@ const PostCard = ({ postData, handleRemove }) => {
                     </div>
                     <div className="flex flex-row gap-2">
                         <FaComment className="mt-0.5" />
-                        <span>{comments?.length}</span>
+                        <span>{0}</span>
                     </div>
                 </div>
             </div>

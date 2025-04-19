@@ -61,6 +61,7 @@ const ProfilePage = () => {
                         {/* Sol Taraf - Profil Resmi ve Temel Bilgiler */}
                         <ProfileCard
                             user={userProfile}
+                            postCount={posts.length}
                             isOwnProfile={isOwnProfile}
                         />
                         {/* Sağ Taraf - Gönderiler ve İçerik */}

@@ -4,10 +4,19 @@ import dotenv from "dotenv";
 import { rateLimit } from "express-rate-limit";
 import { initializeDatabase } from "./config/database.js";
 import setupAssociations from "./models/associations.js";
+
+// Tüm modelleri burada içe aktaralım, böylece sequelize.sync()
+// çağrılmadan önce yüklenmiş olurlar
+import "./models/userModel.js";
+import "./models/postModel.js";
+import "./models/likeModel.js";
+import "./models/followModel.js";
+
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import likeRoutes from "./routes/likeRoutes.js";
+import followRoutes from "./routes/followRoutes.js";
 
 // 1. Uygulama ve temel konfigürasyon
 const app = express();
@@ -34,7 +43,7 @@ const apiLimiter = rateLimit({
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    limit: 10,
+    limit: 5,
     standardHeaders: true,
 });
 
@@ -59,6 +68,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/likes", likeRoutes);
+app.use("/api/follows", followRoutes);
 
 // 6. Hata yönetimi (en sonda olmalı)
 app.use((err, req, res, next) => {

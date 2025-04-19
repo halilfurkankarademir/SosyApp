@@ -1,4 +1,4 @@
-import { DataTypes } from "@sequelize/core";
+import { DataTypes } from "@sequelize/core"; // Veya "sequelize" (v6 için)
 import sequelize from "../config/sequelize.js";
 
 const Post = sequelize.define(
@@ -13,6 +13,7 @@ const Post = sequelize.define(
         userId: {
             type: DataTypes.UUID,
             allowNull: false,
+            // İlişkiler associations.js'de tanımlanacak, burada referans belirtmiyoruz
         },
         content: {
             type: DataTypes.TEXT,
@@ -22,17 +23,10 @@ const Post = sequelize.define(
             type: DataTypes.STRING(255),
             allowNull: true,
         },
-        likes: {
-            type: DataTypes.ARRAY(DataTypes.INTEGER),
-            defaultValue: [],
-        },
-        comments: {
-            type: DataTypes.ARRAY(DataTypes.INTEGER),
-            defaultValue: [],
-        },
     },
     {
         timestamps: true,
+        tableName: "posts", // Tablo adını açıkça belirt
     }
 );
 

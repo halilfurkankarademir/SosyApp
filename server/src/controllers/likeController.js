@@ -44,6 +44,20 @@ const likeController = {
         }
     },
 
+    getLikesByUserId: async (req, res) => {
+        try {
+            const userId = req.user.uid;
+            console.log(userId);
+            const likes = await likeService.getLikesByUserId(userId);
+            res.status(200).json(likes);
+        } catch (error) {
+            console.error("Error getting likes by user ID:", error);
+            res.status(500).json({
+                error: "Kullanıcının begenilerini alırken bir hata oluştu.",
+            });
+        }
+    },
+
     checkLike: async (req, res) => {
         try {
             const { postId } = req.params;

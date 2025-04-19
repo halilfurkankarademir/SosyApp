@@ -1,22 +1,44 @@
 import sequelize from "./sequelize.js";
 
+// Modelleri manuel olarak yükleyelim
+import "../models/userModel.js";
+import "../models/postModel.js";
+import "../models/likeModel.js";
+import "../models/followModel.js";
+
+// Bu fonksiyon, veritabanı bağlantısını başlatır ve modelleri senkronize eder
 export async function initializeDatabase() {
     try {
-        // Bağlantıyı test et
+        // Veritabanı bağlantısını kontrol et
+        console.log("Veritabanı bağlantısı doğrulanıyor...");
         await sequelize.authenticate();
         console.log("Veritabanı bağlantısı başarılı!");
 
-        // Model bağımlılıklarını doğru şekilde yükle
-        await import("../models/userModel.js");
-        await import("../models/postModel.js");
+        // Tabloları senkronize et
+        console.log("Veritabanı tabloları senkronize ediliyor...");
 
-        // Tablolar oluşturul/güncellenir
-        await sequelize.sync({ alter: true });
-        console.log("Veritabanı tabloları senkronize edildi!");
+        // force: true ile tabloları sıfırdan oluştur
+        // NOT: Bu, ÜRETİM ortamında tehlikeli olabilir! Tüm veriler silinir.
+        // await sequelize.sync({
+        //     alter: true, // Tabloları sıfırdan oluştur
+        // });
 
+        console.log("Veritabanı tabloları başarıyla senkronize edildi!");
         return sequelize;
     } catch (error) {
-        console.error("PostgreSQL bağlantı hatası:", error);
-        throw error; // Hatayı yukarı fırlat
+        console.error(
+            "Veritabanı bağlantı/senkronizasyon hatası:",
+            error.message
+        );
+
+        // Hata detaylarını göster
+        if (error.name) {
+            console.error(`Hata tipi: ${error.name}`);
+        }
+        if (error.parent) {
+            console.error(`Altta yatan hata: ${error.parent.message}`);
+        }
+
+        throw error; // Hatayı yukarı aktar
     }
 }

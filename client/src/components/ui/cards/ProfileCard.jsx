@@ -5,7 +5,13 @@ import { PrimaryButton, SecondaryButton } from "../buttons";
 import { FaCog, FaEdit, FaUserPlus } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
 
-const ProfileCard = ({ user, isOwnProfile }) => {
+const ProfileCard = ({
+    user,
+    postCount,
+    followerCount,
+    followingCount,
+    isOwnProfile,
+}) => {
     const { navigateToPage } = useNavigation();
 
     return (
@@ -27,13 +33,10 @@ const ProfileCard = ({ user, isOwnProfile }) => {
                         <h1 className=" md:text-2xl font-bold">
                             {user.firstName} {user.lastName}
                         </h1>
-                        {/* Kullanıcı onaylı ise onay simgesi göster */}
-                        {/* {profile.verified && (
-                            <MdVerified
-                                className="text-blue-400 ml-2"
-                                title="Onaylanmış Kullanıcı"
-                            />
-                        )} */}
+                        <MdVerified
+                            className="text-blue-400 ml-2"
+                            title="Onaylanmış Kullanıcı"
+                        />
                     </div>
                     <p className="text-blue-400 font-medium">{user.username}</p>
                     <p className="text-gray-400 my-2 text-sm md:text-base">
@@ -47,19 +50,25 @@ const ProfileCard = ({ user, isOwnProfile }) => {
                 {/* İstatistikler */}
                 <div className="grid grid-cols-3 gap-2 my-4 text-center">
                     <div className="p-2 rounded-lg bg-neutral-700/50">
-                        <div className="font-bold text-lg md:text-xl">2</div>
+                        <div className="font-bold text-lg md:text-xl">
+                            {postCount || 0}
+                        </div>
                         <div className="text-xs md:text-sm text-gray-400">
                             Gönderi
                         </div>
                     </div>
                     <div className="p-2 rounded-lg bg-neutral-700/50">
-                        <div className="font-bold text-lg md:text-xl">3</div>
+                        <div className="font-bold text-lg md:text-xl">
+                            {followerCount || 0}
+                        </div>
                         <div className="text-xs md:text-sm text-gray-400">
                             Takipçi
                         </div>
                     </div>
                     <div className="p-2 rounded-lg bg-neutral-700/50">
-                        <div className="font-bold text-lg md:text-xl">4</div>
+                        <div className="font-bold text-lg md:text-xl">
+                            {followingCount || 0}
+                        </div>
                         <div className="text-xs md:text-sm text-gray-400">
                             Takip
                         </div>
