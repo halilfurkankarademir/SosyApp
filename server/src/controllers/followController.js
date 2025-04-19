@@ -2,24 +2,17 @@
 import followService from "../services/followService.js";
 
 const followController = {
-    // async getAuthenticatedUserFollowers(req, res) {
-    //     const userId = req.user.uid;
-    //     const followers = await followService.getAllFollowers(userId);
-    //     res.json(followers);
-    // },
-    // async getAuthenticatedUserFollowing(req, res) {
-    //     const userId = req.user.uid;
-    //     const following = await followService.getAllFollowings(userId);
-    //     res.json(following);
-    // },
+    // FollowerId takip eden kullanıcı idsi, FollowingId takip edilen kullanıcı idsi
     async createFollow(req, res) {
         const { userId } = req.params;
-        const follower = await followService.followUser(req.uid, userId);
+        const followerId = req.user.uid;
+        const follower = await followService.followUser(followerId, userId);
         res.json(follower);
     },
     async deleteFollow(req, res) {
         const { userId } = req.params;
-        const follower = await followService.unfollowUser(req.uid, userId);
+        const followerId = req.user.uid;
+        const follower = await followService.unfollowUser(followerId, userId);
         res.json(follower);
     },
 

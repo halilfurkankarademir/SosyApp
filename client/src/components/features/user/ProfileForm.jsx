@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaSave, FaTimes } from "react-icons/fa";
 
 /**
@@ -6,6 +6,22 @@ import { FaSave, FaTimes } from "react-icons/fa";
  * Kullanıcı bilgilerini düzenlemek için kullanılır
  */
 const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Kaydet tusuna basinca kaydedilme durumunu true yap
+    const handleSaving = () => {
+        setIsSaving(true);
+    };
+
+    // 1 sn sonra kaydedilme durumunu sifirla
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setIsSaving(false);
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [isSaving]);
+
     return (
         <form onSubmit={onSubmit} className="p-4 md:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -15,7 +31,7 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                     </label>
                     <input
                         type="text"
-                        name="firstName" // State key'i ile eşleşmeli
+                        name="firstName"
                         value={formData.firstName || ""}
                         onChange={onChange}
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
@@ -27,7 +43,7 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                     </label>
                     <input
                         type="text"
-                        name="lastName" // State key'i ile eşleşmeli
+                        name="lastName"
                         value={formData.lastName || ""}
                         onChange={onChange}
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
@@ -86,9 +102,12 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                 <button
                     type="submit"
                     className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center space-x-2 transition"
+                    onClick={handleSaving}
                 >
                     <FaSave />
-                    <span>Değişiklikleri Kaydet</span>
+                    <span>
+                        {isSaving ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
+                    </span>
                 </button>
             </div>
         </form>

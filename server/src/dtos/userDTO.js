@@ -9,6 +9,7 @@ class userDTO {
         this.profilePicture = user.profilePicture;
         this.bio = user.bio;
         this.location = user.location;
+        this.verified = user.verified;
     }
 }
 

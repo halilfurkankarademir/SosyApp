@@ -16,9 +16,12 @@ const FollowersPage = () => {
     const setUser = useUserStore((state) => state.setUser);
 
     // Filtreleme
-    const filteredFollowers = allFollowers.filter(
+    const filteredFollowers = allUsers.filter(
         (follower) =>
-            follower.name
+            follower.firstName
+                .toLowerCase()
+                .includes(debouncedSearch.toLowerCase()) ||
+            follower.lastName
                 .toLowerCase()
                 .includes(debouncedSearch.toLowerCase()) ||
             follower.username
@@ -90,7 +93,7 @@ const FollowersPage = () => {
                                         </p>
                                     </div>
                                 ) : (
-                                    allUsers.map((follower, index) => (
+                                    filteredFollowers.map((follower, index) => (
                                         <FollowerCard
                                             follower={follower}
                                             key={index}

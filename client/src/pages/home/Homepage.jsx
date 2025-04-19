@@ -56,7 +56,7 @@ const HomePage = () => {
             <Navbar />
             <div className="page-container md:py-36 md:px-6">
                 {/* Responsive Grid Layout */}
-                <div className="page-grid-layout">
+                <div className="page-grid-layout-other">
                     {/* Sidebar - Mobilde gizli, md ve üzeri ekranlarda görünür */}
                     <Sidebar />
                     {/* Post ekleme ve goruntileme kismi */}
@@ -64,7 +64,6 @@ const HomePage = () => {
                         <NewPost onPostCreated={fetchPosts} />
                         <InfiniteScroll
                             dataLength={posts.length}
-                            hasMore={hasMore}
                             // loader={
                             //     <div className="text-center text-white ">
                             //         Yükleniyor...
@@ -72,7 +71,9 @@ const HomePage = () => {
                             // }
 
                             endMessage={
-                                <p>Yukarıdan kucultmek icin tiklayin</p>
+                                <p className="text-center text-white">
+                                    Gönderilerin sonu.
+                                </p>
                             }
                         >
                             {posts ? (

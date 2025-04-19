@@ -164,11 +164,11 @@ const PostCard = ({ postData, handleRemove }) => {
             {/* İstatistikler */}
             <div className="flex items-center justify-between text-xs md:text-sm text-gray-400">
                 <div className="flex items-center gap-3 ">
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row gap-1">
                         <FaHeart className="mt-0.5" />
                         <span>{likeCount}</span>
                     </div>
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row gap-1">
                         <FaComment className="mt-0.5" />
                         <span>{0}</span>
                     </div>

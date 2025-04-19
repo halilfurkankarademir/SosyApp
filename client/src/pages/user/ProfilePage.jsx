@@ -8,11 +8,18 @@ import { getCurrentUser, getUserByUsername } from "../../api/userApi";
 import LoadingPage from "../public/LoadingPage";
 import { fetchPostsByUserId } from "../../api/postApi";
 import { FaHeartBroken, FaSadTear } from "react-icons/fa";
+import {
+    checkFollowStatus,
+    followUser,
+    unfollowUser,
+} from "../../api/followApi";
+import { ShowToast } from "../../components/ui/toasts/ShowToast";
 
 const ProfilePage = () => {
     // Kullanıcının kendi profili mi kontrolü için bir state (gerçek uygulamada auth ile kontrol edilir)
     const [isOwnProfile, setIsOwnProfile] = useState(true);
     const [posts, setPosts] = useState([]);
+    const [isFollowing, setIsFollowing] = useState(false);
     // Guncel profil sayfasinin bilgileri
     const [userProfile, setUserProfile] = useState(null);
 
@@ -29,6 +36,10 @@ const ProfilePage = () => {
                 console.error("User not found");
                 return;
             }
+
+            const followStatus = await checkFollowStatus(fetchedUser.uid);
+
+            setIsFollowing(followStatus);
             setUserProfile(fetchedUser);
             // Kullanici bilgileri ile guncel kullanici bilgileri karsilastiriliyor
             // Eğer eşleşiyorsa kendi profilindeyiz demektir
@@ -39,6 +50,29 @@ const ProfilePage = () => {
             setPosts(fetchedPosts);
         } catch (error) {
             console.error("Error fetching user:", error);
+        }
+    };
+
+    const handleFollow = async () => {
+        try {
+            // Takip etmiyor ise takip et
+            if (!isFollowing) {
+                const response = await followUser(userProfile.uid);
+                if (response.status === 200) {
+                    console.log("User followed successfully");
+                }
+                setIsFollowing(true);
+                ShowToast("success", "Kullanıcı takip ediliyor.");
+            } else {
+                const response = await unfollowUser(userProfile.uid);
+                if (response.status === 200) {
+                    console.log("User unfollowed successfully");
+                }
+                setIsFollowing(false);
+                ShowToast("success", "Kullanıcı takipten çıkıldı.");
+            }
+        } catch (error) {
+            console.error("Error following user:", error);
         }
     };
 
@@ -63,6 +97,8 @@ const ProfilePage = () => {
                             user={userProfile}
                             postCount={posts.length}
                             isOwnProfile={isOwnProfile}
+                            handleFollow={handleFollow}
+                            isFollowing={isFollowing}
                         />
                         {/* Sağ Taraf - Gönderiler ve İçerik */}
                         <div className="md:w-2/3 md:pl-6 mt-6 md:mt-0">

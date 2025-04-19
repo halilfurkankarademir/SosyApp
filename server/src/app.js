@@ -48,7 +48,7 @@ const authLimiter = rateLimit({
 });
 
 // Rate limit middleware
-app.use(apiLimiter);
+// app.use(apiLimiter);
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 

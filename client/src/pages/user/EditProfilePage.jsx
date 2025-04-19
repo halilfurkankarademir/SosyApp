@@ -6,18 +6,19 @@ import {
     ProfileForm,
     ProfileImageUploader,
 } from "../../components/features/user";
-// API fonksiyonlarınızı ve bildirim kütüphanenizi import edin
-import { getCurrentUser, updateUserProfile } from "../../api/userApi"; // updateUserProfile ekledim (varsayım)
-import toast from "react-hot-toast"; // Bildirim için
+import { getCurrentUser, updateUserProfile } from "../../api/userApi";
+import toast from "react-hot-toast";
 import LoadingPage from "../public/LoadingPage";
 import { ShowToast } from "../../components/ui/toasts/ShowToast";
+import { imageUpload } from "../../api/imageUpload";
 
 const EditProfilePage = () => {
     const navigate = useNavigate();
     const [previewProfileImage, setPreviewProfileImage] = useState(null);
-    const [user, setUser] = useState(null); // Başlangıçta null veya boş obje olabilir
-    const [isLoading, setIsLoading] = useState(true); // Yüklenme durumu
-    const [isSaving, setIsSaving] = useState(false); // Kaydetme durumu
+    const [profileImage, setProfileImage] = useState(null);
+    const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
 
     // Mevcut kullanıcı detaylarını çek
     const getCurrentUserDetails = async () => {
@@ -42,7 +43,7 @@ const EditProfilePage = () => {
         }
     };
 
-    // Form değişikliklerini handle eden fonksiyon (setUser kullanıyor)
+    // Form değişikliklerini handle eden fonksiyon
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUser((prevUser) => ({
@@ -55,9 +56,13 @@ const EditProfilePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSaving(true);
-        console.log("Gönderilecek form verileri:", user);
+        const userData = { ...user };
+        if (profileImage) {
+            const profilePicture = await imageUpload(profileImage);
+            userData.profilePicture = profilePicture;
+        }
         try {
-            const updatedUser = await updateUserProfile(user);
+            const updatedUser = await updateUserProfile(userData);
             console.log("Profil güncellendi:", updatedUser);
             ShowToast("success", "Profiliniz başarıyla güncellendi.");
         } catch (error) {
@@ -80,8 +85,7 @@ const EditProfilePage = () => {
         if (file) {
             const imageUrl = URL.createObjectURL(file);
             setPreviewProfileImage(imageUrl);
-            // Resmi API'ye yükleme mantığını buraya ekleyebilirsiniz
-            // Veya handleSubmit içinde yapabilirsiniz
+            setProfileImage(file);
         }
     };
 

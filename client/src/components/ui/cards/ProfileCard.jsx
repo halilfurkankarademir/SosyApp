@@ -11,6 +11,8 @@ const ProfileCard = ({
     followerCount,
     followingCount,
     isOwnProfile,
+    handleFollow,
+    isFollowing,
 }) => {
     const { navigateToPage } = useNavigation();
 
@@ -33,10 +35,12 @@ const ProfileCard = ({
                         <h1 className=" md:text-2xl font-bold">
                             {user.firstName} {user.lastName}
                         </h1>
-                        <MdVerified
-                            className="text-blue-400 ml-2"
-                            title="Onaylanmış Kullanıcı"
-                        />
+                        {user.verified ? (
+                            <MdVerified
+                                className="text-blue-400 ml-2"
+                                title="Onaylanmış Kullanıcı"
+                            />
+                        ) : null}
                     </div>
                     <p className="text-blue-400 font-medium">{user.username}</p>
                     <p className="text-gray-400 my-2 text-sm md:text-base">
@@ -95,8 +99,10 @@ const ProfileCard = ({
                     ) : (
                         <>
                             <PrimaryButton
-                                buttonText={"Arkadaş Ekle"}
-                                handleClick={() => {}}
+                                buttonText={
+                                    isFollowing ? "Takipten Çık" : "Takip Et"
+                                }
+                                handleClick={handleFollow}
                                 icon={<FaUserPlus size={20} />}
                             />
                             <SecondaryButton

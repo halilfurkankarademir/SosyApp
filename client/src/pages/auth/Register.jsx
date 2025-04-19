@@ -5,9 +5,11 @@ import { useNavigation } from "../../context/NavigationContext";
 import AuthForm from "../../components/features/auth/AuthForm";
 import { registerFields } from "../../utils/constants";
 import { register } from "../../api/authApi";
+import { useAuth } from "../../context/AuthContext";
 
 const RegisterPage = () => {
     const { navigateToPage } = useNavigation();
+    const { setIsAuthenticated } = useAuth();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -28,9 +30,10 @@ const RegisterPage = () => {
             console.log("Kayıt işlemi başarısız!");
             return;
         }
+        setIsAuthenticated(true);
         console.log("Kayıt işlemi başarılı!", user);
         // Kayıt başarılıysa yönlendirme
-        navigateToPage("/user-info");
+        navigateToPage("/");
     };
 
     return (
