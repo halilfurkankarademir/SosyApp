@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import userRepository from "../repositories/userRepository.js";
-
 dotenv.config();
 
 // Token doğrulama middleware
@@ -9,6 +8,7 @@ export const authenticateToken = async (req, res, next) => {
     try {
         // Token'ı al (header veya cookie'den)
         const token = getAccessToken(req.headers.cookie);
+
         if (!token) {
             return res.status(401).json({ error: "Yetkilendirme gerekli" });
         }
@@ -37,6 +37,7 @@ export const authenticateToken = async (req, res, next) => {
 
 // Tokenleri cookie'den al
 function getAccessToken(cookieHeader) {
+    if (!cookieHeader) return null;
     const accessTokenMatch = cookieHeader.match(/access_token=([^;]+)/);
     return accessTokenMatch ? accessTokenMatch[1] : null;
 }

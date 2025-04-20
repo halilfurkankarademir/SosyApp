@@ -5,8 +5,6 @@ import { rateLimit } from "express-rate-limit";
 import { initializeDatabase } from "./config/database.js";
 import setupAssociations from "./models/associations.js";
 
-// Tüm modelleri burada içe aktaralım, böylece sequelize.sync()
-// çağrılmadan önce yüklenmiş olurlar
 import "./models/userModel.js";
 import "./models/postModel.js";
 import "./models/likeModel.js";
@@ -17,6 +15,7 @@ import postRoutes from "./routes/postRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import likeRoutes from "./routes/likeRoutes.js";
 import followRoutes from "./routes/followRoutes.js";
+import savedRoutes from "./routes/savedRoutes.js";
 
 // 1. Uygulama ve temel konfigürasyon
 const app = express();
@@ -69,6 +68,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/likes", likeRoutes);
 app.use("/api/follows", followRoutes);
+app.use("/api/saved", savedRoutes);
 
 // 6. Hata yönetimi (en sonda olmalı)
 app.use((err, req, res, next) => {

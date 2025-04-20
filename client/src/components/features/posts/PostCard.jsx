@@ -18,6 +18,7 @@ import {
 } from "../../../api/likeApi";
 import useLikeStatus from "../../../hooks/useLikeStatus";
 import { ShowToast } from "../../ui/toasts/ShowToast";
+import { isPostSaved, savePost, unsavePost } from "../../../api/savedApi";
 
 const PostCard = ({ postData, handleRemove }) => {
     const { navigateToPage } = useNavigation();
@@ -33,6 +34,8 @@ const PostCard = ({ postData, handleRemove }) => {
         try {
             if (!id) return;
             const likes = await getAllLikes(id);
+            const saved = await isPostSaved(id);
+            setSaved(saved);
             setLikeCount(likes.data.length);
         } catch (error) {
             console.error("Error getting post stats:", error);
@@ -69,9 +72,19 @@ const PostCard = ({ postData, handleRemove }) => {
     };
 
     // Kaydet işlemi
-    const handleSave = () => {
-        setSaved(!saved);
-        // API entegrasyonu burada yapılabilir
+    const handleSave = async () => {
+        try {
+            if (!saved) {
+                await savePost(id);
+                setSaved(true);
+                ShowToast("success", "Gönderi kaydedildi.");
+                return;
+            }
+            await unsavePost(id);
+            setSaved(false);
+        } catch (error) {
+            console.log("Error saving post:", error);
+        }
     };
 
     // Dışarı tıklama kontrolü
@@ -225,11 +238,11 @@ const PostCard = ({ postData, handleRemove }) => {
                             ? "text-yellow-400"
                             : "text-gray-400 hover:text-yellow-400"
                     }`}
-                    aria-label={saved ? "Kaydı kaldır" : "Kaydet"}
+                    aria-label={saved ? "Kaydetmeyi kaldır" : "Kaydet"}
                 >
                     {saved ? <FaBookmark /> : <FaRegBookmark />}
                     <span className="hidden md:inline text-xs md:text-sm">
-                        Kaydet
+                        {saved ? "Kaydetmeyi kaldır" : "Kaydet"}
                     </span>
                 </button>
             </div>

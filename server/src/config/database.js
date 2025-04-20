@@ -17,11 +17,9 @@ export async function initializeDatabase() {
         // Tabloları senkronize et
         console.log("Veritabanı tabloları senkronize ediliyor...");
 
-        // force: true ile tabloları sıfırdan oluştur
-        // NOT: Bu, ÜRETİM ortamında tehlikeli olabilir! Tüm veriler silinir.
-        // await sequelize.sync({
-        //     alter: true, // Tabloları sıfırdan oluştur
-        // });
+        await sequelize.sync({
+            alter: true,
+        });
 
         console.log("Veritabanı tabloları başarıyla senkronize edildi!");
         return sequelize;

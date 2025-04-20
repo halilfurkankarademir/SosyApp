@@ -1,8 +1,9 @@
 import { DataTypes } from "@sequelize/core";
 import sequelize from "../config/sequelize.js";
 
-const Like = sequelize.define(
-    "Like",
+// Saved Model tanımı
+const Saved = sequelize.define(
+    "Saved",
     {
         id: {
             type: DataTypes.INTEGER,
@@ -20,9 +21,9 @@ const Like = sequelize.define(
         },
     },
     {
-        tableName: "likes",
+        tableName: "saved",
         timestamps: true,
     }
 );
 
-export default Like;
+export default Saved;
