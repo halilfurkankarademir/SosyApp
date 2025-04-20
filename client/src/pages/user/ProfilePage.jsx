@@ -69,7 +69,7 @@ const ProfilePage = () => {
                     console.log("User unfollowed successfully");
                 }
                 setIsFollowing(false);
-                ShowToast("success", "Kullanıcı takipten çıkıldı.");
+                ShowToast("info", "Kullanıcı takipten çıkıldı.");
             }
         } catch (error) {
             console.error("Error following user:", error);

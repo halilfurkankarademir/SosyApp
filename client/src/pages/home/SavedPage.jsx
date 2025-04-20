@@ -3,27 +3,47 @@ import { Navbar, Sidebar } from "../../components/common";
 import PostCard from "../../components/features/posts/PostCard";
 import { BiBookmark } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
-import { fakePosts } from "../../constants/fakeDatas";
 import { useDebounce } from "use-debounce";
+import { getSavedPosts } from "../../api/savedApi";
 
 const SavedPage = () => {
     const [search, setSearch] = useState("");
     // Örnek olarak her 3. gönderiyi kaydedilmiş gösteriyoruz
-    const [savedPosts, setSavedPosts] = useState(
-        fakePosts.filter((_, i) => i % 3 === 0)
-    );
+    const [savedPosts, setSavedPosts] = useState([]);
     const [debouncedValue] = useDebounce(search, 300);
 
     const filteredPosts = savedPosts.filter((post) => {
+        const postData = post.post;
         return (
-            post.content.toLowerCase().includes(debouncedValue.toLowerCase()) ||
-            post.username.toLowerCase().includes(debouncedValue.toLowerCase())
+            postData.content
+                .toLowerCase()
+                .includes(debouncedValue.toLowerCase()) ||
+            postData.user.username
+                .toLowerCase()
+                .includes(debouncedValue.toLowerCase()) ||
+            postData.user.firstName
+                .toLowerCase()
+                .includes(debouncedValue.toLowerCase()) ||
+            postData.user.lastName
+                .toLowerCase()
+                .includes(debouncedValue.toLowerCase())
         );
     });
+
+    const fetchSavedPosts = async () => {
+        try {
+            const posts = await getSavedPosts();
+            console.log(posts[0]);
+            setSavedPosts(posts);
+        } catch (error) {
+            console.error("Error fetching saved posts:", error);
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Kaydettiklerim";
+        fetchSavedPosts();
     }, []);
 
     return (
@@ -87,7 +107,7 @@ const SavedPage = () => {
                         {/* Kaydedilmiş Gönderiler Listesi */}
                         <div className="space-y-3 md:space-y-4">
                             {filteredPosts.map((post, index) => (
-                                <PostCard key={index} postData={post} />
+                                <PostCard key={index} postData={post.post} />
                             ))}
                         </div>
                     </div>

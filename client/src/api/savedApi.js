@@ -32,9 +32,11 @@ export const getSavedPosts = async () => {
     // api/saved endpointine get isteği gonderen bir fonksiyon
     // Bu istek, kaydedilen gonderileri alır ve sunucudan gelen yanıtı döner
     try {
-        return await axios.get("http://localhost:3000/api/saved", {
-            withCredentials: true,
-        });
+        return await axios
+            .get("http://localhost:3000/api/saved", {
+                withCredentials: true,
+            })
+            .then((response) => response.data);
     } catch (error) {
         console.error("Error getting saved posts:", error);
     }

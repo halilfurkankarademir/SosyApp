@@ -13,6 +13,24 @@ const FavoritesPage = () => {
     const [favorites, setFavorites] = useState([]);
     const [debouncedSearch] = useDebounce(search, 300);
 
+    const filteredPosts = favorites.filter((post) => {
+        const postData = post.post;
+        return (
+            postData.content
+                .toLowerCase()
+                .includes(debouncedSearch.toLowerCase()) ||
+            postData.user.username
+                .toLowerCase()
+                .includes(debouncedSearch.toLowerCase()) ||
+            postData.user.firstName
+                .toLowerCase()
+                .includes(debouncedSearch.toLowerCase()) ||
+            postData.user.lastName
+                .toLowerCase()
+                .includes(debouncedSearch.toLowerCase())
+        );
+    });
+
     const fetchPosts = async () => {
         {
             try {
@@ -66,7 +84,7 @@ const FavoritesPage = () => {
                             />
 
                             {/* Sonuç yoksa */}
-                            {fakePosts.length === 0 && (
+                            {filteredPosts.length === 0 && (
                                 <div className="text-center py-8 md:py-10">
                                     <div className="flex justify-center mb-3 md:mb-4">
                                         <FaHeartBroken className="text-5xl md:text-6xl text-neutral-600" />
@@ -85,7 +103,7 @@ const FavoritesPage = () => {
                         {/* Favori Gönderiler Listesi */}
                         {favorites && (
                             <div className="space-y-3 md:space-y-4">
-                                {favorites.map((favorite, index) => {
+                                {filteredPosts.map((favorite, index) => {
                                     return (
                                         <PostCard
                                             key={index}

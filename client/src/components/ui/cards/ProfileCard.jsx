@@ -43,10 +43,7 @@ const ProfileCard = ({
                         ) : null}
                     </div>
                     <p className="text-blue-400 font-medium">{user.username}</p>
-                    <p className="text-gray-400 my-2 text-sm md:text-base">
-                        {user.location}
-                    </p>
-                    <p className="my-3 text-gray-300 text-sm md:text-base">
+                    <p className="my-2 text-gray-300 text-sm md:text-base">
                         {user.bio}
                     </p>
                 </div>
