@@ -156,7 +156,7 @@ const PostCard = ({ postData, handleRemove }) => {
             {/* Gönderi İçeriği */}
             <div className="mb-3 md:mb-4 md:mt-4">
                 <p className="text-sm md:text-base">
-                    {content || post.content}
+                    {content ? content : " "}
                 </p>
             </div>
 

@@ -1,5 +1,7 @@
 // begeni islemleri icin controllerlar
+import postRepository from "../repositories/postRepository.js";
 import likeService from "../services/likeService.js";
+import { sendLikeNotification } from "../services/notificationService.js";
 
 const likeController = {
     createLike: async (req, res) => {
@@ -8,7 +10,16 @@ const likeController = {
             const { postId } = req.params;
             // Kullanıcının kimliği JWT'den alınıyor
             const userId = req.user.uid;
+
             const like = await likeService.createLike(userId, postId);
+
+            const post = await postRepository.getById(postId);
+            if (!post) {
+                return res.status(404).json({ error: "Post not found" });
+            }
+
+            sendLikeNotification(req.user, post.userId, postId);
+
             res.status(201).json(like);
         } catch (error) {
             console.error("Error creating like:", error);

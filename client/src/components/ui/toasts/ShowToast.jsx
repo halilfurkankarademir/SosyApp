@@ -26,6 +26,11 @@ export const ShowToast = (type, message) => {
                 },
             });
             break;
+        case "notification":
+            toast(message, {
+                icon: "🔔",
+            });
+            break;
         default:
             toast(message);
     }

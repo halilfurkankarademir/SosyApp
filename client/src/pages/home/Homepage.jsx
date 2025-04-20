@@ -6,6 +6,7 @@ import { fetchAllPosts, removePost } from "../../api/postApi";
 import { ShowToast } from "../../components/ui/toasts/ShowToast";
 import { getCurrentUser } from "../../api/userApi";
 import useUserStore from "../../hooks/useUserStore";
+import socket from "../../config/socket";
 
 const HomePage = () => {
     const [posts, setPosts] = useState([]);
