@@ -2,49 +2,50 @@ import React, { useEffect, useState } from "react";
 import { Navbar, Sidebar } from "../../components/common";
 import { BsPeopleFill } from "react-icons/bs";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
-import { allFollowers } from "../../constants/fakeDatas";
 import { useDebounce } from "use-debounce";
-import { getAllUsers, getCurrentUser } from "../../api/userApi";
+import { getCurrentUser } from "../../api/userApi";
 import FollowerCard from "../../components/ui/cards/FollowerCard";
 import useUserStore from "../../hooks/useUserStore";
+import { getFollowers } from "../../api/followApi";
 
 const FollowersPage = () => {
     const [search, setSearch] = useState("");
     const [debouncedSearch] = useDebounce(search, 300);
-    const [allUsers, setAllUsers] = useState([]);
+    const [allFollowers, setAllFollowers] = useState([]);
 
     const setUser = useUserStore((state) => state.setUser);
 
-    // Filtreleme
-    const filteredFollowers = allUsers.filter(
-        (follower) =>
-            follower.firstName
+    const filteredFollowers = allFollowers.filter((follower) => {
+        const followerData = follower.FollowerUser;
+        return (
+            followerData.username
                 .toLowerCase()
-                .includes(debouncedSearch.toLowerCase()) ||
-            follower.lastName
+                .includes(debouncedSearch.toLowerCase().trim()) ||
+            followerData.firstName
                 .toLowerCase()
-                .includes(debouncedSearch.toLowerCase()) ||
-            follower.username
+                .includes(debouncedSearch.toLowerCase().trim()) ||
+            followerData.lastName
                 .toLowerCase()
-                .includes(debouncedSearch.toLowerCase())
-    );
+                .includes(debouncedSearch.toLowerCase().trim())
+        );
+    });
+
+    const fetchData = async () => {
+        try {
+            const followers = await getFollowers();
+            const user = await getCurrentUser();
+            setUser(user);
+            setAllFollowers(followers);
+        } catch (error) {
+            console.log("Error fetching followers:", error);
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Takipçilerim";
-        fetchUsers();
+        fetchData();
     }, []);
-
-    const fetchUsers = async () => {
-        try {
-            const users = await getAllUsers();
-            const currentUser = await getCurrentUser();
-            setAllUsers(users);
-            setUser(currentUser);
-        } catch (error) {
-            console.error("Error fetching users:", error);
-        }
-    };
 
     return (
         <>
@@ -95,7 +96,7 @@ const FollowersPage = () => {
                                 ) : (
                                     filteredFollowers.map((follower, index) => (
                                         <FollowerCard
-                                            follower={follower}
+                                            follower={follower.FollowerUser}
                                             key={index}
                                         />
                                     ))

@@ -1,4 +1,5 @@
 import Follow from "../models/followModel.js";
+import User from "../models/userModel.js";
 
 const followService = {
     async followUser(followerId, followingId) {
@@ -11,6 +12,50 @@ const followService = {
 
     async checkIsFollowing(followerId, followingId) {
         return Follow.findOne({ where: { followerId, followingId } });
+    },
+
+    async getFollowers(followingId) {
+        return Follow.findAll({
+            where: { followingId },
+            include: [
+                {
+                    association: "FollowerUser",
+                },
+            ],
+        });
+    },
+
+    async getFollowing(followerId) {
+        return Follow.findAll({
+            where: { followerId },
+            include: [
+                {
+                    association: "FollowedUser",
+                },
+            ],
+        });
+    },
+
+    async getFollowersById(followingId) {
+        return Follow.findAll({
+            where: { followingId },
+            include: [
+                {
+                    association: "FollowerUser",
+                },
+            ],
+        });
+    },
+
+    async getFollowingById(followerId) {
+        return Follow.findAll({
+            where: { followerId },
+            include: [
+                {
+                    association: "FollowedUser",
+                },
+            ],
+        });
     },
 };
 

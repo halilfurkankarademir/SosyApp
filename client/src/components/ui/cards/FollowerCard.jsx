@@ -1,58 +1,9 @@
 import React, { memo } from "react";
-// Hero UI Skeleton import ediliyor
-import { Skeleton } from "@heroui/react";
 import { FaUserTimes } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
 
-// Hero UI Skeleton kullanan iskelet bileşeni
-const FollowerCardSkeletonHeroUI = () => {
-    return (
-        // Ana kapsayıcı, gerçek kartla aynı stilleme sahip olmalı
-        <div className="flex items-center justify-between p-4 bg-neutral-700 rounded-lg">
-            <div className="flex items-center space-x-3 w-full">
-                {" "}
-                {/* w-full ekleyerek genişlemesini sağla */}
-                {/* Profil Resmi Placeholder'ı */}
-                <Skeleton className="rounded-full">
-                    <div className="w-12 h-12 rounded-full bg-neutral-600"></div>{" "}
-                    {/* İç div rengi ve boyutu tanımlar */}
-                </Skeleton>
-                <div className="space-y-2 flex-grow">
-                    {" "}
-                    {/* flex-grow ekleyerek alanı doldur */}
-                    {/* İsim Placeholder'ı */}
-                    <Skeleton className="w-3/5 rounded-lg">
-                        {" "}
-                        {/* Genişliği ayarlayabilirsiniz (w-3/5, w-32 vb.) */}
-                        <div className="h-4 rounded-lg bg-neutral-600"></div>
-                    </Skeleton>
-                    {/* Kullanıcı Adı Placeholder'ı */}
-                    <Skeleton className="w-4/5 rounded-lg">
-                        {" "}
-                        {/* Genişliği ayarlayabilirsiniz (w-4/5, w-24 vb.) */}
-                        <div className="h-3 rounded-lg bg-neutral-600"></div>
-                    </Skeleton>
-                </div>
-            </div>
-
-            {/* Buton Placeholder'ı */}
-            <Skeleton className="rounded-full ml-3">
-                {" "}
-                {/* Buton ve metin arasına boşluk için ml-3 */}
-                <div className="w-8 h-8 rounded-full bg-neutral-600"></div>
-            </Skeleton>
-        </div>
-    );
-};
-
 const FollowerCard = ({ follower }) => {
     const { navigateToPage } = useNavigation();
-
-    // Eğer yükleniyorsa veya follower verisi yoksa Hero UI Skeleton göster
-    if (!follower) {
-        // return <FollowerCardSkeleton />; // Eski skeleton yerine yenisini kullan
-        return <FollowerCardSkeletonHeroUI />;
-    }
 
     // Veri varsa ve yüklenmiyorsa gerçek kartı göster
     const handleClick = () => {

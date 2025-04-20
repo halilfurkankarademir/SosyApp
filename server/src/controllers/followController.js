@@ -25,6 +25,30 @@ const followController = {
         );
         res.json(isFollowing);
     },
+
+    async getAuthenticatedUserFollowers(req, res) {
+        const userId = req.user.uid;
+        const followers = await followService.getFollowers(userId);
+        res.json(followers);
+    },
+
+    async getAuthenticatedUserFollowing(req, res) {
+        const userId = req.user.uid;
+        const following = await followService.getFollowing(userId);
+        res.json(following);
+    },
+
+    async getFollowersById(req, res) {
+        const followingId = req.params.followingUserId;
+        const followers = await followService.getFollowersById(followingId);
+        res.json(followers);
+    },
+
+    async getFollowingById(req, res) {
+        const followingId = req.params.followingUserId;
+        const following = await followService.getFollowingById(followingId);
+        res.json(following);
+    },
 };
 
 export default followController;

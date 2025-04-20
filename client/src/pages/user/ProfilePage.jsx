@@ -7,10 +7,13 @@ import ProfileCard from "../../components/ui/cards/ProfileCard";
 import { getCurrentUser, getUserByUsername } from "../../api/userApi";
 import LoadingPage from "../public/LoadingPage";
 import { fetchPostsByUserId } from "../../api/postApi";
-import { FaHeartBroken, FaSadTear } from "react-icons/fa";
+import { FaSadTear } from "react-icons/fa";
 import {
     checkFollowStatus,
     followUser,
+    getFollowers,
+    getFollowersByUserId,
+    getFollowingByUserId,
     unfollowUser,
 } from "../../api/followApi";
 import { ShowToast } from "../../components/ui/toasts/ShowToast";
@@ -20,6 +23,8 @@ const ProfilePage = () => {
     const [isOwnProfile, setIsOwnProfile] = useState(true);
     const [posts, setPosts] = useState([]);
     const [isFollowing, setIsFollowing] = useState(false);
+    const [followerCount, setFollowerCount] = useState(0);
+    const [followingCount, setFollowingCount] = useState(0);
     // Guncel profil sayfasinin bilgileri
     const [userProfile, setUserProfile] = useState(null);
 
@@ -28,31 +33,47 @@ const ProfilePage = () => {
 
     const fetchDatas = async () => {
         try {
-            // Parametrelerden gelen kullanici adına gore kullanici bilgileri cekiliyor
+            // 1. Profil kullanıcısını al
             const fetchedUser = await getUserByUsername(username);
-            // Guncel kullanici bilgileri aliniyor
-            const currentUser = await getCurrentUser();
             if (!fetchedUser) {
-                console.error("User not found");
+                console.error("User not found for username:", username);
                 return;
             }
-
-            const followStatus = await checkFollowStatus(fetchedUser.uid);
-
-            setIsFollowing(followStatus);
             setUserProfile(fetchedUser);
-            // Kullanici bilgileri ile guncel kullanici bilgileri karsilastiriliyor
-            // Eğer eşleşiyorsa kendi profilindeyiz demektir
-            setIsOwnProfile(fetchedUser.username === currentUser.username);
 
-            // Kullanıcıya ait postlar cekiliyor
+            // 2. Mevcut (giriş yapmış) kullanıcıyı al
+            const currentUser = await getCurrentUser();
+
+            // 3. Profilin mevcut kullanıcıya ait olup olmadığını belirle
+            // currentUser yoksa veya username eşleşmiyorsa kendi profili değildir.
+            const isOwn =
+                !!currentUser && fetchedUser.username === currentUser.username;
+            setIsOwnProfile(isOwn);
+
+            // 4. Takip durumunu kontrol et
+            let followingStatus = false;
+            if (!isOwn && currentUser) {
+                followingStatus = await checkFollowStatus(fetchedUser.uid);
+            }
+            setIsFollowing(followingStatus);
+
+            // 5. Profil kullanıcısının takipçi ve takip ettiklerini HER ZAMAN al
+            // Bu iki isteği paralel olarak yapmak performansı artırabilir
+            const [followers, following] = await Promise.all([
+                getFollowersByUserId(fetchedUser.uid),
+                getFollowingByUserId(fetchedUser.uid),
+            ]);
+
+            setFollowerCount(followers.length);
+            setFollowingCount(following.length);
+
+            // 6. Profil kullanıcısının postlarını al
             const fetchedPosts = await fetchPostsByUserId(fetchedUser.uid);
             setPosts(fetchedPosts);
         } catch (error) {
-            console.error("Error fetching user:", error);
+            console.error("Error fetching profile data:", error);
         }
     };
-
     const handleFollow = async () => {
         try {
             // Takip etmiyor ise takip et
@@ -62,6 +83,7 @@ const ProfilePage = () => {
                     console.log("User followed successfully");
                 }
                 setIsFollowing(true);
+                setFollowerCount(followerCount + 1);
                 ShowToast("success", "Kullanıcı takip ediliyor.");
             } else {
                 const response = await unfollowUser(userProfile.uid);
@@ -69,6 +91,7 @@ const ProfilePage = () => {
                     console.log("User unfollowed successfully");
                 }
                 setIsFollowing(false);
+                setFollowerCount(followerCount - 1);
                 ShowToast("info", "Kullanıcı takipten çıkıldı.");
             }
         } catch (error) {
@@ -99,6 +122,8 @@ const ProfilePage = () => {
                             isOwnProfile={isOwnProfile}
                             handleFollow={handleFollow}
                             isFollowing={isFollowing}
+                            followerCount={followerCount}
+                            followingCount={followingCount}
                         />
                         {/* Sağ Taraf - Gönderiler ve İçerik */}
                         <div className="md:w-2/3 md:pl-6 mt-6 md:mt-0">

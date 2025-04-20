@@ -18,16 +18,16 @@ const FavoritesPage = () => {
         return (
             postData.content
                 .toLowerCase()
-                .includes(debouncedSearch.toLowerCase()) ||
+                .includes(debouncedSearch.toLowerCase().trim()) ||
             postData.user.username
                 .toLowerCase()
-                .includes(debouncedSearch.toLowerCase()) ||
+                .includes(debouncedSearch.toLowerCase().trim()) ||
             postData.user.firstName
                 .toLowerCase()
-                .includes(debouncedSearch.toLowerCase()) ||
+                .includes(debouncedSearch.toLowerCase().trim()) ||
             postData.user.lastName
                 .toLowerCase()
-                .includes(debouncedSearch.toLowerCase())
+                .includes(debouncedSearch.toLowerCase().trim())
         );
     });
 

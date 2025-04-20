@@ -17,23 +17,22 @@ const SavedPage = () => {
         return (
             postData.content
                 .toLowerCase()
-                .includes(debouncedValue.toLowerCase()) ||
+                .includes(debouncedValue.toLowerCase().trim()) ||
             postData.user.username
                 .toLowerCase()
-                .includes(debouncedValue.toLowerCase()) ||
+                .includes(debouncedValue.toLowerCase().trim()) ||
             postData.user.firstName
                 .toLowerCase()
-                .includes(debouncedValue.toLowerCase()) ||
+                .includes(debouncedValue.toLowerCase().trim()) ||
             postData.user.lastName
                 .toLowerCase()
-                .includes(debouncedValue.toLowerCase())
+                .includes(debouncedValue.toLowerCase().trim())
         );
     });
 
     const fetchSavedPosts = async () => {
         try {
             const posts = await getSavedPosts();
-            console.log(posts[0]);
             setSavedPosts(posts);
         } catch (error) {
             console.error("Error fetching saved posts:", error);
