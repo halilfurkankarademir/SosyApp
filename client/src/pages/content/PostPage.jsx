@@ -1,77 +1,138 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/common/Navbar";
 import Sidebar from "../../components/common/Sidebar";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom"; // useNavigate import edildi
+import { FaArrowLeft } from "react-icons/fa";
+import { fetchPostById } from "../../api/postApi"; // Sadece bu API kalsın
+import { PostCard } from "../../components/features/posts";
+import useUserStore from "../../hooks/useUserStore";
+import { getCurrentUser } from "../../api/userApi";
 import {
-    FaHeart,
-    FaComment,
-    FaShare,
-    FaBookmark,
-    FaArrowLeft,
-} from "react-icons/fa";
-import { FiMoreHorizontal } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
-import FriendsBar from "../../components/common/SuggestionsCard";
-import { fakePosts } from "../../constants/fakeDatas";
+    createComment,
+    deleteComment,
+    getCommentsByPostId,
+} from "../../api/commentApi";
+import { getDateDiff } from "../../utils/helpers";
+import { ShowToast } from "../../components/ui/toasts/ShowToast";
+import { useNavigation } from "../../context/NavigationContext";
 
 const PostPage = () => {
     const { postId } = useParams();
-    const navigate = useNavigate();
-    const [post, setPost] = useState(null);
-    const [comment, setComment] = useState("");
+    const { navigateToPage } = useNavigation();
+    const user = useUserStore((state) => state.user);
+    const setUser = useUserStore((state) => state.setUser);
 
-    // Sahte bir yorum dizisi
-    const [comments, setComments] = useState([
-        {
-            id: 1,
-            username: "aylin_yildiz",
-            profilePic: "https://randomuser.me/api/portraits/women/65.jpg",
-            content: "Çok güzel bir fotoğraf! Orada olmalıyım 😍",
-            timestamp: "45 dakika önce",
-            likes: 8,
-        },
-        {
-            id: 2,
-            username: "baris_kaya",
-            profilePic: "https://randomuser.me/api/portraits/men/41.jpg",
-            content: "Harika görünüyor! Bir dahaki sefere beni de çağır!",
-            timestamp: "2 saat önce",
-            likes: 5,
-        },
-    ]);
+    const [post, setPost] = useState(null); // Gönderi verisi
+    const [comment, setComment] = useState(""); // Yeni yorum input state'i
+    const [comments, setComments] = useState([]); // Yorumlar (şimdilik lokal)
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        // Gerçek uygulamada API'den çekilecek
-        // Şimdilik sahte verileri kullanıyoruz
-        const foundPost = fakePosts[parseInt(postId)];
-        if (foundPost) {
-            setPost(foundPost);
-        }
-    }, [postId]);
-
-    const handleCommentSubmit = (e) => {
-        e.preventDefault();
-        if (comment.trim()) {
-            // Yeni yorumu ekle
-            const newComment = {
-                id: comments.length + 1,
-                username: "merve_demir", // Mevcut kullanıcı
-                profilePic: "https://randomuser.me/api/portraits/women/10.jpg",
-                content: comment,
-                timestamp: "Az önce",
-                likes: 0,
-            };
-            setComments([newComment, ...comments]);
-            setComment(""); // Formu sıfırla
+    // --- Mevcut Veri Çekme Fonksiyonunuz ---
+    const fetchDatas = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const postData = await fetchPostById(postId);
+            const currentUser = await getCurrentUser();
+            const comments = await getCommentsByPostId(postId);
+            if (!postData) {
+                throw new Error("Gönderi bulunamadı.");
+            }
+            setComments(comments);
+            setUser(currentUser);
+            setPost(postData);
+        } catch (error) {
+            console.error("Error fetching post:", error);
+            setError(error.message || "Gönderi yüklenirken bir hata oluştu.");
+            document.title = "Hata";
+        } finally {
+            setIsLoading(false);
         }
     };
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        fetchDatas();
+    }, [postId]);
+
+    // --- Mevcut Yorum Ekleme Fonksiyonunuz (Lokal State'i Günceller) ---
+    const handleCommentSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const postIdInt = parseInt(postId);
+            await createComment({
+                postId: postIdInt,
+                content: comment,
+            });
+            const updatedComments = await getCommentsByPostId(postId);
+            setComments(updatedComments);
+            setComment("");
+            ShowToast("success", "Yorum başarıyla eklendi.");
+        } catch (error) {
+            console.log("Error adding comment:", error);
+        }
+    };
+
+    // Yorum silme fonksiyonu
+    const handleCommentRemove = async (commentId) => {
+        try {
+            await deleteComment(commentId);
+            const updatedComments = await getCommentsByPostId(postId);
+            setComments(updatedComments);
+            ShowToast("success", "Yorum başarıyla silindi.");
+        } catch (error) {
+            console.log("Error removing comment:", error);
+        }
+    };
+
+    // Yükleme Durumu
+    if (isLoading) {
+        return (
+            <>
+                <Navbar />
+                <div className="page-container md:py-36 md:px-6 justify-center items-center">
+                    <p className="text-white text-center">Yükleniyor...</p>
+                </div>
+            </>
+        );
+    }
+
+    // Hata Durumu
+    if (error) {
+        return (
+            <>
+                <Navbar />
+                <div className="page-container md:py-36 md:px-6 justify-center items-center">
+                    <div className="text-center text-red-500">
+                        <p>{error}</p>
+                        <button
+                            onClick={() => navigateToPage(-1)}
+                            className="mt-4 px-4 py-2 bg-neutral-700 rounded hover:bg-neutral-600 transition text-white"
+                        >
+                            Geri Dön
+                        </button>
+                    </div>
+                </div>
+            </>
+        );
+    }
+
+    // Gönderi bulunamadıysa
     if (!post) {
         return (
             <>
                 <Navbar />
-                <div className="flex min-h-screen justify-center bg-neutral-900 z-10 py-24 md:py-36">
-                    <p className="text-white">Gönderi yükleniyor...</p>
+                <div className="page-container md:py-36 md:px-6 justify-center items-center">
+                    <div className="text-center text-neutral-400">
+                        <p>Gönderi bulunamadı veya silinmiş.</p>
+                        <button
+                            onClick={() => navigateToPage(-1)}
+                            className="mt-4 px-4 py-2 bg-neutral-700 rounded hover:bg-neutral-600 transition text-white"
+                        >
+                            Geri Dön
+                        </button>
+                    </div>
                 </div>
             </>
         );
@@ -80,120 +141,37 @@ const PostPage = () => {
     return (
         <>
             <Navbar />
-            <div className="flex min-h-screen justify-center bg-neutral-900 z-10 py-24 md:py-36 px-4 md:px-0">
+            <div className="page-container md:py-36 md:px-6">
                 {/* Grid Layout */}
-                <div
-                    className="w-full md:grid md:grid-cols-4 md:gap-4"
-                    style={{ maxWidth: "84rem" }}
-                >
+                <div className="page-grid-layout-other">
                     {/* Sidebar - Mobilde gizli */}
-                    <div className="hidden md:block md:col-span-1">
-                        <Sidebar />
-                        <div className="mt-4">
-                            <FriendsBar />
-                        </div>
-                    </div>
+                    <Sidebar />
 
                     {/* Post detayları ve yorumlar */}
-                    <div className="md:col-span-3 space-y-4">
+                    <div className="md:col-span-3 w-full space-y-4 ml-72">
+                        {" "}
                         <button
-                            onClick={() => navigate(-1)}
+                            onClick={() => navigateToPage(-1)}
                             className="flex items-center space-x-2 text-neutral-400 hover:text-pink-500 transition mb-4"
                         >
                             <FaArrowLeft />
                             <span>Geri Dön</span>
                         </button>
-
-                        {/* Gönderi Kartı */}
-                        <div className="bg-neutral-800 p-4 md:p-6 rounded-lg shadow-lg text-white">
-                            {/* Kullanıcı Bilgileri ve Zaman Bilgisi*/}
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center space-x-3">
-                                    <img
-                                        src={post.profilePic}
-                                        alt="Profil"
-                                        className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
-                                    />
-                                    <div className="flex flex-col">
-                                        <span className="text-sm md:text-md">
-                                            {post.username}
-                                        </span>
-                                        <span className="text-xs text-gray-400">
-                                            1 saat
-                                        </span>
-                                    </div>
-                                </div>
-                                <button className="text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                                    <FiMoreHorizontal className="text-lg" />
-                                </button>
-                            </div>
-
-                            {/* Gönderi İçeriği */}
-                            <div className="mb-4">
-                                <p className="text-sm md:text-md">
-                                    {post.content}
-                                </p>
-                            </div>
-
-                            {/* Gönderi Medyası (Opsiyonel) */}
-                            {post.photo && (
-                                <div className="mb-4">
-                                    <img
-                                        src={post.photo}
-                                        alt="Gönderi Medyası"
-                                        className="w-full rounded-lg"
-                                    />
-                                </div>
-                            )}
-
-                            {/* İstatistikler */}
-                            <div className="flex items-center justify-between text-xs md:text-sm text-gray-400 border-t border-b border-neutral-700 py-2 md:py-3 my-3 md:my-4">
-                                <div className="flex items-center space-x-2 md:space-x-4">
-                                    <div className="flex items-center space-x-1">
-                                        <FaHeart />
-                                        <span>{post.likes} beğeni</span>
-                                    </div>
-                                    <div className="flex items-center space-x-1">
-                                        <FaComment />
-                                        <span>{post.comments} yorum</span>
-                                    </div>
-                                    <div className="flex items-center space-x-1">
-                                        <FaShare />
-                                        <span>{post.shares} paylaşım</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Butonlar */}
-                            <div className="flex items-center justify-around text-xs md:text-sm mb-4 md:mb-6">
-                                <button className="flex items-center space-x-1 md:space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                                    <FaHeart className="text-md" />
-                                    <span>Beğen</span>
-                                </button>
-                                <button className="flex items-center space-x-1 md:space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                                    <FaComment className="text-md" />
-                                    <span>Yorum Yap</span>
-                                </button>
-                                <button className="flex items-center space-x-1 md:space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                                    <FaBookmark className="text-md" />
-                                    <span>Kaydet</span>
-                                </button>
-                                <button className="flex items-center space-x-1 md:space-x-2 text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer">
-                                    <FaShare className="text-md" />
-                                    <span>Paylaş</span>
-                                </button>
-                            </div>
-
-                            {/* Yorum Ekleme */}
+                        {post && <PostCard postData={post} />}
+                        <div className="bg-neutral-800 p-4 md:p-6 rounded-lg shadow-lg text-white mt-4 md:mt-6">
+                            {/* --- Yorum Ekleme Formu (Mevcut Fonksiyonla Çalışır) --- */}
                             <form
                                 onSubmit={handleCommentSubmit}
-                                className="mb-4 md:mb-6"
+                                className="mb-6"
                             >
-                                <div className="flex items-start space-x-2">
+                                <div className="flex items-start space-x-3">
                                     <img
-                                        src="https://randomuser.me/api/portraits/women/10.jpg"
+                                        src={
+                                            user?.profilePicture ||
+                                            "https://via.placeholder.com/150/771796"
+                                        } // Giriş yapmış kullanıcının resmi veya varsayılan
                                         alt="Profil"
-                                        className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
+                                        className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover mt-1"
                                     />
                                     <div className="flex-1">
                                         <textarea
@@ -201,59 +179,104 @@ const PostPage = () => {
                                             onChange={(e) =>
                                                 setComment(e.target.value)
                                             }
-                                            className="w-full p-2 md:p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white resize-none focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base"
-                                            placeholder="Düşüncelerini paylaş..."
-                                            rows="2"
+                                            className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white resize-none focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm placeholder-neutral-400"
+                                            placeholder="Bir yorum ekle..."
+                                            rows="3"
                                         ></textarea>
-                                        <button
-                                            type="submit"
-                                            className="mt-2 px-3 py-1 md:px-4 md:py-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg text-white text-xs md:text-sm hover:opacity-90 transition"
-                                        >
-                                            Yorum Yap
-                                        </button>
+                                        <div className="flex justify-end mt-2">
+                                            <button
+                                                type="submit"
+                                                disabled={!comment.trim()}
+                                                className="px-4 py-2 bg-gradient-to-r from-pink-500 to-blue-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                Gönder
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
 
-                            {/* Yorumlar Listesi */}
-                            <div className="space-y-3 md:space-y-4">
-                                <h3 className="text-base md:text-lg font-semibold">
+                            {/* --- Yorumlar Listesi (Lokal State'den Gelir) --- */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-semibold border-b border-neutral-700 pb-2 mb-4">
                                     Yorumlar ({comments.length})
                                 </h3>
-
-                                {comments.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="flex items-start space-x-2 md:space-x-3 p-2 md:p-3 border-b border-neutral-700"
-                                    >
-                                        <img
-                                            src={item.profilePic}
-                                            alt="Profil"
-                                            className="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover"
-                                        />
-                                        <div className="flex-1">
-                                            <div className="flex items-center space-x-2 mb-1">
-                                                <span className="font-medium text-xs md:text-sm">
-                                                    {item.username}
-                                                </span>
-                                                <span className="text-xs text-neutral-400">
-                                                    {item.timestamp}
-                                                </span>
+                                {comments.length > 0 ? (
+                                    comments.map((comment) => (
+                                        <div
+                                            key={comment.id}
+                                            className="flex items-start space-x-3 py-3 border-b border-neutral-700 last:border-b-0 relative"
+                                        >
+                                            <img
+                                                src={
+                                                    comment.user.profilePicture
+                                                } // Lokaldeki resim veya varsayılan
+                                                alt="Profil"
+                                                className="w-8 h-8 md:w-9 md:h-9 rounded-full object-cover cursor-pointer"
+                                                onClick={() =>
+                                                    navigateToPage(
+                                                        `profile/${comment.user.username}`
+                                                    )
+                                                }
+                                            />
+                                            <div className="flex-1">
+                                                <div className="flex items-baseline space-x-2 mb-1">
+                                                    <span
+                                                        className="font-semibold text-sm text-white cursor-pointer"
+                                                        onClick={() =>
+                                                            navigateToPage(
+                                                                `profile/${comment.user.username}`
+                                                            )
+                                                        }
+                                                    >
+                                                        {comment.user.username}
+                                                    </span>
+                                                    <span className="text-xs text-neutral-400">
+                                                        {getDateDiff(
+                                                            comment.createdAt
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                <p className="text-sm text-neutral-300 whitespace-pre-wrap break-words">
+                                                    {comment.content}
+                                                </p>
                                             </div>
-                                            <p className="text-xs md:text-sm text-neutral-300">
-                                                {item.content}
-                                            </p>
-                                            <div className="flex items-center mt-1 md:mt-2 text-xs text-neutral-400 space-x-3 md:space-x-4">
-                                                <button className="hover:text-pink-500 transition">
-                                                    Beğen ({item.likes})
+                                            {
+                                                // Eger yorumu kullanici yaptiysa silme butonu goster
+                                            }
+                                            {user?.uid === comment.user.uid && (
+                                                <button
+                                                    className="absolute right-0 top-3 text-neutral-400 hover:text-red-500 transition"
+                                                    onClick={() =>
+                                                        handleCommentRemove(
+                                                            comment.id
+                                                        )
+                                                    }
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        className="h-4 w-4"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                        />
+                                                    </svg>
                                                 </button>
-                                                <button className="hover:text-pink-500 transition">
-                                                    Yanıtla
-                                                </button>
-                                            </div>
+                                            )}
                                         </div>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : (
+                                    <p className="text-center text-neutral-400 text-sm py-4">
+                                        Henüz yorum yapılmamış. İlk yorumu sen
+                                        yap!
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

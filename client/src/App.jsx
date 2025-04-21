@@ -4,6 +4,7 @@ import { AppRoutes } from "./config/routes";
 import { AuthProvider } from "./context/AuthContext";
 import { NavigationProvider } from "./context/NavigationContext";
 import { Toaster } from "react-hot-toast";
+import { NotificationProvider } from "./context/NotificationContext";
 
 /**
  * Ana uygulama bileşeni
@@ -13,9 +14,11 @@ function App() {
     return (
         <BrowserRouter>
             <AuthProvider>
-                <NavigationProvider>
-                    <AppRoutes />
-                </NavigationProvider>
+                <NotificationProvider>
+                    <NavigationProvider>
+                        <AppRoutes />
+                    </NavigationProvider>
+                </NotificationProvider>
             </AuthProvider>
             <Footer />
             {/* Tost bildirimler icin gerekli paket */}

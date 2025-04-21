@@ -7,6 +7,7 @@ import { getCurrentUser } from "../../api/userApi";
 import FollowerCard from "../../components/ui/cards/FollowerCard";
 import useUserStore from "../../hooks/useUserStore";
 import { getFollowers } from "../../api/followApi";
+import { Spinner } from "@heroui/react";
 
 const FollowersPage = () => {
     const [search, setSearch] = useState("");
@@ -78,30 +79,15 @@ const FollowersPage = () => {
                                 placeholderText="Takipçileri Ara"
                             />
 
+                            {!filteredFollowers && <Spinner />}
+
                             {/* Takipçi Listesi */}
-                            <div className="space-y-4">
-                                {filteredFollowers.length === 0 ? (
-                                    <div className="text-center py-10">
-                                        <div className="flex justify-center mb-4">
-                                            <BsPeopleFill className="text-6xl text-neutral-600" />
-                                        </div>
-                                        <h3 className="text-xl font-semibold text-white mb-2">
-                                            Henüz takipçin yok
-                                        </h3>
-                                        <p className="text-sm text-neutral-400">
-                                            Paylaşımlarını artırarak takipçi
-                                            kazanabilirsin.
-                                        </p>
-                                    </div>
-                                ) : (
-                                    filteredFollowers.map((follower, index) => (
-                                        <FollowerCard
-                                            follower={follower.FollowerUser}
-                                            key={index}
-                                        />
-                                    ))
-                                )}
-                            </div>
+                            {filteredFollowers.map((follower, index) => (
+                                <FollowerCard
+                                    follower={follower.FollowerUser}
+                                    key={index}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

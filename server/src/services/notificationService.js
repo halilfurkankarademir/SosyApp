@@ -33,9 +33,6 @@ export function sendLikeNotification(likerUser, postOwnerId, postId) {
         return;
     }
 
-    console.log("Gonderi sahibi", postOwnerId);
-    console.log("Begenen kullanıcı", likerUser.uid);
-
     sendNotification(postOwnerId, {
         type: "like",
         message: `${likerUser.username} gönderini beğendi.`,
@@ -45,3 +42,17 @@ export function sendLikeNotification(likerUser, postOwnerId, postId) {
         timestamp: new Date(),
     });
 }
+
+export const sendFollowNotification = (followerUser, followedUserId) => {
+    if (followerUser.uid === followedUserId) {
+        return;
+    }
+    console.log("Sending follow notification to user:", followedUserId);
+    sendNotification(followedUserId, {
+        type: "follow",
+        message: `${followerUser.username} seni takip etmeye başladı.`,
+        followerUsername: followerUser.username,
+        followerProfilePicture: followerUser.profilePicture,
+        timestamp: new Date(),
+    });
+};

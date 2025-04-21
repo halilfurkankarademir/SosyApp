@@ -47,7 +47,20 @@ export default {
 
     async getById(postId) {
         try {
-            return await Post.findByPk(postId);
+            return await Post.findByPk(postId, {
+                include: [
+                    {
+                        model: User,
+                        attributes: [
+                            "uid",
+                            "username",
+                            "profilePicture",
+                            "firstName",
+                            "lastName",
+                        ],
+                    },
+                ],
+            });
         } catch (error) {
             throw new Error(`Post fetch failed: ${error.message}`);
         }

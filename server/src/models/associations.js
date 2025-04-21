@@ -3,6 +3,7 @@ import User from "./userModel.js";
 import Like from "./likeModel.js";
 import Saved from "./savedModel.js";
 import Follow from "./followModel.js";
+import Comment from "./commentModel.js";
 
 export default function setupAssociations() {
     // User - Follow ilişkisi (1-N)
@@ -98,5 +99,16 @@ export default function setupAssociations() {
     Post.hasMany(Saved, {
         foreignKey: "postId",
         sourceKey: "id",
+    });
+
+    // Comment ve User arasındaki ilişki (1-N)
+    User.hasMany(Comment, {
+        foreignKey: "userId",
+        sourceKey: "uid",
+    });
+
+    Comment.belongsTo(User, {
+        foreignKey: "userId",
+        targetKey: "uid",
     });
 }

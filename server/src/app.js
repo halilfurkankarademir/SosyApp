@@ -18,6 +18,7 @@ import authRoutes from "./routes/authRoutes.js";
 import likeRoutes from "./routes/likeRoutes.js";
 import followRoutes from "./routes/followRoutes.js";
 import savedRoutes from "./routes/savedRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 import { verifyUserFromTokenCookie } from "./utils/authHelper.js";
 import { initializeNotificationService } from "./services/notificationService.js";
 
@@ -90,6 +91,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/likes", likeRoutes);
 app.use("/api/follows", followRoutes);
 app.use("/api/saved", savedRoutes);
+app.use("/api/comments", commentRoutes);
 
 // 6. Hata yönetimi (en sonda olmalı)
 app.use((err, req, res, next) => {

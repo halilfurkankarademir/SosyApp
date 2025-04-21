@@ -20,7 +20,7 @@ const FollowerCard = ({ follower }) => {
 
     return (
         <div
-            className="flex items-center justify-between p-4 bg-neutral-700 rounded-lg hover:bg-neutral-600 transition duration-200 cursor-pointer"
+            className="flex items-center justify-between p-4 bg-neutral-700 rounded-lg hover:bg-neutral-600 transition duration-200 cursor-pointer mt-4"
             onClick={handleClick}
         >
             <div className="flex items-center space-x-3">

@@ -1,13 +1,20 @@
 // takip islemleri icin controllerlar
 import followService from "../services/followService.js";
+import { sendFollowNotification } from "../services/notificationService.js";
+import UserService from "../services/userService.js";
 
 const followController = {
     // FollowerId takip eden kullanıcı idsi, FollowingId takip edilen kullanıcı idsi
     async createFollow(req, res) {
-        const { userId } = req.params;
+        const followedUserId = req.params.userId;
         const followerId = req.user.uid;
-        const follower = await followService.followUser(followerId, userId);
-        res.json(follower);
+        const follow = await followService.followUser(
+            followerId,
+            followedUserId
+        );
+        const followerUser = await UserService.getUserById(followerId, req.ip);
+        sendFollowNotification(followerUser, followedUserId);
+        res.json(follow);
     },
     async deleteFollow(req, res) {
         const { userId } = req.params;

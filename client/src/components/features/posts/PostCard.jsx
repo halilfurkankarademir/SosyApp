@@ -61,7 +61,7 @@ const PostCard = ({ postData, handleRemove }) => {
     };
 
     // Yorum sayfasına yönlendirme
-    const handleComment = () => {
+    const handlePostClick = () => {
         navigateToPage(`/post/${id}`);
     };
 
@@ -154,7 +154,7 @@ const PostCard = ({ postData, handleRemove }) => {
             </div>
 
             {/* Gönderi İçeriği */}
-            <div className="mb-3 md:mb-4 md:mt-4">
+            <div className="mb-3 md:mb-4 md:mt-4" onClick={handlePostClick}>
                 <p className="text-sm md:text-base">
                     {content ? content : " "}
                 </p>
@@ -208,7 +208,7 @@ const PostCard = ({ postData, handleRemove }) => {
 
                 {/* Yorum Butonu */}
                 <button
-                    onClick={handleComment}
+                    onClick={handlePostClick}
                     className="flex flex-col md:flex-row items-center md:space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
                     aria-label="Yorum yap"
                 >

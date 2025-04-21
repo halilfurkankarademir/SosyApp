@@ -28,7 +28,7 @@ export default {
     },
 
     async delete(userId) {
-        return User.destroy({ where: { id: userId } });
+        return User.destroy({ where: { uid: userId } });
     },
 
     async getAll(options = {}) {

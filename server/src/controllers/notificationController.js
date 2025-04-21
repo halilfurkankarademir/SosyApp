@@ -1,1 +1,0 @@
-// bildirimler icin controllerlar
