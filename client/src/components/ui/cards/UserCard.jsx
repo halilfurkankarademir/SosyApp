@@ -2,20 +2,20 @@ import React, { memo } from "react";
 import { FaUserTimes } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
 
-const FollowerCard = ({ follower }) => {
+const UserCard = ({ user }) => {
     const { navigateToPage } = useNavigation();
 
     // Veri varsa ve yüklenmiyorsa gerçek kartı göster
     const handleClick = () => {
-        navigateToPage(`/profile/${follower.username}`);
-        console.log(`Clicked on follower: ${follower.username}`);
+        navigateToPage(`/profile/${user.username}`);
+        console.log(`Clicked on user: ${user.username}`);
     };
 
     const handleRemoveClick = (e) => {
         e.stopPropagation(); // Kartın tıklanmasını engelle
-        console.log(`Remove follower button clicked for: ${follower.username}`);
+        console.log(`Remove user button clicked for: ${user.username}`);
         // Takipçiyi kaldırma API çağrısını burada yapabilirsiniz
-        // Örneğin: removeFollower(follower.id);
+        // Örneğin: removeuser(user.id);
     };
 
     return (
@@ -26,29 +26,25 @@ const FollowerCard = ({ follower }) => {
             <div className="flex items-center space-x-3">
                 <img
                     src={
-                        follower.profilePicture ||
+                        user.profilePicture ||
                         "https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
                     }
                     alt={
-                        follower.firstName
-                            ? `${follower.firstName} ${
-                                  follower.lastName || ""
-                              }`.trim()
-                            : follower.username
+                        user.firstName
+                            ? `${user.firstName} ${user.lastName || ""}`.trim()
+                            : user.username
                     }
                     className="w-12 h-12 rounded-full object-cover flex-shrink-0" // flex-shrink-0 eklemek iyi olabilir
                 />
                 <div>
                     <h3 className="text-white font-medium">
-                        {follower.firstName || follower.lastName
-                            ? `${follower.firstName || ""} ${
-                                  follower.lastName || ""
+                        {user.firstName || user.lastName
+                            ? `${user.firstName || ""} ${
+                                  user.lastName || ""
                               }`.trim()
-                            : follower.username}
+                            : user.username}
                     </h3>
-                    <p className="text-sm text-neutral-400">
-                        @{follower.username}
-                    </p>
+                    <p className="text-sm text-neutral-400">@{user.username}</p>
                 </div>
             </div>
 
@@ -63,4 +59,4 @@ const FollowerCard = ({ follower }) => {
     );
 };
 
-export default memo(FollowerCard);
+export default memo(UserCard);

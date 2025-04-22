@@ -100,7 +100,7 @@ const NewPost = ({ onPostCreated }) => {
     }
 
     return (
-        <div className="bg-neutral-800 rounded-xl p-3 md:p-4 mb-4 md:mb-6">
+        <div className="bg-neutral-800 rounded-xl p-3 md:p-4 mb-4 md:mb-2">
             <div className="flex items-center space-x-2 md:space-x-3 mb-2 md:mb-3">
                 <LazyLoadImage
                     src={user.profilePicture}

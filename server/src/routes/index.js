@@ -7,6 +7,7 @@ import likeRoutes from "./likeRoutes.js";
 import followRoutes from "./followRoutes.js";
 import savedRoutes from "./savedRoutes.js";
 import commentRoutes from "./commentRoutes.js";
+import searchRoutes from "./searchRoutes.js";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/likes", likeRoutes);
 router.use("/follows", followRoutes);
 router.use("/saved", savedRoutes);
 router.use("/comments", commentRoutes);
+router.use("/search", searchRoutes);
 
 export default router;

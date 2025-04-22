@@ -1,6 +1,4 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import userRepository from "../repositories/userRepository.js";
 import { verifyUserFromTokenCookie } from "../utils/authHelper.js";
 dotenv.config();
 

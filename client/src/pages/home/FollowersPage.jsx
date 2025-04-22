@@ -4,7 +4,7 @@ import { BsPeopleFill } from "react-icons/bs";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
 import { useDebounce } from "use-debounce";
 import { getCurrentUser } from "../../api/userApi";
-import FollowerCard from "../../components/ui/cards/FollowerCard";
+import UserCard from "../../components/ui/cards/UserCard";
 import useUserStore from "../../hooks/useUserStore";
 import { getFollowers } from "../../api/followApi";
 import { Spinner } from "@heroui/react";
@@ -82,8 +82,8 @@ const FollowersPage = () => {
 
                             {/* Takipçi Listesi */}
                             {filteredFollowers.map((follower, index) => (
-                                <FollowerCard
-                                    follower={follower.FollowerUser}
+                                <UserCard
+                                    user={follower.FollowerUser}
                                     key={index}
                                 />
                             ))}
