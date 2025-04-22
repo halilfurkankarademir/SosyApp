@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GlowEffect } from "../../components/ui/effects";
 import { FaGoogle } from "react-icons/fa6";
 import { Navbar } from "../../components/common";
@@ -7,24 +7,46 @@ import { loginFields } from "../../utils/constants";
 import { useNavigation } from "../../context/NavigationContext";
 import { useAuth } from "../../context/AuthContext";
 import { login } from "../../api/authApi";
+import { ShowToast } from "../../components/ui/toasts/ShowToast";
 
 const LoginPage = () => {
     const { navigateToPage } = useNavigation();
     const { isAuthenticated, setIsAuthenticated } = useAuth();
 
     const handleLogin = async (e) => {
-        e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-        const user = await login(email, password);
-        console.log("User:", user);
-        if (!user) {
-            console.log("Giriş işlemi başarısız!");
-            return;
+        try {
+            e.preventDefault();
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+            if (!email || !password) {
+                ShowToast("warning", "Lütfen e-posta ve şifre giriniz.");
+                return;
+            }
+            const user = await login(email, password);
+            console.log("User:", user);
+            if (!user) {
+                console.log("Giriş işlemi başarısız!");
+                return;
+            }
+            setIsAuthenticated(true);
+            navigateToPage("/");
+        } catch (error) {
+            console.log("Login error:", error);
+            const errorMessage = error.response.data.details;
+            ShowToast("error", errorMessage);
         }
-        setIsAuthenticated(true);
-        navigateToPage("/");
     };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigateToPage("/");
+        }
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        document.title = "Giriş Yap - SosyApp";
+    }, []);
 
     return (
         <>
@@ -42,11 +64,6 @@ const LoginPage = () => {
                     alternateLinkText="Hesabın yok mu?"
                     forgotPasswordLink={"/forgot-password"}
                 />
-
-                {/* Sosyal Giris Butonlari */}
-                <div className="flex justify-center space-x-4 absolute bottom-20">
-                    <FaGoogle className="text-xl text-white cursor-pointer " />
-                </div>
             </div>
         </>
     );

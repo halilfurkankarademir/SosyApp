@@ -22,7 +22,8 @@ const NotificationsDropdown = ({ notificationsData }) => {
                             className="h-8 w-8 rounded-full mr-2 object-cover"
                             src={
                                 notification.likerProfilePicture ||
-                                notification.followerProfilePicture
+                                notification.followerProfilePicture ||
+                                notification.commenterProfilePicture
                             }
                             alt="Profile"
                         />

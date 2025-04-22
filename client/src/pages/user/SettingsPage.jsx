@@ -6,14 +6,18 @@ import {
     FaBell,
     FaTrashAlt,
 } from "react-icons/fa";
-import Navbar from "../../components/common/Navbar";
 import { useNavigate } from "react-router-dom";
 import { MdAccountCircle } from "react-icons/md";
 import Modal from "react-modal";
 import { ShowToast } from "../../components/ui/toasts/ShowToast";
+import useUserStore from "../../hooks/useUserStore";
+import { deleteUser } from "../../api/userApi";
+import { useAuth } from "../../context/AuthContext";
 
 const SettingsPage = () => {
     const navigate = useNavigate();
+    const setUser = useUserStore((state) => state.setUser);
+    const { setIsAuthenticated } = useAuth();
 
     // Ayarlar için state'ler
     const [notificationsEnabled, setNotificationsEnabled] = useState(
@@ -43,13 +47,17 @@ const SettingsPage = () => {
     };
 
     // Gerçek hesap silme işlemini yapacak fonksiyon
-    const confirmDeleteAccount = () => {
-        console.log("Hesap silme işlemi başlatıldı!");
-        // Burada API çağrısı vb. yapılacak
-        // Başarılı silme sonrası kullanıcıyı yönlendir
-        handleModal(); // Modalı kapat
-        alert("Hesap başarıyla silindi! (Simülasyon)"); // Geçici bildirim
-        navigate("/"); // Ana sayfaya veya giriş sayfasına yönlendir
+    const confirmDeleteAccount = async () => {
+        try {
+            const response = await deleteUser();
+            setUser(null);
+            localStorage.setItem("isAuthenticated", false);
+            setIsAuthenticated(false);
+            handleModal(); // Modalı kapat
+            navigate("/"); // Ana sayfaya veya giriş sayfasına yönlendir
+        } catch (error) {
+            console.log("Hesap silme hatası:", error);
+        }
     };
 
     const handleNotificationsToggle = () => {
@@ -76,7 +84,6 @@ const SettingsPage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={true} />
             {/* Sayfa Arka Planı ve Padding */}
             <div className="bg-neutral-900 min-h-screen text-white py-28 px-4 md:px-8 lg:px-20">
                 <div className="container mx-auto max-w-4xl">

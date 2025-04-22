@@ -47,3 +47,15 @@ export const getCommentsByPostId = async (postId) => {
         throw error;
     }
 };
+
+export const getCommentCount = async (postId) => {
+    try {
+        const response = await apiClient.get(`/count/${postId}`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching comment count:", error);
+        throw error;
+    }
+};

@@ -26,7 +26,7 @@ router.post("/", userController.createUser);
 router.put("/", authenticateToken, userController.updateUser);
 
 // Kullanıcı silme
-router.delete("/:userId", userController.deleteUser);
+router.delete("/", authenticateToken, userController.deleteUser);
 
 // Rastgele onerilecek kullanicilari getirme 5 kisi
 router.get("/random", authenticateToken, userController.getRandomUsers);

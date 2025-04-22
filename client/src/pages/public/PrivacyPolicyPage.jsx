@@ -1,5 +1,4 @@
 import React, { memo, useEffect } from "react";
-import Navbar from "../../components/common/Navbar";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 
 /**
@@ -12,7 +11,6 @@ const PrivacyPolicyPage = () => {
 
     return (
         <>
-            <Navbar />
             <div className="min-h-screen bg-neutral-900 text-white p-6 md:p-12 lg:p-16">
                 <div className="container mx-auto px-4 py-12">
                     <h1 className="text-3xl font-bold mb-8 0 text-center">

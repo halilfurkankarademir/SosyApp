@@ -14,13 +14,32 @@ const AuthService = {
 
             const hashedPassword = await bcrypt.hash(passwordStr, 10);
 
-            console.log("Register - Email:", email);
-            console.log("Register - Username:", username);
-            console.log("Register - Hashed Password:", hashedPassword);
-            console.log(
-                "Register - Hashed Password length:",
-                hashedPassword.length
-            );
+            let existingUsername;
+            try {
+                existingUsername = await UserService.getUserByUsername(
+                    username
+                );
+            } catch (error) {
+                // Hata alirsa kullanici adi yok demektir
+                existingUsername = null;
+            }
+            if (existingUsername) {
+                console.log("Username already exists:", username);
+                throw new Error("Kullanıcı adı zaten kullanılıyor.");
+            }
+
+            let existingEmail;
+            try {
+                existingEmail = await UserService.getUserByEmail(email);
+            } catch (error) {
+                // Email yoksa hata verecegi icin hata durumuna null atayalim
+                existingEmail = null;
+            }
+
+            if (existingEmail) {
+                console.log("Email already exists:", email);
+                throw new Error("Email zaten kullanılıyor.");
+            }
 
             const newUser = await UserService.createUser({
                 email,
@@ -33,7 +52,7 @@ const AuthService = {
             return newUser;
         } catch (error) {
             console.error("Register error:", error);
-            throw new Error("Could not register user: " + error.message);
+            throw new Error(error.message);
         }
     },
 
@@ -46,7 +65,7 @@ const AuthService = {
 
             if (!user) {
                 console.log("User not found with email:", email);
-                throw new Error("User not found");
+                throw new Error("Kullanıcı bulunamadı.");
             }
 
             // Şifre doğrulama kontrolü
@@ -66,14 +85,12 @@ const AuthService = {
                 }
             } catch (bcryptError) {
                 console.error("Bcrypt compare error:", bcryptError);
-                throw new Error(
-                    "Password validation failed: " + bcryptError.message
-                );
+                throw new Error("Hatalı kullanıcı adı veya şifre girdiniz.");
             }
 
             if (!isPasswordValid) {
                 console.log("Invalid password for user:", user.email);
-                throw new Error("Invalid password");
+                throw new Error("Hatalı kullanıcı adı veya şifre girdiniz.");
             }
 
             logger.info("User logged in successfully", {

@@ -21,4 +21,11 @@ router.get(
     commentController.getCommentsByPostId
 );
 
+// Bir gonderideki yorum sayisini getirme
+router.get(
+    "/count/:postId",
+    authenticateToken,
+    commentController.getCommentCount
+);
+
 export default router;

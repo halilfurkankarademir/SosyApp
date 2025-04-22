@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { Navbar } from "../../components/common";
 import { useNavigate } from "react-router-dom";
 import {
     ProfileForm,
@@ -112,7 +111,6 @@ const EditProfilePage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={true} />
             <div className="bg-neutral-900 min-h-screen text-white py-28 px-4 md:px-8 lg:px-20">
                 <div className="container mx-auto max-w-4xl relative">
                     {" "}

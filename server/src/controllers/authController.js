@@ -76,7 +76,7 @@ const authController = {
             const userDTOInstance = new userDTO(user);
 
             if (!user) {
-                return res.status(401).json({ error: "Invalid credentials" });
+                return res.status(401).json({ error: "Kullanıcı bulunamadı." });
             }
 
             // Token oluşturma işlemi

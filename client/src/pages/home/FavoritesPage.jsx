@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Navbar, Sidebar } from "../../components/common";
 import { GoHeartFill } from "react-icons/go";
 import { FaHeartBroken } from "react-icons/fa";
 import PostCard from "../../components/features/posts/PostCard";
@@ -7,6 +6,7 @@ import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
 import { fakePosts } from "../../constants/fakeDatas";
 import { useDebounce } from "use-debounce";
 import { getLikesByUserId } from "../../api/likeApi";
+import { Sidebar } from "../../components/common";
 
 const FavoritesPage = () => {
     const [search, setSearch] = useState("");
@@ -50,7 +50,6 @@ const FavoritesPage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={true} />
             <div className="page-container py-24 md:py-36 px-4 md:px-0">
                 <div className="page-grid-layout-other">
                     {/* Sidebar - Mobilde gizli */}

@@ -6,34 +6,45 @@ import AuthForm from "../../components/features/auth/AuthForm";
 import { registerFields } from "../../utils/constants";
 import { register } from "../../api/authApi";
 import { useAuth } from "../../context/AuthContext";
+import { ShowToast } from "../../components/ui/toasts/ShowToast";
 
 const RegisterPage = () => {
     const { navigateToPage } = useNavigation();
     const { setIsAuthenticated } = useAuth();
 
     const handleRegister = async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const email = formData.get("email");
-        const password = formData.get("password");
-        const username = formData.get("username");
-        const firstName = formData.get("firstName");
-        const lastName = formData.get("lastName");
-        const user = await register(
-            email.toString().trim(),
-            password.toString().trim(),
-            username.toString().trim(),
-            firstName.toString().trim(),
-            lastName.toString().trim()
-        );
-        if (!user) {
-            console.log("Kayıt işlemi başarısız!");
-            return;
+        try {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const email = formData.get("email");
+            const password = formData.get("password");
+            const username = formData.get("username");
+            const firstName = formData.get("firstName");
+            const lastName = formData.get("lastName");
+            if (!email || !password || !username || !firstName || !lastName) {
+                ShowToast("warning", "Lütfen tüm alanları doldurun.");
+                return;
+            }
+            const user = await register(
+                email.toString().trim(),
+                password.toString().trim(),
+                username.toString().trim(),
+                firstName.toString().trim(),
+                lastName.toString().trim()
+            );
+            if (!user) {
+                console.log("Kayıt işlemi başarısız!");
+                return;
+            }
+            setIsAuthenticated(true);
+            console.log("Kayıt işlemi başarılı!", user);
+            // Kayıt başarılıysa yönlendirme
+            navigateToPage("/");
+        } catch (error) {
+            console.log("Kayıt işlemi basarısız!", error);
+            const errorMessage = error.response.data.details;
+            ShowToast("error", errorMessage);
         }
-        setIsAuthenticated(true);
-        console.log("Kayıt işlemi başarılı!", user);
-        // Kayıt başarılıysa yönlendirme
-        navigateToPage("/");
     };
 
     return (

@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { NavigationProvider } from "./context/NavigationContext";
 import { Toaster } from "react-hot-toast";
 import { NotificationProvider } from "./context/NotificationContext";
+import { Navbar } from "./components/common";
 
 /**
  * Ana uygulama bileşeni
@@ -16,6 +17,7 @@ function App() {
             <AuthProvider>
                 <NotificationProvider>
                     <NavigationProvider>
+                        <Navbar />
                         <AppRoutes />
                     </NavigationProvider>
                 </NotificationProvider>

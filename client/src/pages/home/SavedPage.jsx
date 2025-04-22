@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Sidebar } from "../../components/common";
+import { Sidebar } from "../../components/common";
 import PostCard from "../../components/features/posts/PostCard";
 import { BiBookmark } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
@@ -47,7 +47,6 @@ const SavedPage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={true} />
             <div className="page-container py-24 md:py-36 px-4 md:px-0">
                 {/* Grid Layout */}
                 <div className="page-grid-layout-other">

@@ -11,19 +11,11 @@ export const ShowToast = (type, message) => {
         case "warning":
             toast(message, {
                 icon: "⚠️",
-                style: {
-                    background: "#ffcc00",
-                    color: "#000",
-                },
             });
             break;
         case "info":
             toast(message, {
-                icon: "ℹ️",
-                style: {
-                    background: "#3498db",
-                    color: "#fff",
-                },
+                icon: "🛈",
             });
             break;
         case "notification":

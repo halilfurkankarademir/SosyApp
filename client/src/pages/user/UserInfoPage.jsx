@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import GlowEffect from "../../components/ui/effects/GlowEffect";
-import Navbar from "../../components/common/Navbar";
 import PrimaryButton from "../../components/ui/buttons/PrimaryButton";
 import { useNavigation } from "../../context/NavigationContext";
 import { useAuth } from "../../context/AuthContext";
@@ -69,7 +68,6 @@ const UserInfoPage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={false} />
             <div className="min-h-screen flex items-center justify-center bg-neutral-900 py-24 px-8 sm:px-6 lg:px-24 z-10">
                 <GlowEffect />
                 <div className="max-w-md w-full space-y-8 z-10">

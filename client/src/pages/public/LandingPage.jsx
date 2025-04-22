@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { PrimaryButton } from "../../components/ui/buttons";
 import { GlowEffect } from "../../components/ui/effects";
 import { useNavigate } from "react-router-dom";
-import { Navbar } from "../../components/common";
 import landingImage from "../../assets/images/landing.jpg";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css"; // Blur efekti için gerekli
@@ -38,9 +37,6 @@ const LandingPage = () => {
 
     return (
         <>
-            {/* Navbar ve GlowEffect'i ana container dışına almak daha mantıklı olabilir,
-                ancak mevcut yapıya göre devam ediyorum. */}
-            <Navbar isInAppPage={false} />
             <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
                 {/* GlowEffect'i container'ın içine ve belki arkasına almak daha iyi olabilir (z-0?) */}
                 <GlowEffect className="-z-10" />{" "}

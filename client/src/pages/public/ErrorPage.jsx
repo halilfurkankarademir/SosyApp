@@ -2,7 +2,6 @@ import React, { memo } from "react";
 import { BiErrorCircle } from "react-icons/bi";
 import { useNavigation } from "../../context/NavigationContext";
 import { PrimaryButton } from "../../components/ui/buttons";
-import { Navbar } from "../../components/common";
 import { GlowEffect } from "../../components/ui/effects";
 
 const ErrorPage = () => {
@@ -10,7 +9,6 @@ const ErrorPage = () => {
 
     return (
         <>
-            <Navbar />
             <GlowEffect />
             <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-900 text-white p-4">
                 {/* Hata İkonu */}

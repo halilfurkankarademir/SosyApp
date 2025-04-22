@@ -1,5 +1,7 @@
 // yorum ekleme islemleri icin controllerlar
 import commentService from "../services/commentService.js";
+import { sendCommentNotification } from "../services/notificationService.js";
+import PostService from "../services/postService.js";
 
 const commentController = {
     createComment: async (req, res) => {
@@ -12,6 +14,9 @@ const commentController = {
                 postId,
                 content
             );
+            const postDetails = await PostService.getPostById(postId);
+            const postOwnerId = postDetails.user.uid;
+            sendCommentNotification(req.user, postOwnerId, postId);
             res.status(201).json(comment);
         } catch (error) {
             console.error("Error creating comment:", error);
@@ -37,6 +42,17 @@ const commentController = {
             res.status(200).json(comments);
         } catch (error) {
             console.error("Error getting comments:", error);
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    getCommentCount: async (req, res) => {
+        try {
+            const postId = req.params.postId;
+            const commentCount = await commentService.getCommentCount(postId);
+            res.status(200).json(commentCount);
+        } catch (error) {
+            console.error("Error getting comment count:", error);
             res.status(500).json({ error: error.message });
         }
     },

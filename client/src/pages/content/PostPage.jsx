@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../components/common/Navbar";
 import Sidebar from "../../components/common/Sidebar";
 import { useParams } from "react-router-dom"; // useNavigate import edildi
 import { FaArrowLeft } from "react-icons/fa";
@@ -90,7 +89,6 @@ const PostPage = () => {
     if (isLoading) {
         return (
             <>
-                <Navbar />
                 <div className="page-container md:py-36 md:px-6 justify-center items-center">
                     <p className="text-white text-center">Yükleniyor...</p>
                 </div>
@@ -102,7 +100,6 @@ const PostPage = () => {
     if (error) {
         return (
             <>
-                <Navbar />
                 <div className="page-container md:py-36 md:px-6 justify-center items-center">
                     <div className="text-center text-red-500">
                         <p>{error}</p>
@@ -122,7 +119,6 @@ const PostPage = () => {
     if (!post) {
         return (
             <>
-                <Navbar />
                 <div className="page-container md:py-36 md:px-6 justify-center items-center">
                     <div className="text-center text-neutral-400">
                         <p>Gönderi bulunamadı veya silinmiş.</p>
@@ -140,7 +136,6 @@ const PostPage = () => {
 
     return (
         <>
-            <Navbar />
             <div className="page-container md:py-36 md:px-6">
                 {/* Grid Layout */}
                 <div className="page-grid-layout-other">

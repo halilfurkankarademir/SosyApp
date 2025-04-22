@@ -119,8 +119,13 @@ const userController = {
     // Kullanıcı silme
     deleteUser: async (req, res) => {
         try {
+            console.log("User deleting" + req.user.uid);
             const ip = req.ip;
-            await UserService.deleteUser(req.params.userId, ip);
+            const userId = req.user.uid;
+            await UserService.deleteUser(userId, ip);
+            // Cookileri temizleme
+            res.clearCookie("access_token");
+            res.clearCookie("refresh_token");
             res.status(200).json({ message: "Kullanıcı başarıyla silindi" });
         } catch (error) {
             console.error("Error deleting user:", error);

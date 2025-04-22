@@ -5,7 +5,6 @@ let userSocketsRef = {};
 export function initializeNotificationService(io, userSockets) {
     ioInstance = io;
     userSocketsRef = userSockets;
-    console.log("Notification service initialized!");
 }
 
 function sendNotification(targetUserId, data) {
@@ -53,6 +52,24 @@ export const sendFollowNotification = (followerUser, followedUserId) => {
         message: `${followerUser.username} seni takip etmeye başladı.`,
         followerUsername: followerUser.username,
         followerProfilePicture: followerUser.profilePicture,
+        timestamp: new Date(),
+    });
+};
+
+export const sendCommentNotification = (commenterUser, postOwnerId, postId) => {
+    console.log(commenterUser);
+    console.log(postOwnerId);
+    if (commenterUser.uid === postOwnerId) {
+        console.log("Commenter and post owner are the same!");
+        return;
+    }
+    console.log("Sending comment notification to user:", postOwnerId);
+    sendNotification(postOwnerId, {
+        type: "comment",
+        message: `${commenterUser.username} gönderine yorum yaptı.`,
+        postId: postId,
+        commenterUsername: commenterUser.username,
+        commenterProfilePicture: commenterUser.profilePicture,
         timestamp: new Date(),
     });
 };

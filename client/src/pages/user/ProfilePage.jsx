@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import PostCard from "../../components/features/posts/PostCard";
-import Navbar from "../../components/common/Navbar";
 import { useParams } from "react-router-dom";
 import ProfileCard from "../../components/ui/cards/ProfileCard";
 import { getCurrentUser, getUserByUsername } from "../../api/userApi";
@@ -110,7 +109,6 @@ const ProfilePage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={true} />
             <div className="bg-neutral-900 min-h-screen text-white px-4 md:px-8 lg:px-20 py-36 md:py-48 lg:py-72">
                 {/* Profil Bilgileri */}
                 <div className="container mx-auto">

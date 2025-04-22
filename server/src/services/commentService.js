@@ -42,6 +42,15 @@ const commentService = {
             throw new Error("Error getting comments: " + error.message);
         }
     },
+
+    getCommentCount: async (postId) => {
+        try {
+            const commentCount = await Comment.count({ where: { postId } });
+            return commentCount;
+        } catch (error) {
+            throw new Error("Error getting comment count: " + error.message);
+        }
+    },
 };
 
 export default commentService;

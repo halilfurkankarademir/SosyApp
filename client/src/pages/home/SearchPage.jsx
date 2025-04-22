@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import Navbar from "../../components/common/Navbar";
 import Sidebar from "../../components/common/Sidebar";
-import FriendsBar from "../../components/common/SuggestionsCard";
 import { FaSearch, FaSearchMinus } from "react-icons/fa";
 
 const SearchPage = () => {
@@ -21,7 +19,6 @@ const SearchPage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={true} />
             <div className="page-container py-24 md:py-36 px-4 md:px-0">
                 {/* Grid Layout */}
                 <div className="page-grid-layout-other">

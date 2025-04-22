@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Sidebar } from "../../components/common";
+import { Sidebar } from "../../components/common";
 import { BsPeopleFill } from "react-icons/bs";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
 import { useDebounce } from "use-debounce";
@@ -50,7 +50,6 @@ const FollowersPage = () => {
 
     return (
         <>
-            <Navbar isInAppPage={true} />
             <div className="page-container py-24 md:py-36 px-4 md:px-0">
                 <div className="page-grid-layout-other">
                     {/* Sidebar - Mobilde gizli */}

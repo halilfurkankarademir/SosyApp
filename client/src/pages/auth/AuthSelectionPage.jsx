@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import GlowEffect from "../../components/ui/effects/GlowEffect";
-import Navbar from "../../components/common/Navbar";
 import { FaSignInAlt, FaUserPlus } from "react-icons/fa"; // React Icons'tan ikonları import ediyoruz
 import LargeButton from "../../components/ui/buttons/LargeButton";
 
@@ -10,7 +9,6 @@ const AuthSelectionPage = () => {
 
     return (
         <>
-            <Navbar />
             <div className="min-h-screen flex items-center justify-center bg-neutral-900 py-24 px-8 sm:px-6 lg:px-24 z-10">
                 <GlowEffect />
                 <div className="max-w-4xl w-full space-y-8 z-10">

@@ -134,7 +134,7 @@ const UserService = {
 
             if (!user) {
                 console.warn("User not found by email:", email);
-                throw new Error("User not found");
+                throw new Error("Kayıtlı kullanıcı bulunamadı.");
             }
 
             return user;
@@ -145,9 +145,7 @@ const UserService = {
                 operation: "getUserByEmail",
                 email,
             });
-            throw new Error(
-                "Could not retrieve user by email: " + error.message
-            );
+            throw new Error("Kayıtlı kullanıcı bulunamadı.");
         }
     },
 

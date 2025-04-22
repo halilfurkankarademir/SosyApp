@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Sidebar, Navbar, SuggestionsCard } from "../../components/common";
+import { Sidebar, SuggestionsCard } from "../../components/common";
 import { NewPost, PostCard } from "../../components/features/posts";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchAllPosts, removePost } from "../../api/postApi";
 import { ShowToast } from "../../components/ui/toasts/ShowToast";
 import { getCurrentUser } from "../../api/userApi";
 import useUserStore from "../../hooks/useUserStore";
-import socket from "../../config/socket";
 
 const HomePage = () => {
     const [posts, setPosts] = useState([]);
@@ -54,7 +53,6 @@ const HomePage = () => {
 
     return (
         <>
-            <Navbar />
             <div className="page-container md:py-36 md:px-6">
                 {/* Responsive Grid Layout */}
                 <div className="page-grid-layout-other">

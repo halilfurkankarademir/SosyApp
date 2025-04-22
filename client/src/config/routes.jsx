@@ -7,6 +7,7 @@ import ErrorPage from "../pages/public/ErrorPage";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import LoadingPage from "../pages/public/LoadingPage";
+import { Navbar } from "../components/common";
 
 // Dinamik olarak yüklenecek sayfalar
 const FollowersPage = lazy(() => import("../pages/home/FollowersPage"));

@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import GlowEffect from "../../components/ui/effects/GlowEffect";
 import { Navbar } from "../../components/common";
+import { useNavigation } from "../../context/NavigationContext";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const { navigateToPage } = useNavigation();
+
+    const handleCancel = () => {
+        navigateToPage("/login");
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -14,6 +21,11 @@ const ForgotPassword = () => {
             setIsSubmitted(true);
         }
     };
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        document.title = "Şifre Sıfırlama - SosyApp";
+    }, []);
 
     return (
         <>
@@ -79,12 +91,9 @@ const ForgotPassword = () => {
                     )}
 
                     <div className="mt-6 text-center">
-                        <Link
-                            to="/login"
-                            className="text-pink-500 hover:underline"
-                        >
+                        <p className="cursor-pointer" onClick={handleCancel}>
                             Giriş sayfasına dön
-                        </Link>
+                        </p>
                     </div>
                 </div>
             </div>
