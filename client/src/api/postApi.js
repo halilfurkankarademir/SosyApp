@@ -1,88 +1,64 @@
 import axios from "axios";
 
-// Post ile ilgili işlemleri gerçekleştiren fonksiyonlar
-// Bu fonksiyonlar, API ile etkileşimde bulunarak veri alır veya gönderir
+const apiClient = axios.create({
+    baseURL: "http://localhost:3000/api/posts",
+    withCredentials: true,
+});
+
 export const createNewPost = (postData) => {
-    // Gonderi verilerini alarak api/posts endpointine post isteği gonderen bir fonksiyon
-    // Bu istek, yeni bir gonderi oluşturur ve sunucudan gelen yanıtı döner
     try {
-        return axios
-            .post("http://localhost:3000/api/posts", postData, {
-                // Http only cookileri kullanabilmek icin gerekli ayar
-                withCredentials: true,
-            })
-            .then((response) => response.data);
+        return apiClient.post("/", postData).then((response) => response.data);
     } catch (error) {
         console.error("Error creating post:", error);
+        throw error;
     }
 };
 
-export const updatePost = (postId) => {
-    // Gonderi id'sini alarak api/posts/:postId endpointine put isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi günceller ve sunucudan gelen yanıtı döner
+export const updatePost = (postId, postData) => {
     try {
-        return axios
-            .put(`http://localhost:3000/api/posts/${postId}`)
+        return apiClient
+            .put(`/${postId}`, postData)
             .then((response) => response.data);
     } catch (error) {
         console.error("Error updating post:", error);
+        throw error;
     }
 };
 
 export const removePost = (postId) => {
-    // Gonderi id'sini alarak api/posts/:postId endpointine delete isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi siler ve sunucudan gelen yanıtı döner
     try {
-        return axios
-            .delete(`http://localhost:3000/api/posts/${postId}`)
-            .then((response) => response.data);
+        return apiClient.delete(`/${postId}`).then((response) => response.data);
     } catch (error) {
         console.error("Error deleting post:", error);
+        throw error;
     }
 };
 
 export const fetchAllPosts = () => {
-    // api/posts endpointine get isteği gonderen bir fonksiyon
-    // Bu istek, tum gonderileri alır ve sunucudan gelen yanıtı döner
     try {
-        return axios
-            .get("http://localhost:3000/api/posts", {
-                withCredentials: true,
-            })
-            .then((response) => {
-                return response.data;
-            });
+        return apiClient.get("").then((response) => response.data);
     } catch (error) {
         console.error("Error fetching posts:", error);
+        throw error;
     }
 };
 
 export const fetchPostById = (postId) => {
-    // Gonderi id'sini alarak api/posts/:postId endpointine get isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi alır ve sunucudan gelen yanıtı döner
     try {
-        return axios
-            .get(`http://localhost:3000/api/posts/${postId}`, {
-                withCredentials: true,
-            })
-            .then((response) => {
-                return response.data;
-            });
+        return apiClient.get(`/${postId}`).then((response) => response.data);
     } catch (error) {
         console.error("Error fetching post by ID:", error);
+        throw error;
     }
 };
 
 export const fetchPostsByUserId = (userId) => {
     try {
-        return axios
-            .get(`http://localhost:3000/api/posts/user/${userId}`, {
-                withCredentials: true,
-            })
-            .then((response) => {
-                return response.data;
-            });
+        return apiClient
+            .get(`/user/${userId}`)
+            .then((response) => response.data);
     } catch (error) {
         console.error("Error fetching posts by user ID:", error);
+        throw error;
     }
 };

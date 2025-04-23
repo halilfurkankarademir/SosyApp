@@ -23,6 +23,16 @@ const followController = {
         res.json(follower);
     },
 
+    async deleteFollower(req, res) {
+        const followerId = req.params.followerId;
+        const followingId = req.user.uid;
+        const response = await followService.removeFollower(
+            followerId,
+            followingId
+        );
+        res.json(response);
+    },
+
     async checkFollow(req, res) {
         const followerId = req.user.uid;
         const followingId = req.params.followingUserId;

@@ -1,8 +1,10 @@
 import React, { memo } from "react";
 import { FaUserTimes } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
+import { removeFollower } from "../../../api/followApi";
+import { ShowToast } from "../toasts/ShowToast";
 
-const UserCard = ({ user }) => {
+const UserCard = ({ user, isFollowerCard, onRemoveClick }) => {
     const { navigateToPage } = useNavigation();
 
     // Veri varsa ve yüklenmiyorsa gerçek kartı göster
@@ -11,11 +13,22 @@ const UserCard = ({ user }) => {
         console.log(`Clicked on user: ${user.username}`);
     };
 
-    const handleRemoveClick = (e) => {
-        e.stopPropagation(); // Kartın tıklanmasını engelle
+    const handleRemoveClick = async (e) => {
+        e.stopPropagation();
         console.log(`Remove user button clicked for: ${user.username}`);
-        // Takipçiyi kaldırma API çağrısını burada yapabilirsiniz
-        // Örneğin: removeuser(user.id);
+        try {
+            const response = await removeFollower(user?.uid);
+            if (!response) {
+                throw new Error("Kullanıcı takipçilerinizden kaldırılamadı.");
+            }
+            ShowToast("success", "Kullanıcı takipçilerinizden kaldırıldı.");
+            onRemoveClick();
+        } catch (error) {
+            console.log("Error removing user:", error);
+            if (error.response.data.message) {
+                ShowToast("error", error.response.data.message);
+            }
+        }
     };
 
     return (
@@ -48,13 +61,15 @@ const UserCard = ({ user }) => {
                 </div>
             </div>
 
-            <button
-                onClick={handleRemoveClick} // Ayrılmış handleRemoveClick fonksiyonunu kullan
-                className="p-2 rounded-full bg-neutral-600 text-white hover:bg-red-600 transition flex-shrink-0" // flex-shrink-0 eklemek iyi olabilir
-                title="Takipçiyi kaldır"
-            >
-                <FaUserTimes size={16} />
-            </button>
+            {isFollowerCard && (
+                <button
+                    onClick={handleRemoveClick} // Ayrılmış handleRemoveClick fonksiyonunu kullan
+                    className="p-2 rounded-full bg-neutral-600 text-white hover:bg-red-600 transition flex-shrink-0" // flex-shrink-0 eklemek iyi olabilir
+                    title="Takipçiyi kaldır"
+                >
+                    <FaUserTimes size={16} />
+                </button>
+            )}
         </div>
     );
 };

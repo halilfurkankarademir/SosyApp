@@ -84,6 +84,8 @@ const FollowersPage = () => {
                             {filteredFollowers.map((follower, index) => (
                                 <UserCard
                                     user={follower.FollowerUser}
+                                    isFollowerCard={true}
+                                    onRemoveClick={fetchData}
                                     key={index}
                                 />
                             ))}

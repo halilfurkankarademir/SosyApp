@@ -31,12 +31,10 @@ const HomePage = () => {
         }
     };
 
-    const deletePost = async (postId) => {
+    const onRemovePost = async (postId) => {
         try {
-            await removePost(postId);
             setPosts(posts.filter((post) => post._id !== postId));
             fetchPosts();
-            ShowToast("success", "Gönderi başarıyla silindi");
         } catch (error) {
             console.error("Error deleting post:", error);
         }
@@ -75,7 +73,7 @@ const HomePage = () => {
                                         <PostCard
                                             key={index}
                                             postData={post}
-                                            handleRemove={deletePost}
+                                            onPostRemove={onRemovePost}
                                         />
                                     ))}
                                 </div>

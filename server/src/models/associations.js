@@ -10,7 +10,7 @@ export default function setupAssociations() {
 
     // 1. Bir kullanıcının TAKİP ETTİĞİ diğer kullanıcıları tanımlama:
     User.belongsToMany(User, {
-        as: "Following", // Takma ad: user.getFollowing()
+        as: "Following",
         through: Follow,
         foreignKey: "followerId", // Ara tablodaki BU kullanıcı (takip eden)
         otherKey: "followingId", // Ara tablodaki DİĞER kullanıcı (takip edilen)

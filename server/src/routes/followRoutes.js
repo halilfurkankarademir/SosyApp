@@ -35,8 +35,15 @@ router.get(
 // Kullanici takip etme
 router.post("/:userId", authenticateToken, followController.createFollow);
 
-// Kullanici takipten cikarma
+// Takip edilen kullanıcıyı takipten cikma
 router.delete("/:userId", authenticateToken, followController.deleteFollow);
+
+// Aktif kullaniciyi takip eden kullaniciyi kaldırma
+router.delete(
+    "/follower/:followerId",
+    authenticateToken,
+    followController.deleteFollower
+);
 
 // Aktif kullanıcının belirli bir kullanıcıyla takip durumunu kontrol etme
 router.get(

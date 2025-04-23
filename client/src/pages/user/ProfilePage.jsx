@@ -98,6 +98,12 @@ const ProfilePage = () => {
         }
     };
 
+    const handleShareProfile = () => {
+        const shareUrl = window.location.href;
+        navigator.clipboard.writeText(shareUrl);
+        ShowToast("success", "Profil linki kopyalandı.");
+    };
+
     useEffect(() => {
         window.scrollTo(0, 0);
         fetchDatas();
@@ -119,6 +125,7 @@ const ProfilePage = () => {
                             postCount={posts.length}
                             isOwnProfile={isOwnProfile}
                             handleFollow={handleFollow}
+                            handleShareProfile={handleShareProfile}
                             isFollowing={isFollowing}
                             followerCount={followerCount}
                             followingCount={followingCount}

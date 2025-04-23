@@ -27,6 +27,16 @@ export const unfollowUser = async (followingId) => {
     }
 };
 
+export const removeFollower = async (followerId) => {
+    try {
+        return await apiClient
+            .delete(`/follower/${followerId}`)
+            .then((response) => response.data);
+    } catch (error) {
+        console.error("Error unfollowing user:", error);
+    }
+};
+
 export const checkFollowStatus = async (followingId) => {
     // Aktif kullanıcının ilgili kullanıcıyı takip edip takip etmedigini kontrol eder
     try {

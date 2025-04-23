@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { MdBlock, MdVerified } from "react-icons/md";
+import { MdBlock, MdShare, MdVerified } from "react-icons/md";
 import { PrimaryButton, SecondaryButton } from "../buttons";
 import { FaCog, FaEdit, FaUserPlus } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
@@ -12,6 +12,7 @@ const ProfileCard = ({
     followingCount,
     isOwnProfile,
     handleFollow,
+    handleShareProfile,
     isFollowing,
 }) => {
     const { navigateToPage } = useNavigation();
@@ -103,8 +104,9 @@ const ProfileCard = ({
                                 icon={<FaUserPlus size={20} />}
                             />
                             <SecondaryButton
-                                icon={<MdBlock />}
-                                buttonText="Engelle"
+                                icon={<MdShare />}
+                                handleClick={handleShareProfile}
+                                buttonText="Profili Paylaş"
                             />
                         </>
                     )}

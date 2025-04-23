@@ -10,6 +10,10 @@ const followService = {
         return Follow.destroy({ where: { followerId, followingId } });
     },
 
+    async removeFollower(followerId, followingId) {
+        return Follow.destroy({ where: { followerId, followingId } });
+    },
+
     async checkIsFollowing(followerId, followingId) {
         return Follow.findOne({ where: { followerId, followingId } });
     },
