@@ -1,4 +1,3 @@
-import { getUserByUsername } from "../../../client/src/api/userApi.js";
 import User from "../models/userModel.js";
 import userRepository from "../repositories/userRepository.js";
 import logger from "../utils/logger.js";
