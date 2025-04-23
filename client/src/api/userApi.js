@@ -4,7 +4,7 @@ import axios from "axios";
 export const deleteUser = async () => {
     // Mevcut kullanıcının hesabını siler.
     return axios
-        .delete("http://localhost:3000/api/users", {
+        .delete("http://89.213.56.21:3000/api/users", {
             withCredentials: true,
         })
         .then((response) => {
@@ -22,7 +22,7 @@ export const deleteUser = async () => {
 export const getAllUsers = async () => {
     // Tüm kullanıcıları listeler.
     return axios
-        .get("http://localhost:3000/api/users")
+        .get("http://89.213.56.21:3000/api/users")
         .then((response) => response.data)
         .catch((error) => {
             console.error("Error fetching users:", error);
@@ -33,7 +33,7 @@ export const getAllUsers = async () => {
 export const getCurrentUser = async () => {
     // Mevcut kullanıcının bilgilerini getirir.
     return axios
-        .get("http://localhost:3000/api/users/current", {
+        .get("http://89.213.56.21:3000/api/users/current", {
             withCredentials: true,
         })
         .then((response) => {
@@ -51,7 +51,7 @@ export const getCurrentUser = async () => {
 export const getUserByUsername = async (username) => {
     // Belirli bir kullanıcının detaylarını getirir.
     return axios
-        .get(`http://localhost:3000/api/users/username/${username}`)
+        .get(`http://89.213.56.21:3000/api/users/username/${username}`)
         .then((response) => response.data)
         .catch((error) => {
             console.error("Error fetching user by username:", error);
@@ -61,7 +61,7 @@ export const getUserByUsername = async (username) => {
 
 export const updateUserProfile = async (updatedData) => {
     return axios
-        .put(`http://localhost:3000/api/users`, updatedData, {
+        .put(`http://89.213.56.21:3000/api/users`, updatedData, {
             withCredentials: true,
         })
         .then((response) => {
@@ -78,7 +78,7 @@ export const updateUserProfile = async (updatedData) => {
 
 export const getRandomUsersForRecommendation = async () => {
     return axios
-        .get("http://localhost:3000/api/users/random", {
+        .get("http://89.213.56.21:3000/api/users/random", {
             withCredentials: true,
         })
         .then((response) => {

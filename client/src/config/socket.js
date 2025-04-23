@@ -1,7 +1,7 @@
 // Socket IO baglantisi olustur
 import { io } from "socket.io-client";
 
-const URL = "http://localhost:3000";
+const URL = "http://89.213.56.21:3000";
 
 const socket = io(URL, {
     withCredentials: true,

@@ -1,5 +1,7 @@
 export const corsConfig = {
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+        callback(null, true);
+    },
     credentials: true,
     exposedHeaders: ["Set-Cookie"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
