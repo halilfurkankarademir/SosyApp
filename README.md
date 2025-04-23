@@ -1,6 +1,7 @@
 # SosyApp - Modern Sosyal Medya Platformu
 
-![SosyApp Logo](https://github.com/yourusername/sosyapp/raw/main/client/public/logo.png)
+![logo](https://github.com/user-attachments/assets/c4a83553-09bb-42b4-8221-8485e57e8889)
+
 
 ## 📋 Proje Hakkında
 
