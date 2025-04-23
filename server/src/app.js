@@ -11,6 +11,8 @@ import { initializeNotificationService } from "./services/notificationService.js
 import { corsConfig } from "./config/corsOptions.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import { socketAuthMiddleware } from "./middlewares/socketAuth.js";
+import swaggerUi from "swagger-ui-express";
+import { readFile } from "fs/promises";
 
 // 1. Uygulama ve temel konfigürasyon
 dotenv.config();
@@ -26,10 +28,16 @@ const io = new Server(server, {
 // Kullanicilarin socketlerini tutan obje
 const userSockets = {};
 
+// Swagger dosyasisini oku
+const swaggerDocument = JSON.parse(
+    await readFile(new URL("../swagger-output.json", import.meta.url))
+);
+
 // 2. Middleware'ler (sıralama önemli)
 app.set("trust proxy", 1);
 app.use(express.json());
 app.use(cors(corsConfig));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Rate limit middleware
 // app.use("/api/auth/login", authLimiter);

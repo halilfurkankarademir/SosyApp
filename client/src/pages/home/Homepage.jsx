@@ -63,12 +63,6 @@ const HomePage = () => {
                         <NewPost onPostCreated={fetchPosts} />
                         <InfiniteScroll
                             dataLength={posts.length}
-                            // loader={
-                            //     <div className="text-center text-white ">
-                            //         Yükleniyor...
-                            //     </div>
-                            // }
-
                             endMessage={
                                 <p className="text-center text-white">
                                     Gönderilerin sonu.

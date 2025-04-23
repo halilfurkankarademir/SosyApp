@@ -4,6 +4,8 @@ import { authenticateToken } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
+//#swagger.tags = ['Users']
+
 // Tüm kullanıcıları getirme
 router.get("/", userController.getAllUsers);
 

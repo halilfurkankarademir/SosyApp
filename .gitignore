@@ -44,3 +44,4 @@ yarn.lock
 *.tmp
 *.bak
 *.patch
+server/sosyapp-konu-analizi.md

@@ -84,5 +84,3 @@ export const logout = () => {
 };
 
 export const forgotPassword = (email) => {};
-
-export const loginWithGoogle = () => {};
