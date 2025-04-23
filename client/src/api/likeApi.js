@@ -1,75 +1,53 @@
 import axios from "axios";
 
+// Create a dedicated apiClient for likes endpoints
+const likesClient = axios.create({
+    baseURL: "https://api.auroratones.online/api/likes",
+    withCredentials: true,
+});
+
 export const addLikePost = async (postId) => {
-    // Gonderi id'sini alarak api/posts/:postId endpointine post isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi begenir ve sunucudan gelen yanıtı döner
     try {
-        return await axios.post(
-            `http://localhost:3000/api/likes/${postId}`,
-            {},
-            {
-                withCredentials: true,
-            }
-        );
+        return await likesClient.post(`/${postId}`);
     } catch (error) {
         console.error("Error liking post:", error);
+        throw error; // Re-throw the error to handle it in the component
     }
 };
 
 export const removeLikeFromPost = async (postId) => {
-    // Gonderi id'sini alarak api/posts/:postId endpointine delete isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi begeniyi iptal eder ve sunucudan gelen yanıtı döner
     try {
-        return await axios.delete(`http://localhost:3000/api/likes/${postId}`, {
-            withCredentials: true,
-        });
+        return await likesClient.delete(`/${postId}`);
     } catch (error) {
         console.error("Error unliking post:", error);
+        throw error;
     }
 };
 
 export const getAllLikes = async (postId) => {
-    // Gonderi id'sini alarak api/likes/:postId endpointine get isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi begenilerini alır ve sunucudan gelen yanıtı döner
     try {
-        return await axios.get(
-            `http://localhost:3000/api/likes/post/${postId}`,
-            {
-                withCredentials: true,
-            }
-        );
+        return await likesClient.get(`/post/${postId}`);
     } catch (error) {
         console.error("Error getting likes:", error);
+        throw error;
     }
 };
 
 export const checkLike = async (postId) => {
-    // Gonderi id'sini alarak api/likes/:postId endpointine get isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi begeniyi kontrol eder ve sunucudan gelen yanıtı döner
     try {
-        return await axios.get(
-            `http://localhost:3000/api/likes/${postId}/check`,
-            {
-                withCredentials: true,
-            }
-        );
+        return await likesClient.get(`/${postId}/check`);
     } catch (error) {
         console.error("Error checking like:", error);
+        throw error;
     }
 };
 
 export const getLikesByUserId = async () => {
-    // Kullanıcı id'sini alarak api/likes/user/:userId endpointine get isteği gonderen bir fonksiyon
-    // Bu istek, kullanıcının begenilerini alır ve sunucudan gelen yanıtı döner
     try {
-        const response = await axios.get(
-            "http://localhost:3000/api/likes/user",
-            {
-                withCredentials: true,
-            }
-        );
+        const response = await likesClient.get("/user");
         return response.data;
     } catch (error) {
         console.error("Error getting likes by user:", error);
+        throw error;
     }
 };

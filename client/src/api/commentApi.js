@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-    baseURL: "http://localhost:3000/api/comments",
+    baseURL: "https://api.auroratones.online/api/comments",
     withCredentials: true,
 });
 

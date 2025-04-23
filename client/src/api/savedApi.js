@@ -1,57 +1,45 @@
 import axios from "axios";
 
+// Create a dedicated apiClient for saved posts endpoints
+const savedPostsClient = axios.create({
+    baseURL: "https://api.auroratones.online/api/saved",
+    withCredentials: true,
+});
+
 export const savePost = async (postId) => {
-    // Gonderi id'sini alarak api/saved/:postId endpointine post isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi kaydeder ve sunucudan gelen yanıtı döner
     try {
-        return await axios.post(
-            `http://localhost:3000/api/saved/${postId}`,
-            {},
-            {
-                withCredentials: true,
-            }
-        );
+        return await savedPostsClient.post(`/${postId}`);
     } catch (error) {
         console.error("Error saving post:", error);
+        throw error; // Re-throw to allow error handling in components
     }
 };
 
 export const unsavePost = async (postId) => {
-    // Gonderi id'sini alarak api/saved/:postId endpointine delete isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi kaydeder ve sunucudan gelen yanıtı döner
     try {
-        return await axios.delete(`http://localhost:3000/api/saved/${postId}`, {
-            withCredentials: true,
-        });
+        return await savedPostsClient.delete(`/${postId}`);
     } catch (error) {
         console.error("Error un-saving post:", error);
+        throw error;
     }
 };
 
 export const getSavedPosts = async () => {
-    // api/saved endpointine get isteği gonderen bir fonksiyon
-    // Bu istek, kaydedilen gonderileri alır ve sunucudan gelen yanıtı döner
     try {
-        return await axios
-            .get("http://localhost:3000/api/saved", {
-                withCredentials: true,
-            })
-            .then((response) => response.data);
+        const response = await savedPostsClient.get("/");
+        return response.data;
     } catch (error) {
         console.error("Error getting saved posts:", error);
+        throw error;
     }
 };
 
 export const isPostSaved = async (postId) => {
-    // Gonderi id'sini alarak api/saved/:postId endpointine get isteği gonderen bir fonksiyon
-    // Bu istek, gonderiyi kaydeder ve sunucudan gelen yanıtı döner
     try {
-        return await axios
-            .get(`http://localhost:3000/api/saved/check/${postId}`, {
-                withCredentials: true,
-            })
-            .then((response) => response.data);
+        const response = await savedPostsClient.get(`/check/${postId}`);
+        return response.data;
     } catch (error) {
         console.error("Error checking if post is saved:", error);
+        throw error;
     }
 };
