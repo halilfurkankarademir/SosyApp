@@ -1,7 +1,7 @@
 // Socket IO baglantisi olustur
 import { io } from "socket.io-client";
 
-const URL = "http://89.213.56.21:3000";
+const URL = "https://api.auroratones.online";
 
 const socket = io(URL, {
     withCredentials: true,
