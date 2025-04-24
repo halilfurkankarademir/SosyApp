@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 // Cookie header'ından token'ı alan yardımcı fonksiyon
@@ -25,7 +26,6 @@ export async function verifyUserFromTokenCookie(cookieHeader) {
             return null;
         }
 
-        // Başarılı olursa kullanıcı nesnesini döndür
         return user;
     } catch (error) {
         console.error("Token verification/User fetch error:", error.message);

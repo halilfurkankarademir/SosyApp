@@ -45,43 +45,6 @@
           }
         }
       },
-      "post": {
-        "description": "Yeni kullanıcı oluşturur (Bu endpoint yerine /api/auth/register kullanılması önerilir).",
-        "tags": [
-          "Users"
-        ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Yeni kullanıcı bilgileri",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/UserRegisterInput"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-             "schema": {
-               "$ref": "#/definitions/UserResponse"
-             }
-          },
-          "400": {
-            "description": "Bad Request",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-          },
-          "500": {
-            "description": "Internal Server Error",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-          }
-        }
-      },
       "put": {
         "description": "Mevcut kullanıcının (oturum açmış) bilgilerini günceller.",
         "tags": [
@@ -1750,15 +1713,6 @@
         },
         "lastName": {
           "$ref": "#/definitions/UserBase/properties/lastName"
-        },
-        "profilePicture": {
-          "$ref": "#/definitions/UserBase/properties/profilePicture"
-        },
-        "bio": {
-          "$ref": "#/definitions/UserBase/properties/bio"
-        },
-        "location": {
-          "$ref": "#/definitions/UserBase/properties/location"
         }
       }
     },

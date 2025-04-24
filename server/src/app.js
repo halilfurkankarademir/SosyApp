@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import http from "http";
+import helmet from "helmet";
 import dotenv from "dotenv";
 import { authLimiter } from "./config/rateLimiter.js";
 import { Server } from "socket.io";
@@ -33,15 +34,26 @@ const swaggerDocument = JSON.parse(
     await readFile(new URL("../swagger-output.json", import.meta.url))
 );
 
-// 2. Middleware'ler (sıralama önemli)
+// 2. Middleware'ler
+
+// Uygulamanın bir vekil sunucu (proxy) arkasında çalıştığını varsayarak doğru istemci IP adresini almasını sağlar.
 app.set("trust proxy", 1);
+
+// Gelen isteklerin gövdesindeki JSON verilerini ayrıştırarak req.body nesnesine yerleştirir.
 app.use(express.json());
+
+// Farklı kaynaklardan (origin) gelen tarayıcı isteklerine izin vermek için gerekli CORS başlıklarını ayarlar.
 app.use(cors(corsConfig));
+
+// Çeşitli HTTP güvenlik başlıklarını ayarlayarak uygulamanızı yaygın web zafiyetlerine karşı korur.
+app.use(helmet());
+
+// Swagger ui kullanarak api-dokumantasyonunu sunar
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Rate limit middleware
-// app.use("/api/auth/login", authLimiter);
-// app.use("/api/auth/register", authLimiter);
+// DDOS saldirilarina karsi giris ve kayit sinirlamasi
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
 
 async function startServer() {
     try {
@@ -101,7 +113,7 @@ async function startServer() {
             console.log(`Server ${port} portunda çalışıyor`);
         });
 
-        // Graceful shutdown için
+        // Isletim sisteminden kapatma istegi gelirse sunucuyu kapat
         process.on("SIGTERM", () => {
             console.log("SIGTERM alındı. Sunucu kapatılıyor...");
             server.close(() => {

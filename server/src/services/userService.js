@@ -27,9 +27,9 @@ const UserService = {
         }
     },
 
-    updateUser: async (userId, updates, ipAdress) => {
+    updateUser: async (userId, updates) => {
         try {
-            logger.debug(`Ip ${ipAdress} Updating user`, { userId, updates });
+            logger.debug(`Updating user`, { userId });
             const user = await userRepository.getByUserId(userId);
             if (!user) {
                 logger.warn("User not found for update", { userId });
@@ -38,9 +38,9 @@ const UserService = {
 
             await user.update(updates);
 
-            logger.info(`Ip ${ipAdress} User updated successfully`);
+            logger.info(`User updated successfully ${userId}`);
         } catch (error) {
-            logger.error(`Ip ${ipAdress} User update failed`, {
+            logger.error(`User update failed ${userId}`, {
                 error: error.message,
             });
             throw new Error("Could not update user");
@@ -96,10 +96,9 @@ const UserService = {
         }
     },
 
-    getUserById: async (userId, ipAdress) => {
+    getUserById: async (userId) => {
         try {
-            logger.debug(`Ip ${ipAdress} Fetching user by ID`, { userId });
-
+            logger.debug(`Fetching user by ID`, { userId });
             const user = await userRepository.getByUserId(userId);
 
             if (!user) {
@@ -107,14 +106,14 @@ const UserService = {
                 throw new Error("User not found");
             }
 
-            logger.info(`Ip ${ipAdress} Successfully retrieved user by ID`, {
+            logger.info(`Successfully retrieved user by ID`, {
                 userId,
                 operation: "getUserById",
             });
 
             return user;
         } catch (error) {
-            logger.error(`Ip ${ipAdress} failed to fetch user by ID`, {
+            logger.error(` failed to fetch user by ID`, {
                 error: error.message,
                 userId,
                 operation: "getUserById",
@@ -165,25 +164,6 @@ const UserService = {
             throw new Error(
                 "Could not retrieve user by username: " + error.message
             );
-        }
-    },
-
-    getRandomUsers: async (ipAdress) => {
-        try {
-            logger.debug(`Ip ${ipAdress} Fetching random users`);
-            const userLimit = 5;
-            const users = await userRepository.getRandomUsers(userLimit);
-            logger.info(`Ip ${ipAdress} Successfully retrieved random users`, {
-                count: users.length,
-                operation: "getRandomUsers",
-            });
-            return users;
-        } catch (error) {
-            logger.error(`Ip ${ipAdress} failed to fetch random users`, {
-                error: error.message,
-                operation: "getRandomUsers",
-            });
-            throw new Error("Could not retrieve random users");
         }
     },
 };

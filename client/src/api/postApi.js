@@ -1,11 +1,17 @@
 import axios from "axios";
 
+const devMode = import.meta.env.VITE_NODE_ENV;
+const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
+
 const apiClient = axios.create({
-    baseURL: "https://api.auroratones.online/api/posts",
+    baseURL:
+        devMode === "production"
+            ? `${apiUrl}/posts`
+            : "http://localhost:3000/api/posts",
     withCredentials: true,
 });
 
-export const createNewPost = (postData) => {
+export const createNewPost = async (postData) => {
     try {
         return apiClient.post("/", postData).then((response) => response.data);
     } catch (error) {
@@ -14,7 +20,7 @@ export const createNewPost = (postData) => {
     }
 };
 
-export const updatePost = (postId, postData) => {
+export const updatePost = async (postId, postData) => {
     try {
         return apiClient
             .put(`/${postId}`, postData)
@@ -25,7 +31,7 @@ export const updatePost = (postId, postData) => {
     }
 };
 
-export const removePost = (postId) => {
+export const removePost = async (postId) => {
     try {
         return apiClient.delete(`/${postId}`).then((response) => response.data);
     } catch (error) {
@@ -34,16 +40,16 @@ export const removePost = (postId) => {
     }
 };
 
-export const fetchAllPosts = () => {
+export const fetchAllPosts = async () => {
     try {
-        return apiClient.get("").then((response) => response.data);
+        return apiClient.get("/").then((response) => response.data);
     } catch (error) {
         console.error("Error fetching posts:", error);
         throw error;
     }
 };
 
-export const fetchPostById = (postId) => {
+export const fetchPostById = async (postId) => {
     try {
         return apiClient.get(`/${postId}`).then((response) => response.data);
     } catch (error) {
@@ -52,7 +58,7 @@ export const fetchPostById = (postId) => {
     }
 };
 
-export const fetchPostsByUserId = (userId) => {
+export const fetchPostsByUserId = async (userId) => {
     try {
         return apiClient
             .get(`/user/${userId}`)

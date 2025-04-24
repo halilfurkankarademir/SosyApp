@@ -37,8 +37,4 @@ export default {
             offset: options.offset || 0,
         });
     },
-
-    async getRandomUsers(limit) {
-        return User.findAll({ limit });
-    },
 };

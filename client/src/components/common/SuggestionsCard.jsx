@@ -2,7 +2,6 @@ import React, { memo, useEffect, useState } from "react";
 import { useNavigation } from "../../context/NavigationContext";
 import { BsPeopleFill, BsPersonAdd } from "react-icons/bs";
 import { fakePeople } from "../../constants/fakeDatas";
-import { getRandomUsersForRecommendation } from "../../api/userApi";
 
 const SuggestionsCard = () => {
     const { navigateToPage } = useNavigation();
@@ -10,8 +9,6 @@ const SuggestionsCard = () => {
 
     const getSuggestions = async () => {
         try {
-            const randomUsers = await getRandomUsersForRecommendation();
-            setSuggestions(randomUsers);
         } catch (error) {
             console.error("Error fetching suggestions:", error);
         }

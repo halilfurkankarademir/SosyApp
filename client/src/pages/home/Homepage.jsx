@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Sidebar, SuggestionsCard } from "../../components/common";
+import { Sidebar } from "../../components/common";
 import { NewPost, PostCard } from "../../components/features/posts";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchAllPosts, removePost } from "../../api/postApi";
-import { ShowToast } from "../../components/ui/toasts/ShowToast";
 import { getCurrentUser } from "../../api/userApi";
 import useUserStore from "../../hooks/useUserStore";
 
@@ -17,10 +16,15 @@ const HomePage = () => {
         try {
             const posts = await fetchAllPosts();
             setPosts(posts);
+            setHasMore(false);
         } catch (error) {
             console.error("Error fetching posts:", error);
         }
     }, []);
+
+    const fakeFetch = async () => {
+        console.log("Fetching more posts...");
+    };
 
     const fetchUser = async () => {
         try {
@@ -40,13 +44,11 @@ const HomePage = () => {
         }
     };
 
-    // Ekran boyutunu izleme
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Ana Sayfa";
-        // Sayfa yuklendiğinde gönderileri cek
-        fetchPosts();
         fetchUser();
+        fetchPosts();
     }, []);
 
     return (
@@ -60,7 +62,9 @@ const HomePage = () => {
                     <div className="col-span-1 md:col-span-3 md:ml-72 w-full">
                         <NewPost onPostCreated={fetchPosts} />
                         <InfiniteScroll
-                            dataLength={posts.length}
+                            dataLength={posts?.length}
+                            hasMore={hasMore}
+                            next={fakeFetch}
                             endMessage={
                                 <p className="text-center text-white">
                                     Gönderilerin sonu.
@@ -69,9 +73,9 @@ const HomePage = () => {
                         >
                             {posts ? (
                                 <div className="mt-4 space-y-4">
-                                    {posts.map((post, index) => (
+                                    {posts.map((post) => (
                                         <PostCard
-                                            key={index}
+                                            key={post.id}
                                             postData={post}
                                             onPostRemove={onRemovePost}
                                         />
@@ -84,9 +88,6 @@ const HomePage = () => {
                             )}
                         </InfiniteScroll>
                     </div>
-                    {/* <div className="md: ml-72 ">
-                        <SuggestionsCard />
-                    </div> */}
                 </div>
             </div>
         </>

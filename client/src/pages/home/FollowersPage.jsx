@@ -8,6 +8,7 @@ import UserCard from "../../components/ui/cards/UserCard";
 import useUserStore from "../../hooks/useUserStore";
 import { getFollowers } from "../../api/followApi";
 import { Spinner } from "@heroui/react";
+import { FaUserAltSlash, FaUserLock } from "react-icons/fa";
 
 const FollowersPage = () => {
     const [search, setSearch] = useState("");
@@ -79,6 +80,21 @@ const FollowersPage = () => {
                             />
 
                             {!filteredFollowers && <Spinner />}
+
+                            {filteredFollowers.length === 0 && (
+                                <div className="text-center py-8 md:py-10">
+                                    <div className="flex justify-center mb-3 md:mb-4">
+                                        <FaUserAltSlash className="text-5xl md:text-6xl text-neutral-600" />
+                                    </div>
+                                    <h3 className="text-lg md:text-xl font-semibold text-white mb-1 md:mb-2">
+                                        Sonuç bulunamadı
+                                    </h3>
+                                    <p className="text-sm md:text-base text-neutral-400">
+                                        Arama kriterlerinize uygun takipçi
+                                        bulunamadı.
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Takipçi Listesi */}
                             {filteredFollowers.map((follower, index) => (

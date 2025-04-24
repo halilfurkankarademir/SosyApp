@@ -25,6 +25,7 @@ import SearchPage from "../pages/home/SearchPage";
 import AuthSelectionPage from "../pages/auth/AuthSelectionPage";
 import UserInfoPage from "../pages/user/UserInfoPage";
 import GroupsPage from "../pages/home/GroupsPage";
+import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 
 export const AppRoutes = () => {
     const { isAuthenticated } = useAuth();
@@ -83,6 +84,8 @@ export const AppRoutes = () => {
                     />
                     <Route path="/user-info" element={<UserInfoPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
+
+                    <Route path="/admin" element={<AdminDashboardPage />} />
 
                     <Route path="/error" element={<ErrorPage />} />
                 </Routes>

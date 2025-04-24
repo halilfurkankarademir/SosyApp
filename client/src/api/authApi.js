@@ -1,7 +1,13 @@
 import axios from "axios";
 
+const devMode = import.meta.env.VITE_NODE_ENV;
+const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
+
 const apiClient = axios.create({
-    baseURL: "https://api.auroratones.online/api/auth",
+    baseURL:
+        devMode === "production"
+            ? `${apiUrl}/auth`
+            : "http://localhost:3000/api/auth",
     withCredentials: true,
 });
 

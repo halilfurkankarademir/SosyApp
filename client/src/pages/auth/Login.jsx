@@ -23,7 +23,6 @@ const LoginPage = () => {
                 return;
             }
             const user = await login(email, password);
-            console.log("User:", user);
             if (!user) {
                 console.log("Giriş işlemi başarısız!");
                 return;

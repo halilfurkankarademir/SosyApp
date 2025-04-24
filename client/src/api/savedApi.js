@@ -1,8 +1,14 @@
 import axios from "axios";
 
+const devMode = import.meta.env.VITE_NODE_ENV;
+const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
+
 // Create a dedicated apiClient for saved posts endpoints
 const savedPostsClient = axios.create({
-    baseURL: "https://api.auroratones.online/api/saved",
+    baseURL:
+        devMode === "production"
+            ? `${apiUrl}/saved`
+            : "http://localhost:3000/api/saved",
     withCredentials: true,
 });
 

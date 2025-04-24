@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import UserService from "./userService.js";
 
 const AuthService = {
-    async register(email, password, username, firstName, lastName) {
+    async register(email, password, username, firstName, lastName, ipAdress) {
         try {
             // Şifrenin ham halini yazdıralım
             console.log("Registering with raw password:", password);
@@ -47,6 +47,7 @@ const AuthService = {
                 firstName,
                 lastName,
                 password: hashedPassword,
+                ipAdress,
             });
 
             return newUser;
@@ -56,7 +57,7 @@ const AuthService = {
         }
     },
 
-    async login(email, password) {
+    async login(email, password, ipAdress) {
         try {
             // Şifrenin string donusumu
             const passwordStr = String(password);

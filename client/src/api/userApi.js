@@ -1,40 +1,23 @@
 import axios from "axios";
 
-// Create a dedicated apiClient for user endpoints
+const devMode = import.meta.env.VITE_NODE_ENV;
+const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
+
 const userClient = axios.create({
-    baseURL: "https://api.auroratones.online/api/users",
+    baseURL:
+        devMode === "production"
+            ? `${apiUrl}/users`
+            : "http://localhost:3000/api/users",
     withCredentials: true,
 });
 
-export const deleteUser = async () => {
-    try {
-        const response = await userClient.delete("/");
-        if (response.status !== 200) {
-            throw new Error("Failed to delete user");
-        }
-        return response.data;
-    } catch (error) {
-        console.error("Error deleting user:", error);
-        throw error;
-    }
-};
-
-export const getAllUsers = async () => {
-    try {
-        const response = await axios.get(userClient.defaults.baseURL);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        throw error;
-    }
-};
-
+// 1. KULLANICI BİLGİSİ GETİRME FONKSİYONLARI
 export const getCurrentUser = async () => {
+    // Cookieleri kullanarak aktif giris yapan kullanıcının bilgilerini getirme
     try {
-        const response = await userClient.get("/current");
-        if (response.status !== 200) {
+        const response = await userClient.get("/me");
+        if (response.status !== 200)
             throw new Error("Failed to fetch user data");
-        }
         return response.data;
     } catch (error) {
         console.error("Error fetching current user:", error);
@@ -43,10 +26,9 @@ export const getCurrentUser = async () => {
 };
 
 export const getUserByUsername = async (username) => {
+    // Kullanici adi ile kullanici bilgilerini getirme
     try {
-        const response = await axios.get(
-            `${userClient.defaults.baseURL}/username/${username}`
-        );
+        const response = await userClient.get(`/username/${username}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching user by username:", error);
@@ -54,12 +36,24 @@ export const getUserByUsername = async (username) => {
     }
 };
 
-export const updateUserProfile = async (updatedData) => {
+export const getAllUsers = async () => {
+    // Tüm kullanıcıları getirme
     try {
-        const response = await userClient.put("/", updatedData);
-        if (response.status !== 200) {
+        const response = await userClient.get("/");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        throw error;
+    }
+};
+
+// 2. PROFİL GÜNCELLEME FONKSİYONU
+export const updateUserProfile = async (updatedData) => {
+    // Aktif giris yapan kullanıcının profilini güncelleme
+    try {
+        const response = await userClient.put("/me", updatedData);
+        if (response.status !== 200)
             throw new Error("Failed to update user profile");
-        }
         return response.data;
     } catch (error) {
         console.error("Error updating user profile:", error);
@@ -67,12 +61,15 @@ export const updateUserProfile = async (updatedData) => {
     }
 };
 
-export const getRandomUsersForRecommendation = async () => {
+// 3. KULLANICI SİLME FONKSİYONU
+export const deleteUser = async () => {
+    // Aktif giris yapan kullanıcının hesabını silme
     try {
-        const response = await userClient.get("/random");
+        const response = await userClient.delete("/me");
+        if (response.status !== 200) throw new Error("Failed to delete user");
         return response.data;
     } catch (error) {
-        console.error("Error fetching random users:", error);
+        console.error("Error deleting user:", error);
         throw error;
     }
 };

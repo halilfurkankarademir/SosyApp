@@ -73,6 +73,11 @@ const User = sequelize.define(
             allowNull: false,
             defaultValue: false,
         },
+        ipAdress: {
+            type: DataTypes.STRING(24),
+            allowNull: false,
+            defaultValue: "",
+        },
     },
     {
         tableName: "users",

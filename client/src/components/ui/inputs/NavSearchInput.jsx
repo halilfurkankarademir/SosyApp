@@ -3,7 +3,7 @@ import { MdSearch } from "react-icons/md";
 
 const NavSearchInput = ({ searchQuery, setSearchQuery, handleSearch }) => {
     return (
-        <div className="hidden md:flex ml-auto mr-6">
+        <div className="hidden md:flex ml-auto ">
             <form onSubmit={handleSearch} className="relative">
                 <input
                     type="text"

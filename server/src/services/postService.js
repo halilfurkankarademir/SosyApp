@@ -49,7 +49,7 @@ const PostService = {
     getPostByUserId: async (userId) => {
         try {
             const post = await postRepository.getPostByUserId(userId);
-            logger.info("Fetched posts by user ID:", post);
+            logger.info("Fetched posts by user ID:", userId);
             if (!post) {
                 throw new Error("No posts found for this user");
             }

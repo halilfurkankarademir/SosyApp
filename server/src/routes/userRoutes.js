@@ -4,33 +4,29 @@ import { authenticateToken } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-//#swagger.tags = ['Users']
-
 // Tüm kullanıcıları getirme
-router.get("/", userController.getAllUsers);
+router.get("/", authenticateToken, userController.getAllUsers);
 
 // Kullanıcıyı ID ile getirme
-router.get("/id/:userId", userController.getUserById);
+router.get("/id/:userId", authenticateToken, userController.getUserById);
 
 // Kullanıcıyı username ile getirme
-router.get("/username/:username", userController.getUserByUsername);
+router.get(
+    "/username/:username",
+    authenticateToken,
+    userController.getUserByUsername
+);
 
 // Mevcut kullanıcıyı getirme
-router.get("/current", authenticateToken, userController.getCurrent);
+router.get("/me", authenticateToken, userController.getCurrent);
 
 // Kullanıcıyı email ile getirme
-router.get("/email/:email", userController.getUserByEmail);
+router.get("/email/:email", authenticateToken, userController.getUserByEmail);
 
-// Yeni kullanıcı oluşturma
-router.post("/", userController.createUser);
+// Aktif Kullanıcı güncelleme
+router.put("/me", authenticateToken, userController.updateUser);
 
-// Kullanıcı güncelleme
-router.put("/", authenticateToken, userController.updateUser);
-
-// Kullanıcı silme
-router.delete("/", authenticateToken, userController.deleteUser);
-
-// Rastgele onerilecek kullanicilari getirme 5 kisi
-router.get("/random", authenticateToken, userController.getRandomUsers);
+// Aktif Kullanıcı silme
+router.delete("/me", authenticateToken, userController.deleteUser);
 
 export default router;

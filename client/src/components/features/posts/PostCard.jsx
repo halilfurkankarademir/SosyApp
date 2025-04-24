@@ -23,6 +23,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import useLikeStatus from "../../../hooks/useLikeStatus";
 import { MdDelete, MdOutlineReport } from "react-icons/md";
 import { removePost } from "../../../api/postApi";
+import useUserStore from "../../../hooks/useUserStore";
 
 const PostCard = ({ postData, onPostRemove }) => {
     const { id, user, content, media, createdAt } = postData || {};
@@ -36,6 +37,8 @@ const PostCard = ({ postData, onPostRemove }) => {
     const [commentCount, setCommentCount] = useState(0);
     const [isCurrentUserOwner, setIsCurrentUserOwner] = useState(false);
     const { isLiked, setIsLiked } = useLikeStatus(id);
+
+    const currentUser = useUserStore((state) => state.user);
 
     const fetchPostStats = useCallback(async () => {
         if (!id) return;
@@ -65,8 +68,7 @@ const PostCard = ({ postData, onPostRemove }) => {
     const checkPostOwnership = useCallback(async () => {
         if (!user?.uid) return;
         try {
-            const currentUser = await getCurrentUser();
-            setIsCurrentUserOwner(currentUser?.uid === user.uid);
+            setIsCurrentUserOwner(currentUser.uid === user.uid);
         } catch (error) {
             console.error("Error checking post ownership:", error);
             setIsCurrentUserOwner(false);
@@ -299,7 +301,7 @@ const PostCard = ({ postData, onPostRemove }) => {
                     aria-label={isLiked ? "Beğeniyi kaldır" : "Beğen"}
                     aria-pressed={isLiked}
                 >
-                    <FaHeart className="text-xl md:text-lg" />
+                    <FaHeart className="text-sm md:text-lg" />
                     <span className="hidden md:inline text-xs md:text-sm mt-0.5 md:mt-0">
                         {isLiked ? "Beğenildi" : "Beğen"}
                     </span>
@@ -310,7 +312,7 @@ const PostCard = ({ postData, onPostRemove }) => {
                     className="flex flex-col md:flex-row items-center md:space-x-1.5 text-gray-400 hover:text-blue-400 hover:bg-neutral-700/50 transition-colors duration-200 p-2 rounded-md"
                     aria-label="Yorum yap"
                 >
-                    <FaComment className="text-xl md:text-lg" />
+                    <FaComment className="text-sm md:text-lg" />
                     <span className="hidden md:inline text-xs md:text-sm mt-0.5 md:mt-0">
                         Yorum
                     </span>
@@ -321,7 +323,7 @@ const PostCard = ({ postData, onPostRemove }) => {
                     className="flex flex-col md:flex-row items-center md:space-x-1.5 text-gray-400 hover:text-green-400 hover:bg-neutral-700/50 transition-colors duration-200 p-2 rounded-md"
                     aria-label="Paylaş"
                 >
-                    <FaShare className="text-xl md:text-lg" />
+                    <FaShare className="text-sm md:text-lg" />
                     <span className="hidden md:inline text-xs md:text-sm mt-0.5 md:mt-0">
                         Paylaş
                     </span>
@@ -338,9 +340,9 @@ const PostCard = ({ postData, onPostRemove }) => {
                     aria-pressed={isSaved}
                 >
                     {isSaved ? (
-                        <FaBookmark className="text-xl md:text-lg" />
+                        <FaBookmark className="text-sm md:text-lg" />
                     ) : (
-                        <FaRegBookmark className="text-xl md:text-lg" />
+                        <FaRegBookmark className="text-sm md:text-lg" />
                     )}
                     <span className="hidden md:inline text-xs md:text-sm mt-0.5 md:mt-0">
                         {isSaved ? "Kaydedildi" : "Kaydet"}

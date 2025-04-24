@@ -16,6 +16,7 @@ import {
     unfollowUser,
 } from "../../api/followApi";
 import { ShowToast } from "../../components/ui/toasts/ShowToast";
+import useUserStore from "../../hooks/useUserStore";
 
 const ProfilePage = () => {
     // Kullanıcının kendi profili mi kontrolü için bir state (gerçek uygulamada auth ile kontrol edilir)
@@ -30,6 +31,8 @@ const ProfilePage = () => {
     //Burada username parametresi aliniyor ve kullanıcı verileri cekiliyor.
     const { username } = useParams();
 
+    const setUser = useUserStore((state) => state.setUser);
+
     const fetchDatas = async () => {
         try {
             // 1. Profil kullanıcısını al
@@ -42,6 +45,7 @@ const ProfilePage = () => {
 
             // 2. Mevcut (giriş yapmış) kullanıcıyı al
             const currentUser = await getCurrentUser();
+            setUser(currentUser);
 
             // 3. Profilin mevcut kullanıcıya ait olup olmadığını belirle
             // currentUser yoksa veya username eşleşmiyorsa kendi profili değildir.
@@ -115,7 +119,7 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className="bg-neutral-900 min-h-screen text-white px-4 md:px-8 lg:px-20 py-36 md:py-48 lg:py-72">
+            <div className="bg-neutral-900 min-h-screen text-white px-4 md:px-8 lg:px-20 py-52 md:py-48 lg:py-72">
                 {/* Profil Bilgileri */}
                 <div className="container mx-auto">
                     <div className="flex flex-col md:flex-row -mt-20 mb-6">
@@ -135,8 +139,12 @@ const ProfilePage = () => {
                             {/*Kullaniciya ait gonderilerin listelenmesi*/}
                             {posts && posts.length > 0 ? (
                                 <div>
-                                    {posts.map((post, index) => (
-                                        <PostCard key={index} postData={post} />
+                                    {posts.map((post) => (
+                                        <PostCard
+                                            key={post.id}
+                                            postData={post}
+                                            onPostRemove={fetchDatas}
+                                        />
                                     ))}
                                 </div>
                             ) : (

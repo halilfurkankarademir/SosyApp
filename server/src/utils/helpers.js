@@ -6,3 +6,8 @@ export const getPagination = (page, size) => {
     const offset = page ? page * limit : 0;
     return { limit, offset };
 };
+
+// Ip adresinin son 3 hanesini xxx ile degistirir
+export const getAnonymizedIp = (ip) => {
+    return ip.replace(/\.\d+$/, ".XXX");
+};

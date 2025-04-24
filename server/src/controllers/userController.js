@@ -22,8 +22,7 @@ const userController = {
     // ID'ye göre kullanıcı getirme
     getUserById: async (req, res) => {
         try {
-            const ip = req.ip;
-            const user = await UserService.getUserById(req.params.userId, ip);
+            const user = await UserService.getUserById(req.params.userId);
             const userDTOInstance = new userDTO(user);
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
@@ -129,18 +128,6 @@ const userController = {
             res.status(200).json({ message: "Kullanıcı başarıyla silindi" });
         } catch (error) {
             console.error("Error deleting user:", error);
-            res.status(500).json({ error: error.message });
-        }
-    },
-
-    getRandomUsers: async (req, res) => {
-        try {
-            const ip = req.ip;
-            const users = await UserService.getRandomUsers(ip);
-            const usersDTOInstance = users.map((user) => new userDTO(user));
-            res.status(200).json(usersDTOInstance);
-        } catch (error) {
-            console.error("Error getting users:", error);
             res.status(500).json({ error: error.message });
         }
     },

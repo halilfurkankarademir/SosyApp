@@ -2,12 +2,16 @@ import authService from "../services/authService.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import userDTO from "../dtos/userDTO.js";
+import { getAnonymizedIp } from "../utils/helpers.js";
 dotenv.config();
 
 const authController = {
     register: async (req, res) => {
         try {
             const { email, password, username, firstName, lastName } = req.body;
+
+            const ipAdress = req.headers["x-forwarded-for"] || req.ip;
+            const anonymizedIp = getAnonymizedIp(ipAdress);
 
             // Validate required fields
             if (!email || !password || !username) {
@@ -24,7 +28,8 @@ const authController = {
                 password,
                 username,
                 firstName,
-                lastName
+                lastName,
+                anonymizedIp
             );
 
             const userDTOInstance = new userDTO(user);
@@ -62,14 +67,15 @@ const authController = {
         try {
             const { email, password } = req.body;
 
+            const ipAdress = req.headers["x-forwarded-for"] || req.ip;
+            const anonymizedIp = getAnonymizedIp(ipAdress);
+
             // Validate required fields
             if (!email || !password) {
                 return res
                     .status(400)
                     .json({ error: "Email and password are required" });
             }
-
-            console.log("Login attempt:", { email });
 
             // Authenticate user
             const user = await authService.login(email, password);
