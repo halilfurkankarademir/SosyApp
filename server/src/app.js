@@ -3,6 +3,7 @@ import cors from "cors";
 import http from "http";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { authLimiter } from "./config/rateLimiter.js";
 import { Server } from "socket.io";
 import { initializeDatabase } from "./config/database.js";
@@ -47,6 +48,9 @@ app.use(cors(corsConfig));
 
 // Çeşitli HTTP güvenlik başlıklarını ayarlayarak uygulamanızı yaygın web zafiyetlerine karşı korur.
 app.use(helmet());
+
+// Cookielri almak icin middleware
+app.use(cookieParser());
 
 // Swagger ui kullanarak api-dokumantasyonunu sunar
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

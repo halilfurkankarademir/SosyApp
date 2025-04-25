@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 
 dotenv.config({ debug: true });
 
+// Sequelize gibi bir orm kullanıyoruz.
+// Bu sayede sql injection gibi saldirilara bir onlem alinmis oluyor.
+// Burada bir sequelize nesnesi olusturuyoruz ve postgre databasemise baglanmasi icin ayarliyoruz
 const sequelize = new Sequelize({
     dialect: PostgresDialect,
     database: process.env.DB_NAME,

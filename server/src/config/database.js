@@ -1,6 +1,4 @@
 import sequelize from "./sequelize.js";
-
-// Modelleri manuel olarak yükleyelim
 import "../models/userModel.js";
 import "../models/postModel.js";
 import "../models/likeModel.js";
@@ -37,6 +35,6 @@ export async function initializeDatabase() {
             console.error(`Altta yatan hata: ${error.parent.message}`);
         }
 
-        throw error; // Hatayı yukarı aktar
+        throw error;
     }
 }

@@ -1,20 +1,9 @@
-import axios from "axios";
-
-const devMode = import.meta.env.VITE_NODE_ENV;
-const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
-
-const apiClient = axios.create({
-    baseURL:
-        devMode === "production"
-            ? `${apiUrl}/auth`
-            : "http://localhost:3000/api/auth",
-    withCredentials: true,
-});
+import apiClient from "./apiClient";
 
 export const register = (email, password, username, firstName, lastName) => {
     try {
         return apiClient
-            .post("/register", {
+            .post("/auth/register", {
                 email,
                 password,
                 username,
@@ -41,7 +30,7 @@ export const register = (email, password, username, firstName, lastName) => {
 export const login = (email, password) => {
     try {
         return apiClient
-            .post("/login", { email, password })
+            .post("/auth/login", { email, password })
             .then((response) => {
                 localStorage.setItem("isAuthenticated", true);
                 localStorage.setItem(
@@ -62,7 +51,7 @@ export const login = (email, password) => {
 
 export const logout = () => {
     try {
-        return apiClient.post("/logout");
+        return apiClient.post("/auth/logout");
     } catch (error) {
         console.log("Error logging out user:", error);
     }

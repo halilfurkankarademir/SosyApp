@@ -1,7 +1,9 @@
 // Socket IO baglantisi olustur
 import { io } from "socket.io-client";
 
-const URL = "https://api.auroratones.online";
+const isDev = import.meta.env.VITE_NODE_ENV === "development";
+
+const URL = isDev ? "http://localhost:3000" : "https://api.auroratones.online";
 
 const socket = io(URL, {
     withCredentials: true,

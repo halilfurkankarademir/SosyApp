@@ -1,6 +1,10 @@
 import express from "express";
 import postController from "../controllers/postController.js";
 import { authenticateToken } from "../middlewares/authMiddleware.js";
+import {
+    validatePost,
+    validatePostId,
+} from "../middlewares/validators/postValidator.js";
 
 const router = express.Router();
 
@@ -8,15 +12,20 @@ const router = express.Router();
 router.get("/", authenticateToken, postController.getAllPosts);
 
 // Gönderiyi ID ile getirme
-router.get("/:postId", postController.getPostById);
+router.get("/:postId", validatePostId, postController.getPostById);
 
 // Kullaniciya ait gonderileri getirme
 router.get("/user/:userId", authenticateToken, postController.getPostByUserId);
 
 // Yeni gönderi oluşturma - token doğrulama eklendi
-router.post("/", authenticateToken, postController.createPost);
+router.post("/", validatePost, authenticateToken, postController.createPost);
 
 // Gonderiyi silme
-router.delete("/:postId", authenticateToken, postController.deletePost);
+router.delete(
+    "/:postId",
+    validatePostId,
+    authenticateToken,
+    postController.deletePost
+);
 
 export default router;

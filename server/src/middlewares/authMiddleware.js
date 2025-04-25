@@ -5,11 +5,11 @@ dotenv.config();
 // Token doğrulama middleware
 export const authenticateToken = async (req, res, next) => {
     try {
-        const user = await verifyUserFromTokenCookie(req.headers.cookie);
+        const user = await verifyUserFromTokenCookie(req);
 
         if (!user) {
             return res
-                .status(403)
+                .status(401)
                 .json({ error: "Geçersiz veya Süresi Dolmuş Token" });
         }
 
@@ -18,7 +18,7 @@ export const authenticateToken = async (req, res, next) => {
     } catch (error) {
         console.error("Authentication error:", error);
         return res
-            .status(403)
+            .status(401)
             .json({ error: "Geçersiz veya süresi dolmuş token" });
     }
 };

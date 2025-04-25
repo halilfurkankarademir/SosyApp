@@ -1,21 +1,10 @@
-import axios from "axios";
-
-const devMode = import.meta.env.VITE_NODE_ENV;
-const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
-
-const userClient = axios.create({
-    baseURL:
-        devMode === "production"
-            ? `${apiUrl}/users`
-            : "http://localhost:3000/api/users",
-    withCredentials: true,
-});
+import apiClient from "./apiClient";
 
 // 1. KULLANICI BİLGİSİ GETİRME FONKSİYONLARI
 export const getCurrentUser = async () => {
     // Cookieleri kullanarak aktif giris yapan kullanıcının bilgilerini getirme
     try {
-        const response = await userClient.get("/me");
+        const response = await apiClient.get("/users/me");
         if (response.status !== 200)
             throw new Error("Failed to fetch user data");
         return response.data;
@@ -28,7 +17,7 @@ export const getCurrentUser = async () => {
 export const getUserByUsername = async (username) => {
     // Kullanici adi ile kullanici bilgilerini getirme
     try {
-        const response = await userClient.get(`/username/${username}`);
+        const response = await apiClient.get(`/users/username/${username}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching user by username:", error);
@@ -39,7 +28,7 @@ export const getUserByUsername = async (username) => {
 export const getAllUsers = async () => {
     // Tüm kullanıcıları getirme
     try {
-        const response = await userClient.get("/");
+        const response = await apiClient.get("/users/");
         return response.data;
     } catch (error) {
         console.error("Error fetching users:", error);
@@ -51,7 +40,7 @@ export const getAllUsers = async () => {
 export const updateUserProfile = async (updatedData) => {
     // Aktif giris yapan kullanıcının profilini güncelleme
     try {
-        const response = await userClient.put("/me", updatedData);
+        const response = await apiClient.put("/users/me", updatedData);
         if (response.status !== 200)
             throw new Error("Failed to update user profile");
         return response.data;
@@ -65,7 +54,7 @@ export const updateUserProfile = async (updatedData) => {
 export const deleteUser = async () => {
     // Aktif giris yapan kullanıcının hesabını silme
     try {
-        const response = await userClient.delete("/me");
+        const response = await apiClient.delete("/users/me");
         if (response.status !== 200) throw new Error("Failed to delete user");
         return response.data;
     } catch (error) {

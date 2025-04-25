@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import LandingPage from "../pages/public/LandingPage";
 import HomePage from "../pages/home/Homepage";
@@ -7,25 +7,28 @@ import ErrorPage from "../pages/public/ErrorPage";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import LoadingPage from "../pages/public/LoadingPage";
-import { Navbar } from "../components/common";
 
 // Regular imports for previously lazy-loaded pages
-import FollowersPage from "../pages/home/FollowersPage";
-import ProfilePage from "../pages/user/ProfilePage";
-import EditProfilePage from "../pages/user/EditProfilePage";
-import PostPage from "../pages/content/PostPage";
-import PrivacyPolicyPage from "../pages/public/PrivacyPolicyPage";
-import Login from "../pages/auth/Login";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import RegisterPage from "../pages/auth/Register";
-import FavoritesPage from "../pages/home/FavoritesPage";
-import SavedPage from "../pages/home/SavedPage";
-import SettingsPage from "../pages/user/SettingsPage";
-import SearchPage from "../pages/home/SearchPage";
-import AuthSelectionPage from "../pages/auth/AuthSelectionPage";
-import UserInfoPage from "../pages/user/UserInfoPage";
-import GroupsPage from "../pages/home/GroupsPage";
-import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
+const FollowersPage = lazy(() => import("../pages/home/FollowersPage"));
+const ProfilePage = lazy(() => import("../pages/user/ProfilePage"));
+const EditProfilePage = lazy(() => import("../pages/user/EditProfilePage"));
+const PostPage = lazy(() => import("../pages/content/PostPage"));
+const PrivacyPolicyPage = lazy(() =>
+    import("../pages/public/PrivacyPolicyPage")
+);
+const Login = lazy(() => import("../pages/auth/Login"));
+const ForgotPassword = lazy(() => import("../pages/auth/ForgotPassword"));
+const RegisterPage = lazy(() => import("../pages/auth/Register"));
+const FavoritesPage = lazy(() => import("../pages/home/FavoritesPage"));
+const SavedPage = lazy(() => import("../pages/home/SavedPage"));
+const SettingsPage = lazy(() => import("../pages/user/SettingsPage"));
+const SearchPage = lazy(() => import("../pages/home/SearchPage"));
+const AuthSelectionPage = lazy(() => import("../pages/auth/AuthSelectionPage"));
+const UserInfoPage = lazy(() => import("../pages/user/UserInfoPage"));
+const GroupsPage = lazy(() => import("../pages/home/GroupsPage"));
+const AdminDashboardPage = lazy(() =>
+    import("../pages/admin/AdminDashboardPage")
+);
 
 export const AppRoutes = () => {
     const { isAuthenticated } = useAuth();

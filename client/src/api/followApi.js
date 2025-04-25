@@ -1,21 +1,10 @@
-import axios from "axios";
-
-const devMode = import.meta.env.VITE_NODE_ENV;
-const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
-
-const apiClient = axios.create({
-    baseURL:
-        devMode === "production"
-            ? `${apiUrl}/follows`
-            : "http://localhost:3000/api/follows",
-    withCredentials: true,
-});
+import apiClient from "./apiClient";
 
 export const followUser = async (followingId) => {
     // Belirli bir id'li kullanıcıyı takip etme
     try {
         return await apiClient
-            .post(`/${followingId}`, {})
+            .post(`/follows/${followingId}`, {})
             .then((response) => response.data);
     } catch (error) {
         console.error("Error following user:", error);
@@ -26,7 +15,7 @@ export const unfollowUser = async (followingId) => {
     // Belirli bir id'li kullanıcıyı takipten cikartma
     try {
         return await apiClient
-            .delete(`/${followingId}`)
+            .delete(`/follows/${followingId}`)
             .then((response) => response.data);
     } catch (error) {
         console.error("Error unfollowing user:", error);
@@ -36,7 +25,7 @@ export const unfollowUser = async (followingId) => {
 export const removeFollower = async (followerId) => {
     try {
         return await apiClient
-            .delete(`/follower/${followerId}`)
+            .delete(`/follows/follower/${followerId}`)
             .then((response) => response.data);
     } catch (error) {
         console.error("Error unfollowing user:", error);
@@ -47,7 +36,7 @@ export const checkFollowStatus = async (followingId) => {
     // Aktif kullanıcının ilgili kullanıcıyı takip edip takip etmedigini kontrol eder
     try {
         return await apiClient
-            .get(`/check/${followingId}`)
+            .get(`/follows/check/${followingId}`)
             .then((response) => response.data);
     } catch (error) {
         console.error("Error checking follow status:", error);
@@ -58,7 +47,7 @@ export const getFollowers = async () => {
     // Aktif kullanıcının tum takipcilerini getirme
     try {
         return await apiClient
-            .get("/followers")
+            .get("/follows/followers")
             .then((response) => response.data);
     } catch (error) {
         console.error("Error getting followers:", error);
@@ -70,7 +59,7 @@ export const getFollowersByUserId = async (userId) => {
     // Bu istek, kullanıcının takipcilerini alır ve sunucudan gelen yanıtı döner
     try {
         return await apiClient
-            .get(`/followers/${userId}`)
+            .get(`/follows/followers/${userId}`)
             .then((response) => response.data);
     } catch (error) {
         console.error("Error getting followers by user ID:", error);
@@ -82,7 +71,7 @@ export const getFollowingByUserId = async (userId) => {
     // Bu istek, kullanıcının takip ettiklerini alır ve sunucudan gelen yanıtı döner
     try {
         return await apiClient
-            .get(`/following/${userId}`)
+            .get(`/follows/following/${userId}`)
             .then((response) => response.data);
     } catch (error) {
         console.error("Error getting following by user ID:", error);

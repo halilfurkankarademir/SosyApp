@@ -1,6 +1,10 @@
 import express from "express";
 import { userController } from "../controllers/userController.js";
 import { authenticateToken } from "../middlewares/authMiddleware.js";
+import {
+    validateEmail,
+    validateUsername,
+} from "../middlewares/validators/userValidator.js";
 
 const router = express.Router();
 
@@ -13,6 +17,7 @@ router.get("/id/:userId", authenticateToken, userController.getUserById);
 // Kullanıcıyı username ile getirme
 router.get(
     "/username/:username",
+    validateUsername,
     authenticateToken,
     userController.getUserByUsername
 );
@@ -21,7 +26,12 @@ router.get(
 router.get("/me", authenticateToken, userController.getCurrent);
 
 // Kullanıcıyı email ile getirme
-router.get("/email/:email", authenticateToken, userController.getUserByEmail);
+router.get(
+    "/email/:email",
+    validateEmail,
+    authenticateToken,
+    userController.getUserByEmail
+);
 
 // Aktif Kullanıcı güncelleme
 router.put("/me", authenticateToken, userController.updateUser);

@@ -1,21 +1,10 @@
-import axios from "axios";
-
-const devMode = import.meta.env.VITE_NODE_ENV;
-const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
-
-const apiClient = axios.create({
-    baseURL:
-        devMode === "production"
-            ? `${apiUrl}/comments`
-            : "http://localhost:3000/api/comments",
-    withCredentials: true,
-});
+import apiClient from "./apiClient";
 
 export const createComment = async (params) => {
     try {
         const { postId, content } = params;
         const response = await apiClient.post(
-            `/${postId}`,
+            `/comments/${postId}`,
             {
                 content,
             },
@@ -34,7 +23,7 @@ export const createComment = async (params) => {
 
 export const deleteComment = async (commentId) => {
     try {
-        const response = await apiClient.delete(`/${commentId}`, {
+        const response = await apiClient.delete(`/comments/${commentId}`, {
             withCredentials: true,
         });
         return response.data;
@@ -46,7 +35,7 @@ export const deleteComment = async (commentId) => {
 
 export const getCommentsByPostId = async (postId) => {
     try {
-        const response = await apiClient.get(`/${postId}`);
+        const response = await apiClient.get(`/comments/${postId}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching comments by post ID:", error);
@@ -56,7 +45,7 @@ export const getCommentsByPostId = async (postId) => {
 
 export const getCommentCount = async (postId) => {
     try {
-        const response = await apiClient.get(`/count/${postId}`, {
+        const response = await apiClient.get(`/comments/count/${postId}`, {
             withCredentials: true,
         });
         return response.data;

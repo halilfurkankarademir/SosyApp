@@ -27,7 +27,8 @@ const Navbar = () => {
     // --- Context ve Store Kullanımı (Aynı) ---
     const { navigateToPage } = useNavigation();
     const { isAuthenticated, setIsAuthenticated } = useAuth();
-    const { notifications } = useNotification();
+    const { notifications, isAllNotificationsRead, setIsAllNotificationsRead } =
+        useNotification();
 
     // --- Referans Tanımlamaları (Aynı) ---
     const settingsRef = useRef(null);
@@ -98,6 +99,7 @@ const Navbar = () => {
         if (newState && hasNewNotification) {
             setHasNewNotification(false);
             setClickedNotification(true);
+            setIsAllNotificationsRead(true);
         }
     };
     const toggleSettings = () => setShowSettings(!showSettings);
@@ -106,8 +108,7 @@ const Navbar = () => {
 
     // --- Yan Etkiler (Side Effects) (Aynı) ---
     useEffect(() => {
-        const unreadExists = notifications.some((n) => !n.isRead);
-        if (unreadExists && !clickedNotification) {
+        if (!isAllNotificationsRead) {
             setHasNewNotification(true);
         } else {
             setHasNewNotification(false);
@@ -128,11 +129,9 @@ const Navbar = () => {
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         handleSearch={handleSearch}
-                        // Bildirim propları buraya eklendi:
                         hasNewNotification={hasNewNotification}
                         onToggleNotifications={toggleNotifications}
                         notificationsButtonRef={notificationsButtonRef} // Ref'i ilet
-                        // Diğer proplar:
                         onToggleSettings={toggleSettings}
                         onToggleMobileMenu={toggleMobileMenu}
                         onToggleMobileSearch={toggleMobileSearch}
@@ -150,7 +149,6 @@ const Navbar = () => {
                     {showNotifications && (
                         <div
                             ref={notificationsRef} // Dropdown'a ref ata
-                            className="absolute top-16 right-4 md:right-auto md:left-1/2 md:-translate-x-1/2 lg:right-20 lg:left-auto lg:translate-x-0 z-40 w-full max-w-md sm:w-96"
                         >
                             <Notifications
                                 notificationsData={notifications}

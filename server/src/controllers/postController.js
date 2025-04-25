@@ -6,7 +6,6 @@ const postController = {
     createPost: async (req, res) => {
         try {
             let postData = req.body;
-            console.log(req.user);
             postData = {
                 ...postData,
                 userId: req.user.uid,

@@ -5,19 +5,18 @@ const NotificationContext = createContext();
 
 export const NotificationProvider = ({ children }) => {
     const [notifications, setNotifications] = useState([]);
-    const [notificationsEnabled, setNotificationsEnabled] = useState(
-        localStorage.getItem("notificationsEnabled") === "true"
-    );
+    const [isAllNotificationsRead, setIsAllNotificationsRead] = useState(true);
+    const notificationsEnabled = true;
 
     useEffect(() => {
         if (notificationsEnabled) {
             const handleNotifications = (data) => {
                 setNotifications((prev) => [data, ...prev]);
+                setIsAllNotificationsRead(false);
             };
 
             socket.on("new_notification", handleNotifications);
             return () => {
-                console.log("Navbar cleaning up notification listener...");
                 socket.off("new_notification", handleNotifications);
             };
         }
@@ -25,7 +24,12 @@ export const NotificationProvider = ({ children }) => {
 
     return (
         <NotificationContext.Provider
-            value={{ notifications, setNotifications }}
+            value={{
+                notifications,
+                setNotifications,
+                isAllNotificationsRead,
+                setIsAllNotificationsRead,
+            }}
         >
             {children}
         </NotificationContext.Provider>

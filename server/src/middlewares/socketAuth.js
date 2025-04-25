@@ -1,14 +1,36 @@
 import { verifyUserFromTokenCookie } from "../utils/authHelper.js";
+import cookie from "cookie";
 
 export async function socketAuthMiddleware(socket, next) {
     try {
-        const cookieHeader = socket.request.headers.cookie;
+        // Socketten gelen header bilgilerini al
+        const cookieHeaderString = socket.request.headers.cookie;
 
-        if (!cookieHeader) {
+        if (!cookieHeaderString) {
+            console.log("Cookie başlığı bulunamadı.");
             return next(new Error("Kimlik bilgisi (cookie) bulunamadı"));
         }
 
-        const user = await verifyUserFromTokenCookie(cookieHeader);
+        // Cookie kutuphanesi ile cookileri ayristir
+        const cookies = cookie.parse(cookieHeaderString);
+
+        // Cookilerden access token'i al
+        const token = cookies.access_token;
+
+        if (!token) {
+            console.log("Access token cookie içinde bulunamadı.");
+            return next(new Error("Access token bulunamadı"));
+        }
+
+        // Burada verifyToken formatina uymasi icin bir sahte request olustur ve icine cookiesi yerlestir
+        const pseudoReq = {
+            cookies: {
+                access_token: token,
+            },
+        };
+
+        // Cookileri dogrula ve eger dogruysa kullanici bilgisini socket'a at
+        const user = await verifyUserFromTokenCookie(pseudoReq);
 
         if (!user) {
             console.warn(

@@ -1,6 +1,7 @@
 import savedController from "../controllers/savedController.js";
 import express from "express";
 import { authenticateToken } from "../middlewares/authMiddleware.js";
+import { validateSaved } from "../middlewares/validators/savedValidator.js";
 
 const router = express.Router();
 
@@ -8,12 +9,27 @@ const router = express.Router();
 router.get("/", authenticateToken, savedController.getSavedPosts);
 
 // Gonderiyi kaydetme
-router.post("/:postId", authenticateToken, savedController.savePost);
+router.post(
+    "/:postId",
+    validateSaved,
+    authenticateToken,
+    savedController.savePost
+);
 
 // Gonderiyi kaydetme kismindan cikarma
-router.delete("/:postId", authenticateToken, savedController.unsavePost);
+router.delete(
+    "/:postId",
+    validateSaved,
+    authenticateToken,
+    savedController.unsavePost
+);
 
 // Kullanici gonderiyi kaydedip kaydedmedigini kontrol etme
-router.get("/check/:postId", authenticateToken, savedController.checkPostSaved);
+router.get(
+    "/check/:postId",
+    validateSaved,
+    authenticateToken,
+    savedController.checkPostSaved
+);
 
 export default router;

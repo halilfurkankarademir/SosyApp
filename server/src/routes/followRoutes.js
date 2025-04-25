@@ -1,6 +1,7 @@
 import express from "express";
 import { authenticateToken } from "../middlewares/authMiddleware.js";
 import followController from "../controllers/followController.js"; // Controller import edildiğini varsayalım
+import { validateFollow } from "../middlewares/validators/followValidator.js";
 
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.get(
 // Belirli bir kullanicinin takipcilerini getirme
 router.get(
     "/followers/:followingUserId",
+    validateFollow,
     authenticateToken,
     followController.getFollowersById
 );
@@ -28,19 +30,31 @@ router.get(
 // Belirli bir kullanicinin takip ettiklerini getirme
 router.get(
     "/following/:followingUserId",
+    validateFollow,
     authenticateToken,
     followController.getFollowingById
 );
 
 // Kullanici takip etme
-router.post("/:userId", authenticateToken, followController.createFollow);
+router.post(
+    "/:userId",
+    validateFollow,
+    authenticateToken,
+    followController.createFollow
+);
 
 // Takip edilen kullanıcıyı takipten cikma
-router.delete("/:userId", authenticateToken, followController.deleteFollow);
+router.delete(
+    "/:userId",
+    validateFollow,
+    authenticateToken,
+    followController.deleteFollow
+);
 
 // Aktif kullaniciyi takip eden kullaniciyi kaldırma
 router.delete(
     "/follower/:followerId",
+    validateFollow,
     authenticateToken,
     followController.deleteFollower
 );
@@ -48,6 +62,7 @@ router.delete(
 // Aktif kullanıcının belirli bir kullanıcıyla takip durumunu kontrol etme
 router.get(
     "/check/:followingUserId",
+    validateFollow,
     authenticateToken,
     followController.checkFollow
 );

@@ -1,20 +1,8 @@
-import axios from "axios";
-
-const devMode = import.meta.env.VITE_NODE_ENV;
-const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
-
-// Create a dedicated apiClient for likes endpoints
-const likesClient = axios.create({
-    baseURL:
-        devMode === "production"
-            ? `${apiUrl}/likes`
-            : "http://localhost:3000/api/likes",
-    withCredentials: true,
-});
+import apiClient from "./apiClient";
 
 export const addLikePost = async (postId) => {
     try {
-        return await likesClient.post(`/${postId}`);
+        return await apiClient.post(`/likes/${postId}`);
     } catch (error) {
         console.error("Error liking post:", error);
         throw error; // Re-throw the error to handle it in the component
@@ -23,7 +11,7 @@ export const addLikePost = async (postId) => {
 
 export const removeLikeFromPost = async (postId) => {
     try {
-        return await likesClient.delete(`/${postId}`);
+        return await apiClient.delete(`/likes/${postId}`);
     } catch (error) {
         console.error("Error unliking post:", error);
         throw error;
@@ -32,7 +20,7 @@ export const removeLikeFromPost = async (postId) => {
 
 export const getAllLikes = async (postId) => {
     try {
-        return await likesClient.get(`/post/${postId}`);
+        return await apiClient.get(`/likes/post/${postId}`);
     } catch (error) {
         console.error("Error getting likes:", error);
         throw error;
@@ -41,7 +29,7 @@ export const getAllLikes = async (postId) => {
 
 export const checkLike = async (postId) => {
     try {
-        return await likesClient.get(`/${postId}/check`);
+        return await apiClient.get(`/likes/${postId}/check`);
     } catch (error) {
         console.error("Error checking like:", error);
         throw error;
@@ -50,7 +38,7 @@ export const checkLike = async (postId) => {
 
 export const getLikesByUserId = async () => {
     try {
-        const response = await likesClient.get("/user");
+        const response = await apiClient.get("/likes/user");
         return response.data;
     } catch (error) {
         console.error("Error getting likes by user:", error);

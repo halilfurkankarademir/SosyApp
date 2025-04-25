@@ -1,19 +1,8 @@
-import axios from "axios";
-
-const devMode = import.meta.env.VITE_NODE_ENV;
-const apiUrl = import.meta.env.VITE_BACKEND_API_LINK;
-
-const apiClient = axios.create({
-    baseURL:
-        devMode === "production"
-            ? `${apiUrl}/search`
-            : "http://localhost:3000/api/search",
-    withCredentials: true,
-});
+import apiClient from "./apiClient";
 
 export const searchUsers = async (query) => {
     try {
-        const response = await apiClient.get("/users", {
+        const response = await apiClient.get("/search/users", {
             params: {
                 query,
             },
@@ -26,7 +15,7 @@ export const searchUsers = async (query) => {
 
 export const searchPosts = async (query) => {
     try {
-        const response = await apiClient.get("/posts", {
+        const response = await apiClient.get("/search/posts", {
             params: {
                 query,
             },

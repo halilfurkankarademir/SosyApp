@@ -1,5 +1,6 @@
 class userDTO {
     constructor(user) {
+        if (!user) throw new Error("User object is required");
         this.uid = user.uid;
         this.role = user.role;
         this.firstName = user.firstName;

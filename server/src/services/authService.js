@@ -1,6 +1,8 @@
 import logger from "../utils/logger.js";
 import bcrypt from "bcrypt";
 import UserService from "./userService.js";
+import userRepository from "../repositories/userRepository.js";
+import jwt from "jsonwebtoken";
 
 const AuthService = {
     async register(email, password, username, firstName, lastName, ipAdress) {
@@ -104,6 +106,28 @@ const AuthService = {
         } catch (error) {
             console.error("Login error:", error);
             throw error;
+        }
+    },
+
+    async refreshToken(token) {
+        if (!token) {
+            console.log("Refresh token not found in cookies");
+            clearAuthCookies(res);
+            return res
+                .status(401)
+                .json({ error: "Gecersiz veya Süresi Dolmuş Token" });
+        }
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+            const user = await userRepository.getByUserId(decoded.userId);
+
+            if (!user) {
+                throw new Error("User not found");
+            }
+            return user;
+        } catch (error) {
+            console.log("Error verifying refresh token:", error);
         }
     },
 };
