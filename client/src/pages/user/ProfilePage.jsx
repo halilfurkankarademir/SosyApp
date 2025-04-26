@@ -72,6 +72,7 @@ const ProfilePage = () => {
 
             // 6. Profil kullanıcısının postlarını al
             const fetchedPosts = await fetchPostsByUserId(fetchedUser.uid);
+            console.log(fetchedPosts);
             setPosts(fetchedPosts);
         } catch (error) {
             console.error("Error fetching profile data:", error);

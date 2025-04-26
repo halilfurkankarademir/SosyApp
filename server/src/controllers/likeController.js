@@ -2,6 +2,7 @@
 import postRepository from "../repositories/postRepository.js";
 import likeService from "../services/likeService.js";
 import { sendLikeNotification } from "../services/notificationService.js";
+import PostService from "../services/postService.js";
 
 const likeController = {
     createLike: async (req, res) => {
@@ -13,7 +14,9 @@ const likeController = {
 
             const like = await likeService.createLike(userId, postId);
 
-            const post = await postRepository.getById(postId);
+            console.log("Like created:", like);
+
+            const post = await postRepository.findById(postId);
             if (!post) {
                 return res.status(404).json({ error: "Post not found" });
             }
@@ -45,7 +48,7 @@ const likeController = {
     getAllLikes: async (req, res) => {
         try {
             const postId = req.params.postId;
-            const likes = await likeService.getAllLikes(postId);
+            const likes = await likeService.getLikesForPost(postId);
             res.status(200).json(likes);
         } catch (error) {
             console.error("Error getting likes:", error);
@@ -58,8 +61,10 @@ const likeController = {
     getLikesByUserId: async (req, res) => {
         try {
             const userId = req.user.uid;
-            console.log(userId);
-            const likes = await likeService.getLikesByUserId(userId);
+            if (!userId) {
+                return res.status(401).json({ error: "Unauthorized" });
+            }
+            const likes = await PostService.getLikedPostsByUserId(userId);
             res.status(200).json(likes);
         } catch (error) {
             console.error("Error getting likes by user ID:", error);
@@ -73,7 +78,7 @@ const likeController = {
         try {
             const { postId } = req.params;
             const userId = req.user.uid;
-            const isLiked = await likeService.checkLike(userId, postId);
+            const isLiked = await likeService.hasUserLikedPost(userId, postId);
             res.status(200).json({ isLiked });
         } catch (error) {
             console.error("Error checking like:", error);

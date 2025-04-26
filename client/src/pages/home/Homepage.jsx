@@ -14,8 +14,8 @@ const HomePage = () => {
 
     const fetchPosts = useCallback(async () => {
         try {
-            const posts = await fetchAllPosts();
-            setPosts(posts);
+            const response = await fetchAllPosts();
+            setPosts(response);
             setHasMore(false);
         } catch (error) {
             console.error("Error fetching posts:", error);
@@ -51,6 +51,7 @@ const HomePage = () => {
         fetchPosts();
     }, []);
 
+    // Bu kisim tasarim
     return (
         <>
             <div className="page-container md:py-36 md:px-6">

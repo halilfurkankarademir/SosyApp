@@ -1,92 +1,94 @@
+import Comment from "../models/commentModel.js";
+import Like from "../models/likeModel.js";
 import Post from "../models/postModel.js";
+import Saved from "../models/savedModel.js";
 import User from "../models/userModel.js";
+
+const standartIncludes = [
+    {
+        model: User,
+        as: "user",
+        attributes: [
+            "uid",
+            "username",
+            "profilePicture",
+            "firstName",
+            "lastName",
+        ],
+    },
+    { model: Like, attributes: ["userId"] },
+    { model: Saved, attributes: ["userId"] },
+    {
+        model: Comment,
+        include: [
+            {
+                model: User,
+                as: "user",
+                attributes: [
+                    "uid",
+                    "username",
+                    "profilePicture",
+                    "firstName",
+                    "lastName",
+                ],
+            },
+        ],
+        order: [["createdAt", "ASC"]],
+        limit: 50,
+        required: false,
+    },
+];
 
 export default {
     async create(postData) {
         try {
             return await Post.create(postData);
         } catch (error) {
-            throw new Error(`Post creation failed: ${error.message}`);
+            console.error("Repository create error:", error);
+            throw new Error(`Gönderi oluşturulamadı.`);
         }
     },
-    async delete(postId) {
+
+    async deleteById(postId) {
         try {
             const post = await Post.findByPk(postId);
             if (!post) {
-                throw new Error("Post not found");
+                throw new Error("Gönderi bulunamadı");
             }
             await post.destroy();
             return { success: true };
         } catch (error) {
-            throw new Error(`Post deletion failed: ${error.message}`);
+            console.error("Repository delete error:", error);
+            throw new Error(`Gönderi silinemedi: ${error.message}`);
         }
     },
 
-    async getAll() {
+    // Tüm gönderi bulma işlemleri için ana fonksiyon
+    async findPosts(options = {}) {
         try {
-            const posts = await Post.findAll({
-                order: [["createdAt", "DESC"]],
-                include: [
-                    {
-                        model: User,
-                        attributes: [
-                            "uid",
-                            "username",
-                            "profilePicture",
-                            "firstName",
-                            "lastName",
-                        ],
-                    },
-                ],
+            return await Post.findAndCountAll({
+                // Hem listeyi hem toplam sayıyı döner (sayfalama için)
+                include: standartIncludes, // HER ZAMAN standart ilişkileri getir
+                order: [["createdAt", "DESC"]], // Varsayılan sıralama
+                ...options, // Gelen filtre (where), limit, offset'i uygula
+                distinct: true, // İlişkiler varken doğru sayım için
             });
-            return posts;
         } catch (error) {
-            throw new Error(`Post fetch failed: ${error.message}`);
+            console.error("Repository findPosts error:", error);
+            throw new Error(`Gönderiler getirilemedi.`);
         }
     },
 
-    async getById(postId) {
+    async findById(postId) {
         try {
-            return await Post.findByPk(postId, {
-                include: [
-                    {
-                        model: User,
-                        attributes: [
-                            "uid",
-                            "username",
-                            "profilePicture",
-                            "firstName",
-                            "lastName",
-                        ],
-                    },
-                ],
+            // findPosts'u kullanmıyoruz çünkü findByPk daha basit ve count'a gerek yok
+            const post = await Post.findByPk(postId, {
+                include: standartIncludes, // Tek gönderi için de ilişkileri getir
             });
+            return post; // Bulamazsa null döner
         } catch (error) {
-            throw new Error(`Post fetch failed: ${error.message}`);
-        }
-    },
-
-    async getPostByUserId(userId) {
-        try {
-            const posts = await Post.findAll({
-                where: { userId },
-                order: [["createdAt", "DESC"]],
-                include: [
-                    {
-                        model: User,
-                        attributes: [
-                            "uid",
-                            "username",
-                            "profilePicture",
-                            "firstName",
-                            "lastName",
-                        ],
-                    },
-                ],
-            });
-            return posts;
-        } catch (error) {
-            throw new Error(`Post fetch failed: ${error.message}`);
+            console.error("Repository findById error:", error);
+            throw new Error(`Gönderi getirilemedi.`);
         }
     },
 };

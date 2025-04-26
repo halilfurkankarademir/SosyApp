@@ -32,9 +32,10 @@ const postController = {
         }
     },
 
-    getAllPosts: async (req, res) => {
+    findPosts: async (req, res) => {
         try {
-            const posts = await PostService.getAllPosts();
+            const userId = req.user.uid;
+            const posts = await PostService.findPosts(userId);
             if (!posts) {
                 return res.status(404).json({ error: "No posts found" });
             }

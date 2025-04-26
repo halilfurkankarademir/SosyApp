@@ -68,6 +68,17 @@ export default function setupAssociations() {
         targetKey: "id",
     });
 
+    // Post - Comment ilişkisi (1-N)
+    Post.hasMany(Comment, {
+        foreignKey: "postId",
+        sourceKey: "id", // Post.id ile Comment.postId eşleşecek
+    });
+
+    Comment.belongsTo(Post, {
+        foreignKey: "postId",
+        targetKey: "id",
+    });
+
     // User - Like ilişkisi (1-N)
     User.hasMany(Like, {
         foreignKey: "userId",

@@ -10,101 +10,72 @@ import { FiMoreHorizontal } from "react-icons/fi";
 import { useNavigation } from "../../../context/NavigationContext";
 import { getDateDiff } from "../../../utils/helpers";
 import { ShowToast } from "../../ui/toasts/ShowToast";
-import {
-    addLikePost,
-    getAllLikes,
-    removeLikeFromPost,
-} from "../../../api/likeApi";
-import { isPostSaved, savePost, unsavePost } from "../../../api/savedApi";
-import { getCommentCount } from "../../../api/commentApi";
-import { getCurrentUser } from "../../../api/userApi";
+import { addLikePost, removeLikeFromPost } from "../../../api/likeApi";
+import { savePost, unsavePost } from "../../../api/savedApi";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import useLikeStatus from "../../../hooks/useLikeStatus";
 import { MdDelete, MdOutlineReport } from "react-icons/md";
 import { removePost } from "../../../api/postApi";
-import useUserStore from "../../../hooks/useUserStore";
 
 const PostCard = ({ postData, onPostRemove }) => {
-    const { id, user, content, media, createdAt } = postData || {};
+    const {
+        id,
+        user,
+        likes: initialLikes,
+        comments,
+        content,
+        media,
+        createdAt,
+        isOwner,
+        isLiked: initialIsLiked,
+        isSaved: initialIsSaved,
+    } = postData || {};
+
     const postDate = getDateDiff(createdAt);
 
     const { navigateToPage } = useNavigation();
+
     const moreMenuRef = useRef(null);
+
+    const [isLiked, setIsLiked] = useState(initialIsLiked);
+    const [isSaved, setIsSaved] = useState(initialIsSaved);
+    const [likesCount, setLikesCount] = useState(initialLikes.length || 0);
     const [showMoreOptions, setShowMoreOptions] = useState(false);
-    const [isSaved, setIsSaved] = useState(false);
-    const [likeCount, setLikeCount] = useState(0);
-    const [commentCount, setCommentCount] = useState(0);
-    const [isCurrentUserOwner, setIsCurrentUserOwner] = useState(false);
-    const { isLiked, setIsLiked } = useLikeStatus(id);
-
-    const currentUser = useUserStore((state) => state.user);
-
-    const fetchPostStats = useCallback(async () => {
-        if (!id) return;
-        try {
-            const [likesResponse, commentsResponse, savedStatus] =
-                await Promise.all([
-                    getAllLikes(id),
-                    getCommentCount(id),
-                    isPostSaved(id),
-                ]);
-            setLikeCount(likesResponse?.data?.length || 0);
-            setCommentCount(commentsResponse || 0);
-            setIsSaved(savedStatus || false);
-        } catch (error) {
-            console.error(
-                "Error fetching post stats for post ID",
-                id,
-                ":",
-                error
-            );
-            setLikeCount(0);
-            setCommentCount(0);
-            setIsSaved(false);
-        }
-    }, [id]);
-
-    const checkPostOwnership = useCallback(async () => {
-        if (!user?.uid) return;
-        try {
-            setIsCurrentUserOwner(currentUser.uid === user.uid);
-        } catch (error) {
-            console.error("Error checking post ownership:", error);
-            setIsCurrentUserOwner(false);
-        }
-    }, [user?.uid]);
 
     const handleLikeToggle = useCallback(async () => {
         if (!id) return;
         const previousLikeStatus = isLiked;
-        const previousLikeCount = likeCount;
+        let previousLikeCount = likesCount;
 
-        setIsLiked(!isLiked);
-        setLikeCount((prev) => (isLiked ? Math.max(0, prev - 1) : prev + 1));
+        setIsLiked(!previousLikeStatus);
 
         try {
             if (!previousLikeStatus) {
                 await addLikePost(id);
+                previousLikeCount++;
+                setLikesCount(previousLikeCount);
             } else {
                 await removeLikeFromPost(id);
+                previousLikeCount--;
+                setLikesCount(previousLikeCount);
             }
         } catch (error) {
             console.error("Like toggle error:", error);
             setIsLiked(previousLikeStatus);
-            setLikeCount(previousLikeCount);
+            setLikesCount(previousLikeCount);
             ShowToast("error", "İşlem sırasında bir hata oluştu.");
         }
-    }, [id, isLiked, likeCount, setIsLiked, setLikeCount]);
+    }, [id, isLiked, likesCount]);
 
     const handleSaveToggle = useCallback(async () => {
         if (!id) return;
-        const previousSaveStatus = isSaved;
+        const previousIsSaved = isSaved;
 
-        setIsSaved(!isSaved);
+        // Optimistik güncelleme ekleyin
+        setIsSaved(!previousIsSaved);
 
         try {
-            if (!previousSaveStatus) {
+            if (!previousIsSaved) {
                 await savePost(id);
                 ShowToast("success", "Gönderi kaydedildi.");
             } else {
@@ -113,10 +84,11 @@ const PostCard = ({ postData, onPostRemove }) => {
             }
         } catch (error) {
             console.error("Save toggle error:", error);
-            setIsSaved(previousSaveStatus);
+            // Hata durumunda eski state'e dön
+            setIsSaved(previousIsSaved);
             ShowToast("error", "Kaydetme işleminde hata oluştu.");
         }
-    }, [id, isSaved, setIsSaved]);
+    }, [id, isSaved]);
 
     const handleNavigateToPost = useCallback(() => {
         if (id) navigateToPage(`/post/${id}`);
@@ -157,11 +129,6 @@ const PostCard = ({ postData, onPostRemove }) => {
     }, [user?.username]);
 
     useEffect(() => {
-        fetchPostStats();
-        checkPostOwnership();
-    }, [fetchPostStats, checkPostOwnership]);
-
-    useEffect(() => {
         const handleClickOutside = (event) => {
             if (
                 moreMenuRef.current &&
@@ -174,6 +141,12 @@ const PostCard = ({ postData, onPostRemove }) => {
         return () =>
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        setIsLiked(initialIsLiked);
+        setIsSaved(initialIsSaved);
+        setLikesCount(initialLikes.length || 0);
+    }, [initialIsLiked, initialIsSaved, initialLikes]);
 
     if (!postData || !id) {
         return (
@@ -226,7 +199,7 @@ const PostCard = ({ postData, onPostRemove }) => {
                             className="absolute right-0 top-full mt-2 bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl p-2 w-72 animate-fade-in z-50"
                             role="menu"
                         >
-                            {isCurrentUserOwner ? (
+                            {isOwner ? (
                                 <button
                                     role="menuitem"
                                     className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-neutral-700 rounded flex items-center gap-2"
@@ -278,14 +251,14 @@ const PostCard = ({ postData, onPostRemove }) => {
                 <div className="flex items-center gap-4">
                     <span className="flex items-center gap-1.5">
                         <FaHeart />
-                        <span>{likeCount}</span>
+                        <span>{likesCount || 0}</span>
                     </span>
                     <span
                         className="flex items-center gap-1.5 cursor-pointer hover:text-white"
                         onClick={handleNavigateToPost}
                     >
                         <FaComment />
-                        <span>{commentCount}</span>
+                        <span>{comments.length}</span>
                     </span>
                 </div>
             </div>

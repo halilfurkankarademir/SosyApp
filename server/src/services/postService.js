@@ -1,5 +1,31 @@
+import { Op } from "@sequelize/core";
+import likeRepository from "../repositories/likeRepository.js";
 import postRepository from "../repositories/postRepository.js";
 import logger from "../utils/logger.js";
+import savedRepository from "../repositories/savedRepository.js";
+
+const addPostDetailsForUser = (posts, userId) => {
+    return posts.map((post) => {
+        if (!post) {
+            return null;
+        }
+
+        // Gonderiyi json'a cevirip isOwner, isLiked, isSaved degerlerini ekliyoruz
+        const plainPost = post.toJSON();
+
+        const isOwner = plainPost.userId === userId;
+        const isLiked = plainPost.likes.some((like) => like.userId === userId);
+        const isSaved = plainPost.saveds.some(
+            (saved) => saved.userId === userId
+        );
+        return {
+            ...plainPost,
+            isOwner,
+            isLiked,
+            isSaved,
+        };
+    });
+};
 
 const PostService = {
     //Gonderi olusturur
@@ -26,14 +52,17 @@ const PostService = {
     },
 
     // Tum gonderileri getirir
-    getAllPosts: async () => {
+    findPosts: async (userId) => {
         try {
-            const posts = await postRepository.getAll();
+            const { rows: posts, count } = await postRepository.findPosts();
             logger.info("Fetched all posts.");
             if (!posts) {
                 throw new Error("No posts found");
             }
-            return posts;
+
+            const updatedPosts = addPostDetailsForUser(posts, userId);
+
+            return updatedPosts;
         } catch (error) {
             logger.error("Error fetching posts:", error);
             throw new Error("Error getting posts");
@@ -42,18 +71,82 @@ const PostService = {
 
     // Gonderi idsine gore gonderiyi getirir
     getPostById: (postId) => {
-        return postRepository.getById(postId);
+        return postRepository.findById(postId);
+    },
+
+    getLikedPostsByUserId: async (userId) => {
+        try {
+            const postIds = await likeRepository.findLikedPostIdsByUserId(
+                userId
+            );
+
+            logger.info("Fetched liked posts by user ID:", userId);
+            if (!postIds) {
+                throw new Error("No posts found for this user");
+            }
+
+            const postsFilter = { id: { [Op.in]: postIds } };
+
+            const { rows: posts, count } = await postRepository.findPosts({
+                where: postsFilter,
+            });
+
+            if (!posts) {
+                throw new Error("No posts found for this user");
+            }
+
+            const updatedPosts = addPostDetailsForUser(posts, userId);
+
+            return updatedPosts;
+        } catch (error) {
+            logger.error("Error fetching liked posts by user ID:", error);
+            throw new Error("Error getting liked posts by user ID");
+        }
+    },
+
+    getSavedPostsByUserId: async (userId) => {
+        try {
+            const postIds = await savedRepository.findAllSavedPostIdsByUser(
+                userId
+            );
+            logger.info("Fetched saved posts by user ID:", userId);
+            if (!postIds) {
+                throw new Error("No posts found for this user");
+            }
+
+            const postsFilter = { id: { [Op.in]: postIds } };
+
+            const { rows: posts, count } = await postRepository.findPosts({
+                where: postsFilter,
+            });
+
+            if (!posts) {
+                throw new Error("No posts found for this user");
+            }
+
+            const updatedPosts = addPostDetailsForUser(posts, userId);
+
+            return updatedPosts;
+        } catch (error) {
+            logger.error("Error fetching saved posts by user ID:", error);
+            throw new Error("Error getting saved posts by user ID");
+        }
     },
 
     //Belli bir kullaniciya ait gonderileri getirir
     getPostByUserId: async (userId) => {
         try {
-            const post = await postRepository.getPostByUserId(userId);
+            const { rows: posts, count } = await postRepository.findPosts(
+                userId
+            );
             logger.info("Fetched posts by user ID:", userId);
-            if (!post) {
+            if (!posts) {
                 throw new Error("No posts found for this user");
             }
-            return post;
+
+            const updatedPosts = addPostDetailsForUser(posts, userId);
+
+            return updatedPosts;
         } catch (error) {
             logger.error("Error fetching posts by user ID:", error);
             throw new Error("Error getting posts by user ID");

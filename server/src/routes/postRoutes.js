@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 // Tüm gönderileri getirme
-router.get("/", authenticateToken, postController.getAllPosts);
+router.get("/", authenticateToken, postController.findPosts);
 
 // Gönderiyi ID ile getirme
 router.get("/:postId", validatePostId, postController.getPostById);

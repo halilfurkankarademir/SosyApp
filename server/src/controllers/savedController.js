@@ -1,3 +1,4 @@
+import PostService from "../services/postService.js";
 import savedService from "../services/savedService.js";
 
 const savedController = {
@@ -25,7 +26,7 @@ const savedController = {
     getSavedPosts: async (req, res) => {
         try {
             const userId = req.user.uid;
-            const savedPosts = await savedService.getSavedPosts(userId);
+            const savedPosts = await PostService.getSavedPostsByUserId(userId);
             res.status(200).json(savedPosts);
         } catch (error) {
             res.status(500).json({ error: error.message });

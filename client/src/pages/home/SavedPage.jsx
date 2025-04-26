@@ -5,6 +5,8 @@ import { BiBookmark } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 import { getSavedPosts } from "../../api/savedApi";
+import useUserStore from "../../hooks/useUserStore";
+import { getCurrentUser } from "../../api/userApi";
 
 const SavedPage = () => {
     const [search, setSearch] = useState("");
@@ -12,8 +14,10 @@ const SavedPage = () => {
     const [savedPosts, setSavedPosts] = useState([]);
     const [debouncedValue] = useDebounce(search, 300);
 
+    const setUser = useUserStore((state) => state.setUser);
+
     const filteredPosts = savedPosts.filter((post) => {
-        const postData = post.post;
+        const postData = post;
         return (
             postData.content
                 .toLowerCase()
@@ -30,10 +34,12 @@ const SavedPage = () => {
         );
     });
 
-    const fetchSavedPosts = async () => {
+    const fetchDatas = async () => {
         try {
             const posts = await getSavedPosts();
+            const currentUser = await getCurrentUser();
             setSavedPosts(posts);
+            setUser(currentUser);
         } catch (error) {
             console.error("Error fetching saved posts:", error);
         }
@@ -42,7 +48,7 @@ const SavedPage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Kaydettiklerim";
-        fetchSavedPosts();
+        fetchDatas();
     }, []);
 
     return (
@@ -105,7 +111,7 @@ const SavedPage = () => {
                         {/* Kaydedilmiş Gönderiler Listesi */}
                         <div className="space-y-3 md:space-y-4">
                             {filteredPosts.map((post, index) => (
-                                <PostCard key={index} postData={post.post} />
+                                <PostCard key={index} postData={post} />
                             ))}
                         </div>
                     </div>

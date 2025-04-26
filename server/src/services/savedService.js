@@ -1,47 +1,52 @@
-import Post from "../models/postModel.js";
-import Saved from "../models/savedModel.js";
-import User from "../models/userModel.js";
+import savedRepository from "../repositories/savedRepository.js";
 
 const savedService = {
     async savePost(userId, postId) {
         try {
-            const saved = await Saved.create({ userId, postId });
-            return saved;
+            return await savedRepository.createSaved(userId, postId);
         } catch (error) {
             console.error("Error saving post:", error);
+            throw error;
         }
     },
 
     async unsavePost(userId, postId) {
         try {
-            const saved = await Saved.findOne({ where: { userId, postId } });
-            if (saved) {
-                await saved.destroy();
-            }
+            return await savedRepository.deleteSaved(userId, postId);
         } catch (error) {
             console.error("Error un-saving post:", error);
+            throw error;
         }
     },
 
     async getSavedPosts(userId) {
         try {
-            const savedPosts = await Saved.findAll({
-                where: { userId },
-                include: [{ model: Post, include: [User] }],
-                order: [["createdAt", "DESC"]],
-            });
-            return savedPosts;
+            return await savedRepository.findAllSavedPostsByUser(userId);
         } catch (error) {
             console.error("Error getting saved posts:", error);
+            throw error;
         }
     },
 
     async isPostSaved(userId, postId) {
         try {
-            const saved = await Saved.findOne({ where: { userId, postId } });
+            const saved = await savedRepository.findSavedByUserAndPost(
+                userId,
+                postId
+            );
             return saved !== null;
         } catch (error) {
             console.error("Error checking if post is saved:", error);
+            throw error;
+        }
+    },
+
+    async findSavedPostIdsByUserId(userId) {
+        try {
+            return await savedRepository.findAllSavedPostIdsByUser(userId);
+        } catch (error) {
+            console.log("Error finding saved post IDs by user ID:", error);
+            throw error;
         }
     },
 };

@@ -3,18 +3,21 @@ import { GoHeartFill } from "react-icons/go";
 import { FaHeartBroken } from "react-icons/fa";
 import PostCard from "../../components/features/posts/PostCard";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
-import { fakePosts } from "../../constants/fakeDatas";
 import { useDebounce } from "use-debounce";
 import { getLikesByUserId } from "../../api/likeApi";
 import { Sidebar } from "../../components/common";
+import useUserStore from "../../hooks/useUserStore";
+import { getCurrentUser } from "../../api/userApi";
 
 const FavoritesPage = () => {
     const [search, setSearch] = useState("");
     const [favorites, setFavorites] = useState([]);
     const [debouncedSearch] = useDebounce(search, 300);
 
+    const setUser = useUserStore((state) => state.setUser);
+
     const filteredPosts = favorites.filter((post) => {
-        const postData = post.post;
+        const postData = post;
         return (
             postData.content
                 .toLowerCase()
@@ -31,11 +34,13 @@ const FavoritesPage = () => {
         );
     });
 
-    const fetchPosts = async () => {
+    const fetchDatas = async () => {
         {
             try {
                 const fetchedFavorites = await getLikesByUserId();
+                const currentUser = await getCurrentUser();
                 setFavorites(fetchedFavorites);
+                setUser(currentUser);
             } catch (error) {
                 console.log("Error fetching posts:", error);
             }
@@ -45,7 +50,7 @@ const FavoritesPage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         document.title = "Favorilerim";
-        fetchPosts();
+        fetchDatas();
     }, []);
 
     return (
@@ -102,12 +107,9 @@ const FavoritesPage = () => {
                         {/* Favori Gönderiler Listesi */}
                         {favorites && (
                             <div className="space-y-3 md:space-y-4">
-                                {filteredPosts.map((favorite, index) => {
+                                {filteredPosts.map((post, index) => {
                                     return (
-                                        <PostCard
-                                            key={index}
-                                            postData={favorite.post}
-                                        />
+                                        <PostCard key={index} postData={post} />
                                     );
                                 })}
                             </div>
