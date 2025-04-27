@@ -66,15 +66,18 @@ const userController = {
 
     getUserByUsername: async (req, res) => {
         try {
-            const ip = req.ip;
+            const username = req.params.username;
+            const requestedUserId = req.user.uid;
             const user = await UserService.getUserByUsername(
-                req.params.username,
-                ip
+                username,
+                requestedUserId
             );
-            const userDTOInstance = new userDTO(user);
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
+
+            const userDTOInstance = new userDTO(user);
+
             res.status(200).json(userDTOInstance);
         } catch (error) {
             console.error("Error getting user:", error);

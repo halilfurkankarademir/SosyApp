@@ -18,7 +18,9 @@ export async function verifyUserFromTokenCookie(req) {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        const user = await userRepository.getByUserId(decoded.userId);
+        const user = await userRepository.findUser({
+            where: { uid: decoded.userId },
+        });
 
         if (!user) {
             console.log("User not found");

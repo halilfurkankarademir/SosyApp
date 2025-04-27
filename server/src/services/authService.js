@@ -120,7 +120,9 @@ const AuthService = {
         try {
             const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 
-            const user = await userRepository.getByUserId(decoded.userId);
+            const user = await userRepository.findUser({
+                where: { uid: decoded.userId },
+            });
 
             if (!user) {
                 throw new Error("User not found");

@@ -45,7 +45,7 @@ const PostService = {
     deletePost: async (postId) => {
         try {
             logger.info("Deleting post with ID:", postId);
-            await postRepository.delete(postId);
+            await postRepository.deleteById(postId);
         } catch (error) {
             logger.error("Error deleting post:", error);
             throw new Error("Error deleting post");
@@ -70,8 +70,10 @@ const PostService = {
         }
     },
 
-    getFeedPosts: async (userId) => {
+    getFeedPosts: async (userId, page, limit) => {
         try {
+            const offset = (page - 1) * limit;
+
             const followingUsersIds = await followService.getFollowingUsersId(
                 userId
             );
@@ -91,6 +93,8 @@ const PostService = {
 
             const { rows: posts, count } = await postRepository.findPosts({
                 where: postsFilter,
+                offset,
+                limit,
             });
 
             if (!posts) {
@@ -99,7 +103,7 @@ const PostService = {
 
             const updatedPosts = addPostDetailsForUser(posts, userId);
 
-            return updatedPosts;
+            return { posts: updatedPosts, count };
         } catch (error) {
             logger.error("Error fetching posts:", error);
             throw new Error("Error getting posts");
@@ -111,8 +115,10 @@ const PostService = {
         return postRepository.findById(postId);
     },
 
-    getLikedPostsByUserId: async (userId) => {
+    getLikedPostsByUserId: async (userId, page, limit) => {
         try {
+            const offset = (page - 1) * limit;
+
             const postIds = await likeRepository.findLikedPostIdsByUserId(
                 userId
             );
@@ -126,6 +132,8 @@ const PostService = {
 
             const { rows: posts, count } = await postRepository.findPosts({
                 where: postsFilter,
+                offset,
+                limit,
             });
 
             if (!posts) {
@@ -134,15 +142,17 @@ const PostService = {
 
             const updatedPosts = addPostDetailsForUser(posts, userId);
 
-            return updatedPosts;
+            return { posts: updatedPosts, count };
         } catch (error) {
             logger.error("Error fetching liked posts by user ID:", error);
             throw new Error("Error getting liked posts by user ID");
         }
     },
 
-    getSavedPostsByUserId: async (userId) => {
+    getSavedPostsByUserId: async (userId, page, limit) => {
         try {
+            const offset = (page - 1) * limit;
+
             const postIds = await savedRepository.findAllSavedPostIdsByUser(
                 userId
             );
@@ -155,6 +165,8 @@ const PostService = {
 
             const { rows: posts, count } = await postRepository.findPosts({
                 where: postsFilter,
+                offset,
+                limit,
             });
 
             if (!posts) {
@@ -163,7 +175,7 @@ const PostService = {
 
             const updatedPosts = addPostDetailsForUser(posts, userId);
 
-            return updatedPosts;
+            return { posts: updatedPosts, count };
         } catch (error) {
             logger.error("Error fetching saved posts by user ID:", error);
             throw new Error("Error getting saved posts by user ID");
@@ -171,11 +183,18 @@ const PostService = {
     },
 
     //Belli bir kullaniciya ait gonderileri getirir
-    getPostByUserId: async (userId) => {
+    getPostByUserId: async (userId, page, limit) => {
         try {
+            const offset = (page - 1) * limit;
+
+            const postsFilter = { userId: userId };
+
             const { rows: posts, count } = await postRepository.findPosts({
-                where: { userId },
+                where: postsFilter,
+                offset,
+                limit,
             });
+
             logger.info("Fetched posts by user ID:", userId);
             if (!posts) {
                 throw new Error("No posts found for this user");
@@ -183,7 +202,7 @@ const PostService = {
 
             const updatedPosts = addPostDetailsForUser(posts, userId);
 
-            return updatedPosts;
+            return { posts: updatedPosts, count };
         } catch (error) {
             logger.error("Error fetching posts by user ID:", error);
             throw new Error("Error getting posts by user ID");

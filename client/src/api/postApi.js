@@ -33,9 +33,11 @@ export const removePost = async (postId) => {
     }
 };
 
-export const fetchAllPosts = async () => {
+export const fetchFeedPosts = async (page) => {
     try {
-        return apiClient.get("/posts/feed").then((response) => response.data);
+        return apiClient
+            .get("/posts/feed", { params: { page } })
+            .then((response) => response.data);
     } catch (error) {
         console.error("Error fetching posts:", error);
         throw error;
@@ -53,10 +55,10 @@ export const fetchPostById = async (postId) => {
     }
 };
 
-export const fetchPostsByUserId = async (userId) => {
+export const fetchPostsByUserId = async (userId, page) => {
     try {
         return apiClient
-            .get(`/posts/user/${userId}`)
+            .get(`/posts/user/${userId}`, { params: { page } })
             .then((response) => response.data);
     } catch (error) {
         console.error("Error fetching posts by user ID:", error);

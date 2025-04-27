@@ -1,20 +1,33 @@
+import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
 
+const standartIncludes = [
+    {
+        model: Post,
+        attributes: ["id"],
+    },
+    {
+        model: User,
+        as: "Following",
+        attributes: ["uid"],
+    },
+    {
+        model: User,
+        as: "Followers",
+        attributes: ["uid"],
+    },
+];
+
 export default {
-    async getByUserId(userId) {
+    async findUser(options = {}) {
         try {
-            return await User.findOne({ where: { uid: userId } });
+            return await User.findOne({
+                ...options,
+                include: standartIncludes,
+            });
         } catch (error) {
-            throw new Error(`User fetch failed: ${error.message}`);
+            console.log("Error finding user:", error);
         }
-    },
-
-    async getByEmail(email) {
-        return User.findOne({ where: { email } });
-    },
-
-    async getByUsername(username) {
-        return User.findOne({ where: { username } });
     },
     async create(userData) {
         return User.create(userData);

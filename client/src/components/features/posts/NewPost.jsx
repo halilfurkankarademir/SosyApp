@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaSmile, FaCamera, FaPoll } from "react-icons/fa";
+import { FaSmile, FaCamera } from "react-icons/fa";
 import FeelingsCard from "../../ui/cards/FeelingsCard";
 import { MdDelete } from "react-icons/md";
 import PrimaryButton from "../../ui/buttons/PrimaryButton";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import PollModal from "../../ui/modals/PollModal";
 import { LuShare } from "react-icons/lu";
 import { ShowToast } from "../../ui/toasts/ShowToast";
 import { imageUpload } from "../../../api/imageUpload";
@@ -17,8 +16,10 @@ const NewPost = ({ onPostCreated }) => {
     const [showFeelings, setShowFeelings] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
     const [selectedFilePreview, setSelectedFilePreview] = useState(null);
+
     const feelingsRef = useRef(null);
     const fileInputRef = useRef(null);
+
     const user = useUserStore((state) => state.user);
 
     const handleShare = async () => {
@@ -100,15 +101,14 @@ const NewPost = ({ onPostCreated }) => {
     }
 
     return (
-        <div className="bg-neutral-800 rounded-xl p-3 md:p-4 mb-4 md:mb-2">
-            <div className="flex items-center space-x-2 md:space-x-3 mb-2 md:mb-3">
-                <LazyLoadImage
+        <div className="bg-neutral-800 rounded-xl p-3 md:p-4 mb-4 md:mb-4">
+            <div className="flex items-center space-x-2 md:space-x-4 mb-2 md:mb-3">
+                <img
                     src={user.profilePicture}
                     alt="Profil"
+                    aria-label="Profil Fotoğrafı"
                     className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
-                    threshold={100}
-                    effect="blur"
-                    placeholderSrc={`${user.profilePicture}?q=50&w=20`}
+                    loading="lazy"
                 />
                 <textarea
                     value={postContent}

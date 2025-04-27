@@ -34,7 +34,6 @@ const standartIncludes = [
             },
         ],
         order: [["createdAt", "ASC"]],
-        limit: 50,
         required: false,
     },
 ];
@@ -67,11 +66,10 @@ export default {
     async findPosts(options = {}) {
         try {
             return await Post.findAndCountAll({
-                // Hem listeyi hem toplam sayıyı döner (sayfalama için)
-                include: standartIncludes, // HER ZAMAN standart ilişkileri getir
-                order: [["createdAt", "DESC"]], // Varsayılan sıralama
+                include: standartIncludes,
+                order: [["createdAt", "DESC"]],
                 ...options, // Gelen filtre (where), limit, offset'i uygula
-                distinct: true, // İlişkiler varken doğru sayım için
+                distinct: true,
             });
         } catch (error) {
             console.error("Repository findPosts error:", error);

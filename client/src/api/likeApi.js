@@ -36,9 +36,11 @@ export const checkLike = async (postId) => {
     }
 };
 
-export const getLikesByUserId = async () => {
+export const getLikesByUserId = async (page) => {
     try {
-        const response = await apiClient.get("/likes/user");
+        const response = await apiClient.get("/likes/user", {
+            params: { page },
+        });
         return response.data;
     } catch (error) {
         console.error("Error getting likes by user:", error);

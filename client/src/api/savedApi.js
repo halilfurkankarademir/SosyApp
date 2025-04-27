@@ -18,9 +18,9 @@ export const unsavePost = async (postId) => {
     }
 };
 
-export const getSavedPosts = async () => {
+export const getSavedPosts = async (page) => {
     try {
-        const response = await apiClient.get("/saved/");
+        const response = await apiClient.get("/saved/", { params: { page } });
         return response.data;
     } catch (error) {
         console.error("Error getting saved posts:", error);

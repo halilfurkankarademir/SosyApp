@@ -7,38 +7,18 @@ import { useDebounce } from "use-debounce";
 import { getSavedPosts } from "../../api/savedApi";
 import useUserStore from "../../hooks/useUserStore";
 import { getCurrentUser } from "../../api/userApi";
+import RenderPosts from "../../components/features/posts/RenderPosts";
 
 const SavedPage = () => {
     const [search, setSearch] = useState("");
     // Örnek olarak her 3. gönderiyi kaydedilmiş gösteriyoruz
-    const [savedPosts, setSavedPosts] = useState([]);
     const [debouncedValue] = useDebounce(search, 300);
 
     const setUser = useUserStore((state) => state.setUser);
 
-    const filteredPosts = savedPosts.filter((post) => {
-        const postData = post;
-        return (
-            postData.content
-                .toLowerCase()
-                .includes(debouncedValue.toLowerCase().trim()) ||
-            postData.user.username
-                .toLowerCase()
-                .includes(debouncedValue.toLowerCase().trim()) ||
-            postData.user.firstName
-                .toLowerCase()
-                .includes(debouncedValue.toLowerCase().trim()) ||
-            postData.user.lastName
-                .toLowerCase()
-                .includes(debouncedValue.toLowerCase().trim())
-        );
-    });
-
     const fetchDatas = async () => {
         try {
-            const posts = await getSavedPosts();
             const currentUser = await getCurrentUser();
-            setSavedPosts(posts);
             setUser(currentUser);
         } catch (error) {
             console.error("Error fetching saved posts:", error);
@@ -74,9 +54,6 @@ const SavedPage = () => {
                                         Kaydettiklerim
                                     </h1>
                                 </div>
-                                <div className="text-xs md:text-sm text-neutral-400">
-                                    {filteredPosts.length} gönderi
-                                </div>
                             </div>
 
                             {/* Arama */}
@@ -90,30 +67,14 @@ const SavedPage = () => {
                                 />
                                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
                             </div>
-
-                            {/* Sonuç yoksa */}
-                            {filteredPosts.length === 0 && (
-                                <div className="text-center py-8 md:py-10">
-                                    <div className="flex justify-center mb-3 md:mb-4">
-                                        <BiBookmark className="text-5xl md:text-6xl text-neutral-600" />
-                                    </div>
-                                    <h3 className="text-lg md:text-xl font-semibold text-white mb-1 md:mb-2">
-                                        Sonuç bulunamadı
-                                    </h3>
-                                    <p className="text-sm md:text-base text-neutral-400">
-                                        Arama kriterlerinize uygun kaydedilmiş
-                                        gönderi bulunamadı.
-                                    </p>
-                                </div>
-                            )}
                         </div>
 
                         {/* Kaydedilmiş Gönderiler Listesi */}
-                        <div className="space-y-3 md:space-y-4">
-                            {filteredPosts.map((post, index) => (
-                                <PostCard key={index} postData={post} />
-                            ))}
-                        </div>
+                        <RenderPosts
+                            fetchOptions={getSavedPosts}
+                            canCreatePost={false}
+                            filters={debouncedValue}
+                        />
                     </div>
                 </div>
             </div>

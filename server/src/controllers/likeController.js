@@ -61,10 +61,16 @@ const likeController = {
     getLikesByUserId: async (req, res) => {
         try {
             const userId = req.user.uid;
+            const page = req.query.page || 1;
+            const limit = req.query.limit || 5;
             if (!userId) {
                 return res.status(401).json({ error: "Unauthorized" });
             }
-            const likes = await PostService.getLikedPostsByUserId(userId);
+            const likes = await PostService.getLikedPostsByUserId(
+                userId,
+                page,
+                limit
+            );
             res.status(200).json(likes);
         } catch (error) {
             console.error("Error getting likes by user ID:", error);

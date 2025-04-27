@@ -2,23 +2,23 @@ import React, { useEffect } from "react";
 import { PrimaryButton } from "../../components/ui/buttons";
 import { GlowEffect } from "../../components/ui/effects";
 import { useNavigate } from "react-router-dom";
-import landingImage from "../../assets/images/landing.jpg";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css"; // Blur efekti için gerekli
+import { useNavigation } from "../../context/NavigationContext";
 
 /**
  * Uygulamanın karşılama sayfası bileşeni
  * Ziyaretçileri karşılayan ve kayıt/giriş için yönlendiren sayfa
  */
 const LandingPage = () => {
-    const navigate = useNavigate();
+    const { navigateToPage } = useNavigation();
 
     /**
      * Verilen yola yönlendirme yapar
      * path parametresi ile belirtilen sayfaya yönlendirir
      */
     const handleClick = (path) => {
-        navigate(`/${path}`);
+        navigateToPage(`/${path}`);
     };
 
     /**
@@ -27,13 +27,6 @@ const LandingPage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
-
-    // Resim için iskelet (placeholder) bileşeni
-    const ImageSkeleton = () => (
-        <div className="w-full h-96 rounded-lg bg-neutral-800 animate-pulse"></div>
-        // Boyutlar (w-full h-96 rounded-lg) gerçek resimle aynı olmalı
-        // bg-neutral-800 ve animate-pulse iskelet görünümünü ve animasyonunu sağlar
-    );
 
     return (
         <>
@@ -70,13 +63,10 @@ const LandingPage = () => {
                 {/* Sağ Tarafta Resim (z-10 ekleyerek glow'un üzerinde kalmasını sağlayabiliriz) */}
                 <div className="hidden md:block md:ml-12 lg:ml-20 z-10 mt-8 md:mt-0">
                     <LazyLoadImage
-                        src={landingImage}
+                        src="https://res.cloudinary.com/djkg7dhyx/image/upload/v1745754025/landing_ba0fz7.jpg"
                         alt="SosyApp Arayüzü" // Daha açıklayıcı bir alt metin
                         className="w-full h-96 rounded-lg object-cover" // object-cover eklemek resmin orantısını korur
                         effect="blur" // Yüklenirken bulanıklaştırma efekti
-                        placeholder={<ImageSkeleton />} // Özel iskelet bileşenimizi placeholder olarak verdik
-                        // threshold={100} // Resmin ne kadar görünür olduğunda yüklenmeye başlayacağını ayarlayabilirsiniz (opsiyonel)
-                        // wrapperClassName="w-full h-96" // Bazen boyutları sarmalayıcıya vermek gerekebilir
                     />
                 </div>
             </div>

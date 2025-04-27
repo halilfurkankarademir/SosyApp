@@ -11,6 +11,11 @@ class userDTO {
         this.bio = user.bio;
         this.location = user.location;
         this.verified = user.verified;
+        this.isFollowing = user.isFollowing;
+        this.isOwnProfile = user.isOwnProfile;
+        this.followerCount = user.followerCount;
+        this.followingCount = user.followingCount;
+        this.postsCount = user.postsCount;
     }
 }
 

@@ -77,10 +77,8 @@ const PostCard = ({ postData, onPostRemove }) => {
         try {
             if (!previousIsSaved) {
                 await savePost(id);
-                ShowToast("success", "Gönderi kaydedildi.");
             } else {
                 await unsavePost(id);
-                ShowToast("info", "Gönderi kayıtlardan çıkarıldı.");
             }
         } catch (error) {
             console.error("Save toggle error:", error);
@@ -119,7 +117,7 @@ const PostCard = ({ postData, onPostRemove }) => {
             const response = await removePost(id);
             if (!response) ShowToast("error", "Gönderi silinemedi.");
             ShowToast("success", "Gönderi başarıyla silindi.");
-            onPostRemove(id);
+            onPostRemove();
         }
     }, [id]);
 

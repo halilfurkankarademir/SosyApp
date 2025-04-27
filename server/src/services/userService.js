@@ -1,3 +1,4 @@
+import { where } from "@sequelize/core";
 import User from "../models/userModel.js";
 import userRepository from "../repositories/userRepository.js";
 import logger from "../utils/logger.js";
@@ -30,7 +31,9 @@ const UserService = {
     updateUser: async (userId, updates) => {
         try {
             logger.debug(`Updating user`, { userId });
-            const user = await userRepository.getByUserId(userId);
+            const user = await userRepository.findUser({
+                where: { uid: userId },
+            });
             if (!user) {
                 logger.warn("User not found for update", { userId });
                 throw new Error("User not found");
@@ -50,7 +53,9 @@ const UserService = {
     deleteUser: async (userId, ipAdress) => {
         try {
             logger.debug(`Ip ${ipAdress} Deleting user`, { userId });
-            const user = await userRepository.getByUserId(userId);
+            const user = await userRepository.findUser({
+                where: { uid: userId },
+            });
             if (!user) {
                 logger.warn("User not found for deletion", { userId });
                 throw new Error("User not found");
@@ -99,7 +104,9 @@ const UserService = {
     getUserById: async (userId) => {
         try {
             logger.debug(`Fetching user by ID`, { userId });
-            const user = await userRepository.getByUserId(userId);
+            const user = await userRepository.findUser({
+                where: { uid: userId },
+            });
 
             if (!user) {
                 logger.warn("User not found", { userId });
@@ -126,7 +133,9 @@ const UserService = {
             console.log("Finding user by email:", email);
 
             // Doğrudan User modeli üzerinden sorgu yapalım
-            const user = await userRepository.getByEmail(email);
+            const user = await userRepository.findUser({
+                where: { email },
+            });
 
             console.log(user);
 
@@ -147,13 +156,40 @@ const UserService = {
         }
     },
 
-    getUserByUsername: async (username) => {
+    getUserByUsername: async (username, requestedUserId) => {
         try {
-            const user = await userRepository.getByUsername(username);
+            const user = await userRepository.findUser({
+                where: { username },
+            });
             if (!user) {
                 throw new Error("User not found");
             }
-            return user;
+
+            const userData = user.get ? user.get({ plain: true }) : user;
+
+            if (!userData) {
+                throw new Error("User not found");
+            }
+
+            const followerCount = userData.Followers.length;
+            const followingCount = userData.Following.length;
+            const postsCount = userData.posts.length;
+            const isOwnProfile = userData.uid === requestedUserId;
+
+            const isFollowing = userData.Followers.some(
+                (follower) => follower.uid === requestedUserId
+            );
+
+            const updatedUser = {
+                ...userData,
+                followerCount,
+                followingCount,
+                postsCount,
+                isOwnProfile,
+                isFollowing,
+            };
+
+            return updatedUser;
         } catch (error) {
             console.error("Error fetching user by username:", error);
             logger.error("Error fetching user by username", {

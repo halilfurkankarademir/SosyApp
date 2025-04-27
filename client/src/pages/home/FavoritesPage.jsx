@@ -8,38 +8,18 @@ import { getLikesByUserId } from "../../api/likeApi";
 import { Sidebar } from "../../components/common";
 import useUserStore from "../../hooks/useUserStore";
 import { getCurrentUser } from "../../api/userApi";
+import RenderPosts from "../../components/features/posts/RenderPosts";
 
 const FavoritesPage = () => {
     const [search, setSearch] = useState("");
-    const [favorites, setFavorites] = useState([]);
     const [debouncedSearch] = useDebounce(search, 300);
 
     const setUser = useUserStore((state) => state.setUser);
 
-    const filteredPosts = favorites.filter((post) => {
-        const postData = post;
-        return (
-            postData.content
-                .toLowerCase()
-                .includes(debouncedSearch.toLowerCase().trim()) ||
-            postData.user.username
-                .toLowerCase()
-                .includes(debouncedSearch.toLowerCase().trim()) ||
-            postData.user.firstName
-                .toLowerCase()
-                .includes(debouncedSearch.toLowerCase().trim()) ||
-            postData.user.lastName
-                .toLowerCase()
-                .includes(debouncedSearch.toLowerCase().trim())
-        );
-    });
-
     const fetchDatas = async () => {
         {
             try {
-                const fetchedFavorites = await getLikesByUserId();
                 const currentUser = await getCurrentUser();
-                setFavorites(fetchedFavorites);
                 setUser(currentUser);
             } catch (error) {
                 console.log("Error fetching posts:", error);
@@ -75,9 +55,6 @@ const FavoritesPage = () => {
                                         Favorilerim
                                     </h1>
                                 </div>
-                                <div className="text-xs md:text-sm text-neutral-400">
-                                    0 gönderi
-                                </div>
                             </div>
 
                             {/* Arama */}
@@ -86,34 +63,14 @@ const FavoritesPage = () => {
                                 setSearch={setSearch}
                                 placeholderText="Favoriler içinde ara..."
                             />
-
-                            {/* Sonuç yoksa */}
-                            {filteredPosts.length === 0 && (
-                                <div className="text-center py-8 md:py-10">
-                                    <div className="flex justify-center mb-3 md:mb-4">
-                                        <FaHeartBroken className="text-5xl md:text-6xl text-neutral-600" />
-                                    </div>
-                                    <h3 className="text-lg md:text-xl font-semibold text-white mb-1 md:mb-2">
-                                        Sonuç bulunamadı
-                                    </h3>
-                                    <p className="text-sm md:text-base text-neutral-400">
-                                        Arama kriterlerinize uygun favori
-                                        gönderi bulunamadı.
-                                    </p>
-                                </div>
-                            )}
                         </div>
 
                         {/* Favori Gönderiler Listesi */}
-                        {favorites && (
-                            <div className="space-y-3 md:space-y-4">
-                                {filteredPosts.map((post, index) => {
-                                    return (
-                                        <PostCard key={index} postData={post} />
-                                    );
-                                })}
-                            </div>
-                        )}
+                        <RenderPosts
+                            fetchOptions={getLikesByUserId}
+                            canCreatePost={false}
+                            filters={debouncedSearch}
+                        />
                     </div>
                 </div>
             </div>

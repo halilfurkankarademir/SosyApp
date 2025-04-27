@@ -62,7 +62,13 @@ const postController = {
     getPostByUserId: async (req, res) => {
         try {
             const userId = req.params.userId;
-            const posts = await PostService.getPostByUserId(userId);
+            const page = req.query.page || 1;
+            const limit = req.query.limit || 5;
+            const posts = await PostService.getPostByUserId(
+                userId,
+                page,
+                limit
+            );
             if (!posts) {
                 return res
                     .status(404)
@@ -78,7 +84,9 @@ const postController = {
     getFeedPosts: async (req, res) => {
         try {
             const userId = req.user.uid;
-            const posts = await PostService.getFeedPosts(userId);
+            const page = req.query.page || 1;
+            const limit = req.query.limit || 5;
+            const posts = await PostService.getFeedPosts(userId, page, limit);
             if (!posts) {
                 return res
                     .status(404)

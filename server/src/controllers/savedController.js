@@ -26,7 +26,13 @@ const savedController = {
     getSavedPosts: async (req, res) => {
         try {
             const userId = req.user.uid;
-            const savedPosts = await PostService.getSavedPostsByUserId(userId);
+            const page = req.query.page || 1;
+            const limit = req.query.limit || 5;
+            const savedPosts = await PostService.getSavedPostsByUserId(
+                userId,
+                page,
+                limit
+            );
             res.status(200).json(savedPosts);
         } catch (error) {
             res.status(500).json({ error: error.message });
