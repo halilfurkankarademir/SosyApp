@@ -74,6 +74,22 @@ const postController = {
             res.status(500).json({ error: "Error getting posts by user ID" });
         }
     },
+
+    getFeedPosts: async (req, res) => {
+        try {
+            const userId = req.user.uid;
+            const posts = await PostService.getFeedPosts(userId);
+            if (!posts) {
+                return res
+                    .status(404)
+                    .json({ error: "No posts found for this user" });
+            }
+            res.status(200).json(posts);
+        } catch (error) {
+            console.error("Error getting posts by user ID:", error);
+            res.status(500).json({ error: "Error getting posts by user ID" });
+        }
+    },
 };
 
 export default postController;

@@ -11,6 +11,9 @@ const router = express.Router();
 // Tüm gönderileri getirme
 router.get("/", authenticateToken, postController.findPosts);
 
+// Mevcut kullanicinin takip ettigi kullanicilarin gonderilerini getirme
+router.get("/feed", authenticateToken, postController.getFeedPosts);
+
 // Gönderiyi ID ile getirme
 router.get("/:postId", validatePostId, postController.getPostById);
 

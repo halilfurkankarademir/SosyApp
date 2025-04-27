@@ -3,6 +3,7 @@ import likeRepository from "../repositories/likeRepository.js";
 import postRepository from "../repositories/postRepository.js";
 import logger from "../utils/logger.js";
 import savedRepository from "../repositories/savedRepository.js";
+import followService from "./followService.js";
 
 const addPostDetailsForUser = (posts, userId) => {
     return posts.map((post) => {
@@ -56,6 +57,42 @@ const PostService = {
         try {
             const { rows: posts, count } = await postRepository.findPosts();
             logger.info("Fetched all posts.");
+            if (!posts) {
+                throw new Error("No posts found");
+            }
+
+            const updatedPosts = addPostDetailsForUser(posts, userId);
+
+            return updatedPosts;
+        } catch (error) {
+            logger.error("Error fetching posts:", error);
+            throw new Error("Error getting posts");
+        }
+    },
+
+    getFeedPosts: async (userId) => {
+        try {
+            const followingUsersIds = await followService.getFollowingUsersId(
+                userId
+            );
+
+            if (!followingUsersIds) {
+                throw new Error("No posts found for this user");
+            }
+
+            const postsFilter = {
+                [Op.or]: [
+                    // Kullanicinin takip ettigi kullanicilarin gonderilerini getir
+                    { userId: { [Op.in]: followingUsersIds } },
+                    // Ya da kullanicinin kendi gonderilerini getir
+                    { userId: userId },
+                ],
+            };
+
+            const { rows: posts, count } = await postRepository.findPosts({
+                where: postsFilter,
+            });
+
             if (!posts) {
                 throw new Error("No posts found");
             }
@@ -136,9 +173,9 @@ const PostService = {
     //Belli bir kullaniciya ait gonderileri getirir
     getPostByUserId: async (userId) => {
         try {
-            const { rows: posts, count } = await postRepository.findPosts(
-                userId
-            );
+            const { rows: posts, count } = await postRepository.findPosts({
+                where: { userId },
+            });
             logger.info("Fetched posts by user ID:", userId);
             if (!posts) {
                 throw new Error("No posts found for this user");

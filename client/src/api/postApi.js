@@ -35,7 +35,7 @@ export const removePost = async (postId) => {
 
 export const fetchAllPosts = async () => {
     try {
-        return apiClient.get("/posts/").then((response) => response.data);
+        return apiClient.get("/posts/feed").then((response) => response.data);
     } catch (error) {
         console.error("Error fetching posts:", error);
         throw error;

@@ -61,6 +61,13 @@ const followService = {
             ],
         });
     },
+
+    async getFollowingUsersId(followerId) {
+        const followingUsers = await Follow.findAll({ where: { followerId } });
+
+        const userIds = followingUsers.map((follow) => follow.followingId);
+        return userIds;
+    },
 };
 
 export default followService;
