@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Giris icin kullanilan tokenleri dogrulayan, temizleyen ve HTTP-only cookie olarak ekleyen yardımcı fonksiyonlar.
+ * @module utils/authHelper
+ */
+
 import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
 import dotenv from "dotenv";

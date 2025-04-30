@@ -58,7 +58,7 @@ const SuggestionsCard = ({ suggestions }) => {
                         className="ml-auto cursor-pointer hover:text-pink-500 duration-200 transition-all"
                         onClick={() => handleFollow(user.uid, user.username)}
                     >
-                        <BsPersonAdd size={24} />
+                        <BsPersonAdd size={20} />
                     </button>
                 </div>
             ))}

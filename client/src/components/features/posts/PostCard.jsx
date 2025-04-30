@@ -232,12 +232,15 @@ const PostCard = ({ postData, onPostRemove }) => {
             )}
 
             {media && (
-                <div className="mb-3 md:mb-4 -mx-4 md:-mx-6 bg-black flex justify-center">
+                <div
+                    className="mb-3 md:mb-4 -mx-4 md:-mx-6 bg-black flex justify-center"
+                    onClick={handleNavigateToPost}
+                >
                     <LazyLoadImage
                         src={media}
                         alt="Gönderi Medyası"
                         effect="blur"
-                        className="w-full max-h-[75vh] object-contain"
+                        className="w-full max-h-[75vh] object-contain cursor-pointer"
                         threshold={300}
                         wrapperClassName="w-full"
                     />

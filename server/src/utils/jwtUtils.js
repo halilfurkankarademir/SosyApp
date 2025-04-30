@@ -1,3 +1,8 @@
+/**
+ * @fileoverview JWT token olusturma ve dogrulama islemlerini yoneten modul.
+ * @module utils/jwtUtils
+ */
+
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { ErrorMessages } from "./constants.js";

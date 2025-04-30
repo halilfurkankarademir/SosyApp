@@ -35,6 +35,8 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                         value={formData.firstName || ""}
                         onChange={onChange}
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                        required
+                        aria-label="Ad"
                     />
                 </div>
                 <div>
@@ -47,6 +49,7 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                         value={formData.lastName || ""}
                         onChange={onChange}
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                        aria-label="Soyad"
                     />
                 </div>
                 <div>
@@ -60,6 +63,7 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                         onChange={onChange}
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                         required
+                        aria-label="Kullanıcı adı"
                     />
                 </div>
                 <div>
@@ -70,9 +74,9 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                         type="email"
                         name="email"
                         value={formData.email || ""}
-                        onChange={onChange}
-                        className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                        required
+                        className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-neutral-400"
+                        disabled
+                        aria-label="E-posta adresi"
                     />
                 </div>
                 <div className="md:col-span-2">

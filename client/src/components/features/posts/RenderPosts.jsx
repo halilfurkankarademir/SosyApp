@@ -1,40 +1,37 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react"; // useMemo eklendi
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { PostCard, NewPost } from "./";
+// React Icons'dan ikonları import edin
+import { FiInbox, FiSearch } from "react-icons/fi"; // Veya başka setler: FaInbox, BiSearch vb.
 
-const RenderPosts = ({
-    fetchOptions,
-    canCreatePost,
-    filters /* Yeni prop */,
-}) => {
-    const [posts, setPosts] = useState([]); // Tüm yüklenen postlar
+const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
+    const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [totalPostsCount, setTotalPostsCount] = useState(0);
-    const [isLoading, setIsLoading] = useState(false); // Yüklenme durumu ekleyelim
+    const [isLoading, setIsLoading] = useState(false);
 
-    // İlk gönderileri yükle (veya filtre değiştiğinde/refresh yapıldığında)
     const loadInitialPosts = useCallback(async () => {
         setIsLoading(true);
-        setPosts([]); // Yenileme sırasında mevcut postları temizle
-        setPage(1); // Sayfayı başa al
-        setHasMore(true); // Daha fazla post olabileceğini varsay
+        setPosts([]);
+        setPage(1);
+        setHasMore(true);
         try {
-            const response = await fetchOptions(1); // Her zaman 1. sayfayı çek
+            const response = await fetchOptions(1);
             setPosts(response.posts);
             setTotalPostsCount(response.count);
-            setPage(2); // Bir sonraki sayfa için hazırla
+            setPage(2);
             setHasMore(response.posts.length < response.count);
         } catch (error) {
+            console.error("Error loading initial posts:", error);
             setHasMore(false);
         } finally {
             setIsLoading(false);
         }
-    }, [fetchOptions]); // fetchOptions değişirse yeniden oluşturulsun
+    }, [fetchOptions]);
 
-    // Daha fazla gönderi çek
     const fetchMoreData = useCallback(async () => {
-        if (!hasMore || isLoading) return; // Zaten yükleniyorsa veya daha fazla yoksa dur
+        if (!hasMore || isLoading) return;
 
         setIsLoading(true);
         try {
@@ -46,28 +43,21 @@ const RenderPosts = ({
             setHasMore(currentTotalLoaded < response.count);
             setPage((prevPage) => prevPage + 1);
         } catch (error) {
-            setHasMore(false); // Hata durumunda durdur
+            console.error("Error fetching more data:", error);
+            setHasMore(false);
         } finally {
             setIsLoading(false);
         }
-    }, [page, hasMore, posts.length, totalPostsCount, fetchOptions, isLoading]); // Bağımlılıklara isLoading ve fetchOptions eklendi
+    }, [page, hasMore, posts.length, totalPostsCount, fetchOptions, isLoading]);
 
-    // Filtreleme işlemi için useMemo kullanımı
-    // Sadece 'posts' veya 'filters' değiştiğinde yeniden hesaplanır
     const filteredPosts = useMemo(() => {
-        // Eğer filtre boş veya tanımsızsa, tüm postları dön
         if (!filters || filters.trim() === "") {
             return posts;
         }
-
         const searchTerm = filters.toLowerCase().trim();
-
-        // Sağlanan filtreleme mantığını uygula
         return posts.filter((post) => {
-            // post objesinin ve user objesinin varlığını kontrol etmek iyi bir pratik olabilir
             const postData = post;
             const userData = postData?.user;
-
             const contentMatch = postData?.content
                 ?.toLowerCase()
                 .includes(searchTerm);
@@ -80,80 +70,122 @@ const RenderPosts = ({
             const lastNameMatch = userData?.lastName
                 ?.toLowerCase()
                 .includes(searchTerm);
-
             return (
                 contentMatch || usernameMatch || firstNameMatch || lastNameMatch
             );
         });
-    }, [posts, filters]); // posts veya filters değiştiğinde tetiklenir
+    }, [posts, filters]);
 
-    // Yenileme fonksiyonu
-    const refreshPosts = () => {
+    const refreshPosts = useCallback(() => {
         loadInitialPosts();
-    };
+    }, [loadInitialPosts]);
 
-    // Bileşen yüklendiğinde ilk veriyi çek
     useEffect(() => {
         loadInitialPosts();
     }, [loadInitialPosts]);
 
-    // Yüklenme durumunu ve mesajları yönet
+    // React Icons ile görselleştirilmiş içerik render fonksiyonu
     const renderContent = () => {
-        // Filtreleme sonucu boşsa ve hiç post yüklenmemişse (ve daha fazla yoksa)
-        if (filteredPosts.length === 0 && posts.length === 0 && !hasMore) {
+        if (isLoading && posts.length === 0) {
             return (
-                <div className="text-center text-white py-4">
-                    Gönderi bulunamadı.
+                <div className="text-center text-white py-12">
+                    Yükleniyor...
                 </div>
             );
         }
 
-        // Filtreleme sonucu boşsa ama postlar yüklenmişse
-        if (filteredPosts.length === 0 && posts.length > 0) {
+        // Hiç gönderi yoksa
+        if (
+            filteredPosts.length === 0 &&
+            posts.length === 0 &&
+            !hasMore &&
+            !isLoading
+        ) {
             return (
-                <div className="text-center text-white py-4">
-                    Filtrenizle eşleşen gönderi bulunamadı.
+                <div className="flex flex-col items-center justify-center text-center text-gray-400 py-12 px-4">
+                    {/* React Icon kullanımı */}
+                    <FiInbox
+                        className="h-16 w-16 mb-4 text-gray-500"
+                        aria-hidden="true"
+                    />
+                    <h3 className="text-lg font-semibold text-white">
+                        Henüz Gönderi Yok
+                    </h3>
+                    <p className="text-sm">
+                        Görünüşe göre buralar biraz sessiz.
+                    </p>
+                </div>
+            );
+        }
+
+        // Filtreyle eşleşen sonuç yoksa
+        if (filteredPosts.length === 0 && posts.length > 0 && !isLoading) {
+            return (
+                <div className="flex flex-col items-center justify-center text-center text-gray-400 py-12 px-4">
+                    {/* React Icon kullanımı */}
+                    <FiSearch
+                        className="h-16 w-16 mb-4 text-gray-500"
+                        aria-hidden="true"
+                    />
+                    <h3 className="text-lg font-semibold text-white">
+                        Eşleşen Gönderi Bulunamadı
+                    </h3>
+                    <p className="text-sm">
+                        Farklı bir anahtar kelimeyle aramayı deneyin.
+                    </p>
                 </div>
             );
         }
 
         // Filtrelenmiş postları göster
-        return (
-            <div className="space-y-4">
-                {filteredPosts.map((post, index) => (
-                    <PostCard
-                        // key için post'un benzersiz bir ID'sini kullanmak daha iyidir (varsa)
-                        key={post._id || post.id || index}
-                        postData={post}
-                        onPostRemove={refreshPosts} // Refresh daha mantıklı olabilir
-                    />
-                ))}
-            </div>
-        );
+        if (filteredPosts.length > 0) {
+            return (
+                <div className="space-y-4">
+                    {filteredPosts.map((post, index) => (
+                        <PostCard
+                            key={post._id || post.id || index}
+                            postData={post}
+                            onPostRemove={refreshPosts}
+                        />
+                    ))}
+                </div>
+            );
+        }
+
+        return null;
     };
 
     return (
-        <div>
+        <div className="mt-4 md:mt-0">
             {canCreatePost && <NewPost onPostCreated={refreshPosts} />}
 
             <InfiniteScroll
                 dataLength={filteredPosts.length}
                 next={fetchMoreData}
-                hasMore={hasMore}
+                // Filtre sonucu yoksa daha fazla yükleme tetikleme
+                hasMore={
+                    hasMore &&
+                    !(
+                        filteredPosts.length === 0 &&
+                        posts.length > 0 &&
+                        filters?.trim()
+                    )
+                }
                 loader={
                     <h4 className="text-center text-white py-4">
                         Yükleniyor...
                     </h4>
                 }
                 endMessage={
-                    filteredPosts.length > 0 ? (
+                    !hasMore && filteredPosts.length > 0 ? (
                         <p className="text-center text-white py-4 font-light">
-                            <b>Başka gönderi yok.</b>
+                            <span role="img" aria-label="Bitiş">
+                                🏁
+                            </span>{" "}
+                            Başka gönderi yok.
                         </p>
-                    ) : null // Filtre sonucu yoksa veya hiç post yoksa endMessage gösterme
+                    ) : null
                 }
-                // ScrollableTarget belirtmek gerekebilir (eğer ana pencere scroll olmuyorsa)
-                // scrollableTarget="scrollableDivId"
             >
                 {renderContent()}
             </InfiniteScroll>

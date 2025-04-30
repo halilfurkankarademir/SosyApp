@@ -1,8 +1,21 @@
+/**
+ * @fileoverview Yorum (Comment) veritabanı işlemlerini yönetir.
+ * @module repositories/commentRepository
+ */
+
 import Comment from "../models/commentModel.js";
 import User from "../models/userModel.js";
 import logger from "../utils/logger.js";
 
 export default {
+    /**
+     * Yeni bir yorum oluşturur.
+     * @param {string} userId - Yorumu yapan kullanıcının ID'si.
+     * @param {number} postId - Yorumun yapıldığı gönderinin ID'si.
+     * @param {string} content - Yorumun metin içeriği.
+     * @returns {Promise<Comment>} Oluşturulan Comment modeli örneği.
+     * @throws {Error} Veritabanı hatası durumunda.
+     */
     async createComment(userId, postId, content) {
         try {
             const comment = await Comment.create({ userId, postId, content });
@@ -15,6 +28,12 @@ export default {
         }
     },
 
+    /**
+     * Belirli bir yorumu ID'sine göre siler.
+     * @param {number} commentId - Silinecek yorumun ID'si.
+     * @returns {Promise<void>} İşlem tamamlandığında resolve eder (dönüş değeri yok).
+     * @throws {Error} Veritabanı hatası durumunda.
+     */
     async deleteComment(commentId) {
         try {
             await Comment.destroy({ where: { id: commentId } });
@@ -24,6 +43,12 @@ export default {
         }
     },
 
+    /**
+     * Belirli bir gönderiye ait tüm yorumları (kullanıcı bilgileriyle) getirir.
+     * @param {number} postId - Yorumları alınacak gönderinin ID'si.
+     * @returns {Promise<Array<Comment>>} Bulunan Comment örnekleri dizisi (ilişkili User bilgileriyle).
+     * @throws {Error} Veritabanı hatası durumunda.
+     */
     async getCommentsByPostId(postId) {
         try {
             const comments = await Comment.findAll({
@@ -51,6 +76,12 @@ export default {
         }
     },
 
+    /**
+     * Belirli bir gönderiye ait yorum sayısını sayar.
+     * @param {number} postId - Yorum sayısı alınacak gönderinin ID'si.
+     * @returns {Promise<number>} Gönderiye ait yorum sayısı.
+     * @throws {Error} Veritabanı hatası durumunda.
+     */
     async getCommentCount(postId) {
         try {
             const commentCount = await Comment.count({ where: { postId } });

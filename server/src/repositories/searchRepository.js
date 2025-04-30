@@ -1,8 +1,20 @@
+/**
+ * @fileoverview Arama işlemleri için veritabanı sorgularını yönetir.
+ * @module repositories/searchRepository
+ */
+
 import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
 import { Op } from "sequelize";
+import logger from "../utils/logger.js";
 
 export default {
+    /**
+     * Kullanıcıları kullanıcı adı, isim veya soyisime göre arar.
+     * @param {string} query - Arama yapılacak metin.
+     * @returns {Promise<Array<User>>} Eşleşen kullanıcıların listesi (belirli alanlarla).
+     * @throws {Error} Veritabanı sorgusu sırasında hata oluşursa.
+     */
     async searchUsers(query) {
         try {
             const users = await User.findAll({
@@ -10,7 +22,7 @@ export default {
                     [Op.or]: [
                         {
                             username: {
-                                [Op.iLike]: `%${query}%`,
+                                [Op.iLike]: `%${query}%`, // Case-insensitive like
                             },
                         },
                         {
@@ -36,11 +48,17 @@ export default {
 
             return users;
         } catch (error) {
-            console.error("Error searching users:", error);
-            throw new Error("Error searching for users");
+            logger.error("Error searching users:", error);
+            throw new Error("Error searching for users in repository");
         }
     },
 
+    /**
+     * Gönderileri içeriklerine göre arar.
+     * @param {string} query - Arama yapılacak metin.
+     * @returns {Promise<Array<Post>>} Eşleşen gönderilerin listesi (kullanıcı bilgileriyle birlikte).
+     * @throws {Error} Veritabanı sorgusu sırasında hata oluşursa.
+     */
     async searchPosts(query) {
         try {
             const posts = await Post.findAll({
@@ -65,8 +83,8 @@ export default {
             });
             return posts;
         } catch (error) {
-            console.log("Error searching:", error);
-            throw new Error("Error searching");
+            logger.error("Error searching posts:", error);
+            throw new Error("Error searching for posts in repository");
         }
     },
 };

@@ -1,7 +1,10 @@
+/**
+ * @fileoverview Kullanıcı Model tanımı
+ * @module models/userModel
+ */
 import { DataTypes } from "@sequelize/core";
 import sequelize from "../config/sequelize.js";
 
-// User Model tanımı
 const User = sequelize.define(
     "User",
     {

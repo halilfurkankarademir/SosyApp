@@ -1,31 +1,45 @@
+/**
+ * @fileoverview Kullanıcı kimlik doğrulama işlemlerini (kayıt, giriş, çıkış, token yenileme)
+ * yöneten Express controller'ları içerir.
+ * @module controllers/authController
+ */
+
 import authService from "../services/authService.js";
 import dotenv from "dotenv";
 import userDTO from "../dtos/userDTO.js";
 import { getAnonymizedIp } from "../utils/helpers.js";
 import jwtUtils from "../utils/jwtUtils.js";
 import { clearAuthCookies, setAuthCookies } from "../utils/authHelper.js";
+import logger from "../utils/logger.js";
+import { ErrorMessages } from "../utils/constants.js";
 
 dotenv.config();
 
+/**
+ * Kimlik doğrulama ile ilgili HTTP isteklerini işleyen controller metotları.
+ * @namespace authController
+ */
 const authController = {
+    /**
+     * Yeni bir kullanıcı kaydeder.
+     * İstek gövdesinden kullanıcı bilgilerini alır, IP adresini anonimleştirir,
+     * `authService` kullanarak kullanıcıyı kaydeder, JWT tokenları oluşturur,
+     * tokenları cookie'lere ayarlar ve kullanıcı bilgilerini DTO ile döndürür.
+     * @async
+     * @param {express.Request} req - Express istek nesnesi. req.body {email, password, username, firstName, lastName} içermelidir.
+     * @param {express.Response} res - Express yanıt nesnesi.
+     * @param {express.NextFunction} next - Bir sonraki middleware fonksiyonu.
+     * @returns {Promise<void>} Başarılı olursa 201 durum kodu ve kullanıcı bilgileri ile yanıt gönderir.
+     */
     register: async (req, res, next) => {
         try {
-            // Bodyden gelen verileri ayristir.
+            logger.info("Registering user...");
+
             const { email, password, username, firstName, lastName } = req.body;
+            const ipAddress =
+                req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+            const anonymizedIp = getAnonymizedIp(ipAddress);
 
-            // Istemicinin ip adresini alip anonymize et
-            const ipAdress = req.headers["x-forwarded-for"] || req.ip;
-            const anonymizedIp = getAnonymizedIp(ipAdress);
-
-            // TODO validasyon kutuphaneleri ile daha iyi validasyon yap
-            // Eksik veri varsa hata dondur
-            if (!email || !password || !username) {
-                return res
-                    .status(400)
-                    .json({ error: "Missing required fields" });
-            }
-
-            // Bodyden gelen verilerle kullanıcı oluşturuluyor
             const user = await authService.register(
                 email,
                 password,
@@ -35,53 +49,59 @@ const authController = {
                 anonymizedIp
             );
 
-            // Jwt utils ile tokenler olusturuluyor
             const { accessToken, refreshToken } = jwtUtils.generateTokens(
                 user.uid
             );
 
-            // Response icin http only cookileri ayarlayan fonksiyon
             setAuthCookies(res, accessToken, refreshToken);
 
-            // Veri guvenligi icin dto kullanarak veriyi disari aktar.
-            // Bu yontemle sadece istenilen bilgiler response olarak doner.
             const userDTOInstance = new userDTO(user);
 
-            // Eger kullanıcı oluşturuldu ise 201 status code ile response gonderilir
+            logger.info("User registered successfully");
+
             res.status(201).json({
                 message: "User registered successfully",
                 user: userDTOInstance,
             });
         } catch (error) {
-            console.error("Error registering user:", error);
+            logger.error("Error registering user:", error);
             res.status(500).json({
                 error: "Registration failed",
                 details: error.message,
             });
+            // Hatayı errorHandler fonksiyonuna gönder
             next(error);
         }
     },
 
+    /**
+     * Mevcut bir kullanıcının giriş yapmasını sağlar.
+     * İstek gövdesinden email ve şifreyi alır, `authService` ile doğrular,
+     * JWT tokenları oluşturur, tokenları cookie'lere ayarlar ve kullanıcı bilgilerini DTO ile döndürür.
+     * @async
+     * @param {express.Request} req - Express istek nesnesi. req.body {email, password} içermelidir.
+     * @param {express.Response} res - Express yanıt nesnesi.
+     * @param {express.NextFunction} next - Bir sonraki middleware fonksiyonu.
+     * @returns {Promise<void>} Başarılı olursa 200 durum kodu ve kullanıcı bilgileri ile yanıt gönderir. Hatalı kimlik bilgisi için 401 döndürür.
+     */
     login: async (req, res, next) => {
         try {
-            // Bodyden gelen verileri ayristir
             const { email, password } = req.body;
 
-            // Validate required fields
             if (!email || !password) {
                 return res
                     .status(400)
                     .json({ error: "Email and password are required" });
             }
 
-            // Authenticate user
             const user = await authService.login(email, password);
 
             if (!user) {
-                return res.status(401).json({ error: "Kullanıcı bulunamadı." });
+                return res
+                    .status(401)
+                    .json({ error: ErrorMessages.INVALID_CREDENTIALS });
             }
 
-            // Token olustur
             const { accessToken, refreshToken } = jwtUtils.generateTokens(
                 user.uid
             );
@@ -97,59 +117,93 @@ const authController = {
         } catch (error) {
             console.error("Error logging in user:", error);
 
+            // AuthService özel bir hata fırlatıyorsa yakala (örneğin CredentialsError)
             if (
-                error.name === "AuthenticationError" ||
-                error.message.includes("Invalid credentials")
+                error.message === "Invalid credentials" ||
+                error.name === "CredentialsError"
             ) {
-                // Kendi hata türünüze göre uyarlayın
                 return res
                     .status(401)
                     .json({ error: "Invalid email or password." });
             }
 
-            // Diğer beklenmedik hatalar için genel 500 hatası
+            // Diğer beklenmedik hatalar
             res.status(500).json({
                 error: "Login failed due to an internal server error.",
-                // Production'da error.message'ı göndermeyin
                 details:
                     process.env.NODE_ENV !== "production"
                         ? error.message
                         : undefined,
             });
-
-            next(error);
+            next(error); // Hata middleware'ine ilet
         }
     },
 
+    /**
+     * Kullanıcının oturumunu sonlandırır.
+     * Kimlik doğrulama ile ilgili cookie'leri temizler.
+     * @async
+     * @param {express.Request} req - Express istek nesnesi.
+     * @param {express.Response} res - Express yanıt nesnesi.
+     * @param {express.NextFunction} next - Bir sonraki middleware fonksiyonu.
+     * @returns {Promise<void>} Başarılı olursa 200 durum kodu ile yanıt gönderir.
+     */
     logout: async (req, res, next) => {
         try {
             clearAuthCookies(res);
             res.status(200).json({ message: "Logout successful" });
         } catch (error) {
             console.error("Error logging out user:", error);
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: "Logout failed" }); // Genel hata mesajı
             next(error);
         }
     },
 
+    /**
+     * Refresh token kullanarak yeni bir access token ve refresh token oluşturur.
+     * Cookie'den refresh token'ı alır, `authService` ile doğrular ve yeniler,
+     * yeni tokenları cookie'lere ayarlar.
+     * @async
+     * @param {express.Request} req - Express istek nesnesi. req.cookies.refresh_token içermelidir.
+     * @param {express.Response} res - Express yanıt nesnesi.
+     * @param {express.NextFunction} next - Bir sonraki middleware fonksiyonu.
+     * @returns {Promise<void>} Başarılı olursa 200 durum kodu ile yanıt gönderir. Token geçersiz veya süresi dolmuşsa uygun bir hata durumu döndürmelidir (genellikle authService içinde halledilir ve 401/403 döner).
+     */
     refreshToken: async (req, res, next) => {
         try {
             const token = req.cookies.refresh_token;
 
+            // Token yoksa hata döndür
+            if (!token) {
+                return res
+                    .status(401)
+                    .json({ error: "Refresh token not found." });
+            }
+
+            // AuthService token doğrulama ve kullanıcı bulma işlemini yapar
             const user = await authService.refreshToken(token);
 
-            const { accessToken, refreshToken } = jwtUtils.generateTokens(
-                user.uid
-            );
+            // Yeni tokenları oluştur
+            const { accessToken, refreshToken: newRefreshToken } =
+                jwtUtils.generateTokens(user.uid);
 
-            setAuthCookies(res, accessToken, refreshToken);
+            // Yeni tokenları cookie'ye set et
+            setAuthCookies(res, accessToken, newRefreshToken);
 
-            console.log("Token refreshed successfully");
-
+            console.log("Token refreshed successfully for user:", user.uid);
             res.status(200).json({ message: "Token refreshed successfully" });
         } catch (error) {
             console.error("Error refreshing token:", error);
-            res.status(500).json({ error: error.message });
+            if (
+                error.name === "InvalidTokenError" ||
+                error.message.includes("invalid")
+            ) {
+                clearAuthCookies(res);
+                return res
+                    .status(401)
+                    .json({ error: "Invalid or expired refresh token." });
+            }
+            res.status(500).json({ error: "Token refresh failed" });
             next(error);
         }
     },

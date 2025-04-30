@@ -1,4 +1,8 @@
-// routes/index.js
+/**
+ * @fileoverview Tum route'leri birlestirir ve disariya export eder.
+ * @module routes/index
+ */
+
 import { Router } from "express";
 import userRoutes from "./userRoutes.js";
 import postRoutes from "./postRoutes.js";
@@ -11,7 +15,11 @@ import searchRoutes from "./searchRoutes.js";
 
 const router = Router();
 
-// Tüm rotaları burada birleştir
+/**
+ * Tum route'leri birlestirir ve disariya import eder.
+ * @module routes/index
+ * @exports router
+ */
 router.use("/users", userRoutes);
 router.use("/posts", postRoutes);
 router.use("/auth", authRoutes);

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Kaydedilen Gönderiler Model tanımı
+ * @module models/savedModel
+ */
 import { DataTypes } from "@sequelize/core";
 import sequelize from "../config/sequelize.js";
 

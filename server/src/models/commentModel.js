@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Yorum Model tanımı
+ * @module models/commentModel
+ */
+
 import sequelize from "../config/sequelize.js";
 import { DataTypes } from "@sequelize/core";
 

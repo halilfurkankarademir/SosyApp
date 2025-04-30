@@ -66,11 +66,11 @@ const NavbarMobileMenu = ({
                         <span className={textClass}>Profilim</span>
                     </button>
                     <button
-                        onClick={() => handleNavigate("/followers")}
+                        onClick={() => handleNavigate("/connections")}
                         className={buttonClass}
                     >
                         <BsPeopleFill size={20} className={iconClass} />{" "}
-                        <span className={textClass}>Takipçilerim</span>
+                        <span className={textClass}>Sosyal Ağım</span>
                     </button>
                     <button
                         onClick={() => handleNavigate("/favorites")}

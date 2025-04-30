@@ -1,40 +1,66 @@
+/**
+ * @fileoverview Uygulama sunucusunu başlatan ve graceful shutdown mekanizmasını yöneten ana giriş noktası.
+ * @module src/server
+ */
 import { initializeServer } from "./app.js";
+import sequelize from "./config/sequelize.js";
+import logger from "./utils/logger.js";
 
 const port = process.env.PORT || 3000;
 
+/**
+ * Uygulama sunucusunu başlatır.
+ * Önce `initializeServer` ile Express uygulaması, HTTP sunucusu ve diğer bileşenler hazırlanır.
+ * Ardından HTTP sunucusu belirtilen portta dinlemeye başlar.
+ * SIGTERM ve SIGINT sinyallerini dinleyerek graceful shutdown (düzgün kapatma) işlemini gerçekleştirir.
+ * @async
+ * @function startServer
+ * @throws {Error} Sunucu başlatma veya kapatma sırasında bir hata olursa konsola yazdırır ve işlemi sonlandırır.
+ */
 async function startServer() {
     try {
-        console.log("Sunucu baslatiliyor...");
+        logger.info("Sunucu baslatiliyor...");
+
         const { server } = await initializeServer();
 
+        // HTTP sunucusunu belirtilen portta dinlemeye başla
         const runningServer = server.listen(port, () => {
-            console.log(`Sunucu ${port} portunda çalışıyor`);
+            logger.info(`Sunucu ${port} portunda baslatildi.`);
         });
+
+        /**
+         * Uygulamayı düzgün bir şekilde kapatan fonksiyon.
+         * Gelen sinyali loglar, HTTP sunucusunu kapatır,
+         * veritabanı havuzunu sonlandırır ve işlemi başarıyla bitirir.
+         * @param {string} signal - Kapatma işlemini tetikleyen sinyal ('SIGTERM' veya 'SIGINT').
+         */
         const gracefulShutdown = async (signal) => {
-            console.log(`${signal} alındı. Sunucu kapatılıyor...`);
+            logger.info(`Sunucu kapatılıyor... (${signal})`);
+            // Yeni istekleri kabul etmeyi durdur ve mevcutları bitirmesini bekle
             runningServer.close(async () => {
-                console.log("HTTP sunucusu kapatıldı.");
+                logger.info("Sunucu kapatıldı.");
                 try {
-                    // Veritabanı havuzunu da kapat
-                    await pool.end();
-                    console.log("Veritabanı havuzu kapatıldı.");
+                    await sequelize.close();
+                    logger.info("Veritabanı havuzu kapatıldı.");
                 } catch (dbError) {
-                    console.error(
-                        "Veritabanı havuzu kapatılırken hata:",
+                    logger.error(
+                        "Veritabanı havuzu kapatılırken bir hata olustu:",
                         dbError
                     );
                 } finally {
-                    process.exit(0); // Başarıyla çık
+                    process.exit(0);
                 }
             });
         };
 
+        // Kapatma sinyallerini dinle
         process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
         process.on("SIGINT", () => gracefulShutdown("SIGINT"));
     } catch (e) {
-        console.error(e);
+        logger.error("Sunucu baslatılırken bir hata olustu:", e);
         process.exit(1);
     }
 }
 
+// Sunucuyu başlat
 startServer();

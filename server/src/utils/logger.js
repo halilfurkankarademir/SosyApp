@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Uygulama genelinde kullanılan logger nesnesini ve ayarlarını tanımlayan modül.
+ * @module utils/logger
+ */
+
 import winston from "winston";
 import dotenv from "dotenv";
 dotenv.config();

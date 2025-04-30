@@ -19,8 +19,8 @@ export const navigationItems = [
         color: colors.pink,
     },
     {
-        name: "Takipçilerim",
-        route: "/followers",
+        name: "Sosyal Ağım",
+        route: "/connections",
         icon: BsPeopleFill,
         color: colors.blue,
     },

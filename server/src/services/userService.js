@@ -312,11 +312,7 @@ const userService = {
                 userLimit,
                 requestedUserId
             );
-            if (!users) {
-                logger.error("Error getting random users in repository:");
-                return [];
-            }
-            return users;
+            return users || [];
         } catch (error) {
             console.error("Error getting all users in repository:", error);
             return undefined;

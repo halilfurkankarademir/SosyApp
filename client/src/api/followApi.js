@@ -54,6 +54,17 @@ export const getFollowers = async () => {
     }
 };
 
+export const getFollowings = async () => {
+    // Aktif kullanıcının tum takip ettiklerini getirme
+    try {
+        return await apiClient
+            .get("/follows/following")
+            .then((response) => response.data);
+    } catch (error) {
+        console.error("Error getting followings:", error);
+    }
+};
+
 export const getFollowersByUserId = async (userId) => {
     // Kullanıcı id'sini alarak api/follows/followers/:userId endpointine get isteği gonderen bir fonksiyon
     // Bu istek, kullanıcının takipcilerini alır ve sunucudan gelen yanıtı döner

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Begeni Model tanımı
+ * @module models/likeModel
+ */
 import { DataTypes } from "@sequelize/core";
 import sequelize from "../config/sequelize.js";
 

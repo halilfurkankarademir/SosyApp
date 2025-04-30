@@ -1,12 +1,21 @@
+/**
+ * @fileoverview Sequelize ORM yapılandırması ve veritabanı bağlantı nesnesi.
+ * @module config/sequelize
+ */
+
 import { Sequelize } from "@sequelize/core";
 import { PostgresDialect } from "@sequelize/postgres";
 import dotenv from "dotenv";
 
-dotenv.config({ debug: true });
+// Ortam değişkenlerini yükle (.env dosyasından)
+dotenv.config();
 
-// Sequelize gibi bir orm kullanıyoruz.
-// Bu sayede sql injection gibi saldirilara bir onlem alinmis oluyor.
-// Burada bir sequelize nesnesi olusturuyoruz ve postgre databasemise baglanmasi icin ayarliyoruz
+/**
+ * @description PostgreSQL veritabanına bağlanmak için yapılandırılmış Sequelize instance'ı.
+ * Bağlantı detayları `.env` dosyasından alınır.
+ * Tüm modeller bu instance üzerinden tanımlanır ve kullanılır.
+ * @type {Sequelize}
+ */
 const sequelize = new Sequelize({
     dialect: PostgresDialect,
     database: process.env.DB_NAME,

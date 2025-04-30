@@ -1,4 +1,8 @@
-import { DataTypes } from "@sequelize/core"; // Veya "sequelize" (v6 için)
+/**
+ * @fileoverview Gönderiler Model tanımı
+ * @module models/postModel
+ */
+import { DataTypes } from "@sequelize/core";
 import sequelize from "../config/sequelize.js";
 
 const Post = sequelize.define(

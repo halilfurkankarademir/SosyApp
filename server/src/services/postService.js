@@ -5,6 +5,7 @@ import logger from "../utils/logger.js";
 import savedRepository from "../repositories/savedRepository.js";
 import followService from "./followService.js";
 import { addPostDetailsForUser } from "../utils/helpers.js";
+import { ErrorMessages } from "../utils/constants.js";
 
 /**
  * Gönderi işlemleri için servis katmanı.
@@ -108,9 +109,24 @@ const PostService = {
      * @param {number} postId - Getirilecek gönderinin ID'si.
      * @returns {Promise<Post|null>} Bulunan gönderi nesnesini veya bulunamazsa null döndürür.
      */
-    getPostById: (postId) => {
-        // Repository'nin Promise döndürdüğünü varsayıyoruz.
-        return postRepository.findById(postId);
+    getPostById: async (postId) => {
+        try {
+            logger.info("Fetching post with ID:", postId);
+
+            const post = await postRepository.findById(postId);
+
+            if (!post) {
+                logger.info("Post not found with ID:", postId);
+                throw new Error(ErrorMessages.POST_NOT_FOUND);
+            }
+
+            const updatedPost = addPostDetailsForUser(post, post.userId);
+
+            return updatedPost;
+        } catch (error) {
+            logger.error("Error fetching post:", error);
+            throw new Error("Error fetching post");
+        }
     },
 
     /**

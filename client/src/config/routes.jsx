@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import LoadingPage from "../pages/public/LoadingPage";
 
 // Regular imports for previously lazy-loaded pages
-const FollowersPage = lazy(() => import("../pages/home/FollowersPage"));
+const ConnectionsPage = lazy(() => import("../pages/home/ConnectionsPage"));
 const ProfilePage = lazy(() => import("../pages/user/ProfilePage"));
 const EditProfilePage = lazy(() => import("../pages/user/EditProfilePage"));
 const PostPage = lazy(() => import("../pages/content/PostPage"));
@@ -60,7 +60,7 @@ export const AppRoutes = () => {
                     />
 
                     <Route path="/favorites" element={<FavoritesPage />} />
-                    <Route path="/followers" element={<FollowersPage />} />
+                    <Route path="/connections" element={<ConnectionsPage />} />
                     <Route path="/groups" element={<GroupsPage />} />
                     <Route path="/search" element={<SearchPage />} />
                     <Route path="/profile" element={<ProfilePage />} />

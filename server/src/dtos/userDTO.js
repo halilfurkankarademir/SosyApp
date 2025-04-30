@@ -1,3 +1,8 @@
+/**
+ * Kullanıcı verilerini temsil eden DTO sınıfı.
+ * API yanıtlarında döndürülecek kullanıcı verilerini yapılandırır.
+ * @class userDTO
+ */
 class userDTO {
     constructor(user) {
         if (!user) throw new Error("User object is required");

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Takip Model tanımı
+ * @module models/followModel
+ */
+
 import { DataTypes } from "@sequelize/core";
 import sequelize from "../config/sequelize.js";
 import User from "./userModel.js";

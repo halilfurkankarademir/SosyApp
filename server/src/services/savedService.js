@@ -1,4 +1,5 @@
 import savedRepository from "../repositories/savedRepository.js";
+import PostService from "./postService.js";
 
 /**
  * Kaydetme ve silme işlemleriyle ilgili servis fonksiyonları.
@@ -49,7 +50,7 @@ const savedService = {
      */
     async getSavedPosts(userId) {
         try {
-            return await savedRepository.findAllSavedPostsByUser(userId);
+            return await PostService.getSavedPostsByUserId(userId);
         } catch (error) {
             console.error("Error getting saved posts:", error);
             throw error;

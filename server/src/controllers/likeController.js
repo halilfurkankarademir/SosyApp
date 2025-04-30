@@ -1,10 +1,24 @@
-// begeni islemleri icin controllerlar
-import postRepository from "../repositories/postRepository.js";
-import likeService from "../services/likeService.js";
-import { sendLikeNotification } from "../services/notificationService.js";
-import PostService from "../services/postService.js";
+/**
+ * @fileoverview Beğeni (Like) işlemleriyle ilgili HTTP isteklerini yöneten controller.
+ * @module controllers/likeController
+ */
 
+// begeni islemleri icin controllerlar
+import postRepository from "../repositories/postRepository.js"; // Kullanılıyor
+import likeService from "../services/likeService.js";
+import { sendLikeNotification } from "../services/notificationService.js"; // Kullanılıyor
+import PostService from "../services/postService.js"; // Kullanılıyor
+
+/**
+ * @description Beğeni işlemleri (oluşturma, silme, listeleme, kontrol) için controller fonksiyonlarını içerir.
+ */
 const likeController = {
+    /**
+     * @description Bir gönderiye beğeni ekler ve bildirim gönderir.
+     * @route POST /like/:postId
+     * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
+     * @param {object} res - Express yanıt nesnesi.
+     */
     createLike: async (req, res) => {
         try {
             //Kullanicinin begenecigi postun idsini aliyoruz
@@ -31,6 +45,12 @@ const likeController = {
             });
         }
     },
+    /**
+     * @description Bir gönderideki beğeniyi kaldırır.
+     * @route DELETE /like/:postId
+     * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
+     * @param {object} res - Express yanıt nesnesi.
+     */
     deleteLike: async (req, res) => {
         try {
             const { postId } = req.params;
@@ -45,6 +65,12 @@ const likeController = {
         }
     },
 
+    /**
+     * @description Belirli bir gönderiye ait tüm beğenileri listeler.
+     * @route GET /like/post/:postId
+     * @param {object} req - Express istek nesnesi. `req.params.postId` gönderi ID'sini içerir.
+     * @param {object} res - Express yanıt nesnesi.
+     */
     getAllLikes: async (req, res) => {
         try {
             const postId = req.params.postId;
@@ -58,6 +84,12 @@ const likeController = {
         }
     },
 
+    /**
+     * @description Aktif kullanıcının beğendiği gönderileri listeler (sayfalama ile).
+     * @route GET /like/user?page={pageNumber}&limit={pageSize}
+     * @param {object} req - Express istek nesnesi. `req.user.uid` kullanıcı ID'sini, `req.query` sayfalama bilgilerini içerir.
+     * @param {object} res - Express yanıt nesnesi.
+     */
     getLikesByUserId: async (req, res) => {
         try {
             const userId = req.user.uid;
@@ -66,6 +98,7 @@ const likeController = {
             if (!userId) {
                 return res.status(401).json({ error: "Unauthorized" });
             }
+            // PostService'in bu fonksiyonu çağırdığı varsayılıyor.
             const likes = await PostService.getLikedPostsByUserId(
                 userId,
                 page,
@@ -80,6 +113,12 @@ const likeController = {
         }
     },
 
+    /**
+     * @description Aktif kullanıcının belirli bir gönderiyi beğenip beğenmediğini kontrol eder.
+     * @route GET /like/check/:postId (Varsayılan route, kontrol edilmeli)
+     * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
+     * @param {object} res - Express yanıt nesnesi.
+     */
     checkLike: async (req, res) => {
         try {
             const { postId } = req.params;

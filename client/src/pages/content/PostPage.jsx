@@ -138,7 +138,7 @@ const PostPage = () => {
         <>
             <div className="page-container md:py-36 md:px-6">
                 {/* Grid Layout */}
-                <div className="page-grid-layout-other">
+                <div className="page-grid-layout-large">
                     {/* Sidebar - Mobilde gizli */}
                     <Sidebar />
 
@@ -184,14 +184,14 @@ const PostPage = () => {
                                                 disabled={!comment.trim()}
                                                 className="px-4 py-2 bg-gradient-to-r from-pink-500 to-blue-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                Gönder
+                                                Yorum Ekle
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             </form>
 
-                            {/* --- Yorumlar Listesi (Lokal State'den Gelir) --- */}
+                            {/* --- Yorumlar Listesi  --- */}
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold border-b border-neutral-700 pb-2 mb-4">
                                     Yorumlar ({comments.length})
@@ -239,7 +239,7 @@ const PostPage = () => {
                                             {
                                                 // Eger yorumu kullanici yaptiysa silme butonu goster
                                             }
-                                            {user?.uid === comment.user.uid && (
+                                            {comment.isOwner && (
                                                 <button
                                                     className="absolute right-0 top-3 text-neutral-400 hover:text-red-500 transition"
                                                     onClick={() =>

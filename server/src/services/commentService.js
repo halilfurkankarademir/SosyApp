@@ -1,6 +1,8 @@
 import Comment from "../models/commentModel.js";
 import User from "../models/userModel.js";
 import commentRepository from "../repositories/commentRepository.js";
+import { ErrorMessages } from "../utils/constants.js";
+import { addCommentDetailsForUser } from "../utils/helpers.js";
 import logger from "../utils/logger.js";
 
 /**
@@ -25,15 +27,10 @@ const commentService = {
                 content
             );
 
-            if (!comment) {
-                logger.error("Comment creation failed");
-                throw new Error("Comment creation failed");
-            }
-
             return comment;
         } catch (error) {
             logger.error("Error creating comment:", error);
-            throw new Error("Error creating comment: " + error.message);
+            throw new Error(ErrorMessages.COMMENT_CREATION_FAILED);
         }
     },
 
@@ -47,7 +44,7 @@ const commentService = {
         try {
             await commentRepository.deleteComment(commentId);
         } catch (error) {
-            throw new Error("Error deleting comment: " + error.message);
+            throw new Error(ErrorMessages.COMMENT_DELETION_FAILED);
         }
     },
 
@@ -55,22 +52,23 @@ const commentService = {
      * Belirli bir gonderiye ait yorumları alır.
      * @memberof commentService
      * @param {number} postId yorumları almak istenen gönderinin ID'si
+     * @param {string} userId yorumları almak isteyen kullanıcının ID'si
      * @returns {Comment[]} gonderiye ait atilan yorumların listesini döndürür
      */
-    getCommentsByPostId: async (postId) => {
+    getCommentsByPostId: async (postId, userId) => {
         try {
             logger.info("Getting comments", postId);
+
             const comments = await commentRepository.getCommentsByPostId(
                 postId
             );
-            if (!comments) {
-                logger.error("Comments not found");
-                throw new Error("Comments not found");
-            }
             logger.info("Comments found", comments);
-            return comments;
+
+            const updatedComments = addCommentDetailsForUser(comments, userId);
+
+            return updatedComments;
         } catch (error) {
-            throw new Error("Error getting comments: " + error.message);
+            throw new Error(ErrorMessages.COMMENT_NOT_FOUND);
         }
     },
 
