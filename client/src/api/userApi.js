@@ -36,6 +36,17 @@ export const getAllUsers = async () => {
     }
 };
 
+export const getRandomUsers = async () => {
+    // Rastgele kullanıcıları getirme
+    try {
+        const response = await apiClient.get("/users/random");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching random users:", error);
+        throw error;
+    }
+};
+
 // 2. PROFİL GÜNCELLEME FONKSİYONU
 export const updateUserProfile = async (updatedData) => {
     // Aktif giris yapan kullanıcının profilini güncelleme

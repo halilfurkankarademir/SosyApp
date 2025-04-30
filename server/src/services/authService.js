@@ -1,16 +1,14 @@
 import logger from "../utils/logger.js";
 import bcrypt from "bcrypt";
-import UserService from "./userService.js";
+import userService from "./userService.js";
 import userRepository from "../repositories/userRepository.js";
 import jwt from "jsonwebtoken";
+import { ErrorMessages } from "../utils/constants.js";
 
 const AuthService = {
     async register(email, password, username, firstName, lastName, ipAdress) {
         try {
-            // Şifrenin ham halini yazdıralım
-            console.log("Registering with raw password:", password);
-            console.log("Password type:", typeof password);
-
+            logger.info("Register started");
             // Şifreyi string'e çevirelim (güvenlik için)
             const passwordStr = String(password);
 
@@ -18,7 +16,7 @@ const AuthService = {
 
             let existingUsername;
             try {
-                existingUsername = await UserService.getUserByUsername(
+                existingUsername = await userService.getUserByUsername(
                     username
                 );
             } catch (error) {
@@ -26,24 +24,24 @@ const AuthService = {
                 existingUsername = null;
             }
             if (existingUsername) {
-                console.log("Username already exists:", username);
+                logger.error("Username already exists.");
                 throw new Error("Kullanıcı adı zaten kullanılıyor.");
             }
 
             let existingEmail;
             try {
-                existingEmail = await UserService.getUserByEmail(email);
+                existingEmail = await userService.getUserByEmail(email);
             } catch (error) {
                 // Email yoksa hata verecegi icin hata durumuna null atayalim
                 existingEmail = null;
             }
 
             if (existingEmail) {
-                console.log("Email already exists:", email);
+                logger.error("Email already exists.");
                 throw new Error("Email zaten kullanılıyor.");
             }
 
-            const newUser = await UserService.createUser({
+            const newUser = await userService.createUser({
                 email,
                 username,
                 firstName,
@@ -52,48 +50,53 @@ const AuthService = {
                 ipAdress,
             });
 
+            logger.info("User created successfully", {
+                userId: newUser.uid,
+                email: newUser.email,
+                operation: "createUser",
+            });
+
             return newUser;
         } catch (error) {
-            console.error("Register error:", error);
+            logger.error("Error creating user:", error);
             throw new Error(error.message);
         }
     },
 
     async login(email, password, ipAdress) {
         try {
+            logger.info("Login started");
             // Şifrenin string donusumu
             const passwordStr = String(password);
 
-            const user = await UserService.getUserByEmail(email);
+            const user = await userService.getUserByEmail(email);
 
             if (!user) {
-                console.log("User not found with email:", email);
-                throw new Error("Kullanıcı bulunamadı.");
+                logger.error("User not found.");
+                throw new Error(ErrorMessages.USER_NOT_FOUND);
             }
 
             // Şifre doğrulama kontrolü
             let isPasswordValid = false;
 
             try {
-                // Bcrypt ile şifreyi karşılaştır
                 isPasswordValid = await bcrypt.compare(
                     passwordStr,
                     user.password
                 );
-                console.log("Password validation result:", isPasswordValid);
 
-                // Hala başarısız ise, elle karşılaştırma deneyelim
                 if (!isPasswordValid) {
-                    throw new Error("Invalid credentials"); // Klasik hata mesajı
+                    logger.error("Invalid credentials.");
+                    throw new Error(ErrorMessages.INVALID_CREDENTIALS);
                 }
             } catch (bcryptError) {
-                console.error("Bcrypt compare error:", bcryptError);
-                throw new Error("Hatalı kullanıcı adı veya şifre girdiniz.");
+                logger.error("Error comparing passwords:", bcryptError);
+                throw new Error(ErrorMessages.INVALID_CREDENTIALS);
             }
 
             if (!isPasswordValid) {
-                console.log("Invalid password for user:", user.email);
-                throw new Error("Hatalı kullanıcı adı veya şifre girdiniz.");
+                logger.error("Invalid credentials.");
+                throw new Error(ErrorMessages.INVALID_CREDENTIALS);
             }
 
             logger.info("User logged in successfully", {
@@ -104,14 +107,14 @@ const AuthService = {
 
             return user;
         } catch (error) {
-            console.error("Login error:", error);
-            throw error;
+            logger.error("Error logging in:", error);
+            throw new Error(error.message);
         }
     },
 
     async refreshToken(token) {
         if (!token) {
-            console.log("Refresh token not found in cookies");
+            logger.error("No token provided.");
             clearAuthCookies(res);
             return res
                 .status(401)
@@ -125,11 +128,13 @@ const AuthService = {
             });
 
             if (!user) {
-                throw new Error("User not found");
+                logger.error("User not found.");
+                throw new Error(ErrorMessages.TOKEN_EXPIRED);
             }
             return user;
         } catch (error) {
-            console.log("Error verifying refresh token:", error);
+            logger.error("Error verifying token:", error);
+            throw new Error(error.message);
         }
     },
 };

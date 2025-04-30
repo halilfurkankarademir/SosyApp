@@ -12,7 +12,7 @@ const ProfileImageUploader = ({ currentImage, onImageChange }) => {
                 <img
                     src={currentImage}
                     alt="Profil"
-                    className="w-full h-full rounded-full object-cover border-4 border-neutral-800"
+                    className="w-full h-full rounded-full object-cover border-4 border-neutral-800 object-center"
                 />
                 <label
                     htmlFor="profileImage"

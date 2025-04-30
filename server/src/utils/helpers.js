@@ -1,13 +1,33 @@
-// Sayfalama icin yardimci fonksiyon
-export const getPagination = (page, size) => {
-    // Limit 1 sayfada kac tane gonderi olacagini tanimlar
-    const limit = size ? +size : 10;
-    // Offset kacinci gonderiden itibaren gosterilecegini tanimlar
-    const offset = page ? page * limit : 0;
-    return { limit, offset };
+/**
+ * Istemcinin IP adresinin son bölümünü ".XXX" ile değiştirerek anonimleştirir.
+ * Bu genellikle IPv4 adresleri için kullanılır.
+ * @param {string} ip - İstemcinin IP adresi (örn: "192.168.1.101").
+ * @returns {string} Son bölümü anonimleştirilmiş IP adresi (örn: "192.168.1.XXX").
+ */
+export const getAnonymizedIp = (ip) => {
+    if (typeof ip !== "string") return "";
+    return ip.replace(/\.\d+$/, ".XXX");
 };
 
-// Ip adresinin son 3 hanesini xxx ile degistirir
-export const getAnonymizedIp = (ip) => {
-    return ip.replace(/\.\d+$/, ".XXX");
+export const addPostDetailsForUser = (posts, userId) => {
+    return posts.map((post) => {
+        if (!post) {
+            return null;
+        }
+
+        // Gonderiyi json'a cevirip isOwner, isLiked, isSaved degerlerini ekliyoruz
+        const plainPost = post.toJSON();
+
+        const isOwner = plainPost.userId === userId;
+        const isLiked = plainPost.likes.some((like) => like.userId === userId);
+        const isSaved = plainPost.saveds.some(
+            (saved) => saved.userId === userId
+        );
+        return {
+            ...plainPost,
+            isOwner,
+            isLiked,
+            isSaved,
+        };
+    });
 };

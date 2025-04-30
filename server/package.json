@@ -41,7 +41,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "jest": "^29.7.0",
-    "nodemon": "^3.1.9",
+    "nodemon": "^3.1.10",
     "supertest": "^7.1.0",
     "swagger-autogen": "^2.23.7"
   }

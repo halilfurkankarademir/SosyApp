@@ -1,5 +1,5 @@
 import userDTO from "../dtos/userDTO.js";
-import UserService from "../services/userService.js";
+import userService from "../services/userService.js";
 
 //Controllerlar ile backende gelen http isteklerini işleme alıyoruz
 //Ornegin parametre olarak gelen body'deki bilgiler
@@ -9,8 +9,7 @@ const userController = {
     // Tüm kullanıcıları getirme
     getAllUsers: async (req, res) => {
         try {
-            const ip = req.ip;
-            const users = await UserService.getAllUsers(ip);
+            const users = await userService.getAllUsers();
             const usersDTOInstance = users.map((user) => new userDTO(user));
             res.status(200).json(usersDTOInstance);
         } catch (error) {
@@ -22,7 +21,8 @@ const userController = {
     // ID'ye göre kullanıcı getirme
     getUserById: async (req, res) => {
         try {
-            const user = await UserService.getUserById(req.params.userId);
+            const userId = req.params.userId;
+            const user = await userService.getUserById(userId);
             const userDTOInstance = new userDTO(user);
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
@@ -34,10 +34,10 @@ const userController = {
         }
     },
 
-    getCurrent: async (req, res) => {
+    getCurrentUser: async (req, res) => {
         try {
-            const ip = req.ip;
-            const user = await UserService.getUserById(req.user.uid, ip);
+            const userId = req.user.uid;
+            const user = await userService.getUserById(userId);
             const userDTOInstance = new userDTO(user);
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
@@ -51,8 +51,8 @@ const userController = {
 
     getUserByEmail: async (req, res) => {
         try {
-            const ip = req.ip;
-            const user = await UserService.getUserByEmail(req.params.email, ip);
+            const email = req.params.email;
+            const user = await userService.getUserByEmail(email);
             const userDTOInstance = new userDTO(user);
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
@@ -64,11 +64,11 @@ const userController = {
         }
     },
 
-    getUserByUsername: async (req, res) => {
+    getUserProfileDetails: async (req, res) => {
         try {
             const username = req.params.username;
             const requestedUserId = req.user.uid;
-            const user = await UserService.getUserByUsername(
+            const user = await userService.getUserProfileDetails(
                 username,
                 requestedUserId
             );
@@ -88,8 +88,8 @@ const userController = {
     // Kullanıcı oluşturma
     createUser: async (req, res) => {
         try {
-            const ip = req.ip;
-            const newUser = await UserService.createUser(req.body, ip);
+            const userData = req.body;
+            const newUser = await userService.createUser(userData);
             const userDTOInstance = new userDTO(newUser);
             if (!newUser) {
                 return res
@@ -103,13 +103,13 @@ const userController = {
         }
     },
 
-    updateUser: async (req, res) => {
+    updateUserById: async (req, res) => {
         try {
-            const ip = req.ip;
-            const updatedUser = await UserService.updateUser(
-                req.user.uid,
-                req.body,
-                ip
+            const userId = req.user.uid;
+            const updates = req.body;
+            const updatedUser = await userService.updateUserById(
+                userId,
+                updates
             );
             res.status(200).json(updatedUser);
         } catch (error) {
@@ -121,16 +121,26 @@ const userController = {
     // Kullanıcı silme
     deleteUser: async (req, res) => {
         try {
-            console.log("User deleting" + req.user.uid);
-            const ip = req.ip;
             const userId = req.user.uid;
-            await UserService.deleteUser(userId, ip);
+            await userService.deleteUser(userId);
             // Cookileri temizleme
             res.clearCookie("access_token");
             res.clearCookie("refresh_token");
             res.status(200).json({ message: "Kullanıcı başarıyla silindi" });
         } catch (error) {
             console.error("Error deleting user:", error);
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    getRandomUsers: async (req, res) => {
+        try {
+            const requestedUserId = req.user.uid;
+            const users = await userService.getRandomUsers(requestedUserId);
+            const usersDTOInstance = users.map((user) => new userDTO(user));
+            res.status(200).json(usersDTOInstance);
+        } catch (error) {
+            console.error("Error getting users:", error);
             res.status(500).json({ error: error.message });
         }
     },

@@ -1,24 +1,37 @@
+import { fn, Op } from "@sequelize/core";
 import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
+import Follow from "../models/followModel.js";
 
+/**
+ * Standart iliskili verileri (Posts, Following, Followers)
+ * kullanici sorgularina dahil etmek icin kullanilan yapilandirma.
+ * Sadece ID'leri getirir.
+ */
 const standartIncludes = [
     {
         model: Post,
-        attributes: ["id"],
+        attributes: ["id"], // Post sadece ID'si ile
     },
     {
         model: User,
-        as: "Following",
+        as: "Following", // Takip edilenler (sadece ID)
         attributes: ["uid"],
     },
     {
         model: User,
-        as: "Followers",
+        as: "Followers", // Takipçiler (sadece ID)
         attributes: ["uid"],
     },
 ];
 
 export default {
+    /**
+     * Belirtilen seçeneklere göre tek bir kullanıcıyı bulur.
+     * Her zaman standart ilişkili verileri (Posts, Followers, Following ID'leri) içerir.
+     * @param {object} options - Sequelize findOne seçenekleri (örn. { where: { uid: '...' } }).
+     * @returns {Promise<User|null>} Bulunan User modelini veya null döndürür. Hata durumunda konsola log basar ve undefined dönebilir.
+     */
     async findUser(options = {}) {
         try {
             return await User.findOne({
@@ -26,28 +39,101 @@ export default {
                 include: standartIncludes,
             });
         } catch (error) {
-            console.log("Error finding user:", error);
+            console.error("Error finding user in repository:", error);
+            return undefined;
         }
     },
-    async create(userData) {
-        return User.create(userData);
+
+    /**
+     * Verilen verilerle yeni bir kullanıcı oluşturur.
+     * @param {object} userData - Yeni kullanıcı için veriler (örn. email, password, username).
+     * @returns {Promise<User>} Oluşturulan User modelini döndürür.
+     */
+    async createUser(userData) {
+        try {
+            return await User.create(userData);
+        } catch (error) {
+            console.error("Error creating user in repository:", error);
+            return undefined;
+        }
     },
 
+    /**
+     * Belirtilen ID'ye sahip kullanıcıyı günceller.
+     * @param {string} userId - Güncellenecek kullanıcının ID'si (uid).
+     * @param {object} updates - Uygulanacak güncellemeler.
+     * @returns {Promise<number>} Etkilenen satır sayısını döndürür (genellikle 0 veya 1).
+     */
     async update(userId, updates) {
-        const [affectedCount] = await User.update(updates, {
-            where: { id: userId },
-        });
-        return affectedCount > 0;
+        try {
+            return await User.update(updates, { where: { uid: userId } });
+        } catch (error) {
+            console.error("Error updating user in repository:", error);
+            return undefined;
+        }
     },
 
+    /**
+     * Belirtilen ID'ye sahip kullanıcıyı siler.
+     * @param {string} userId - Silinecek kullanıcının ID'si (uid).
+     * @returns {Promise<number>} Silinen satır sayısını döndürür (genellikle 0 veya 1).
+     */
     async delete(userId) {
-        return User.destroy({ where: { uid: userId } });
+        try {
+            return User.destroy({ where: { uid: userId } });
+        } catch (error) {
+            console.error("Error deleting user in repository:", error);
+            return undefined;
+        }
     },
 
+    /**
+     * Tüm kullanıcıları (varsayılan olarak limitli/sayfalı) getirir.
+     * @param {object} [options={}] - Seçenekler (örn. { limit: 20, offset: 0 }).
+     * @returns {Promise<User[]>} Kullanıcı modellerini içeren bir dizi döndürür.
+     */
     async getAll(options = {}) {
-        return User.findAll({
-            limit: options.limit || 10,
-            offset: options.offset || 0,
-        });
+        try {
+            return User.findAll({
+                limit: options.limit || 10, // Varsayılan limit 10
+                offset: options.offset || 0, // Varsayılan offset 0
+                // Gerekirse buraya da include veya attributes eklenebilir
+                ...options, // Limit ve offset dışındaki diğer findAll seçeneklerini de ekle
+            });
+        } catch (error) {
+            console.error("Error getting all users in repository:", error);
+            return undefined;
+        }
+    },
+
+    /**
+     * Istenilen sayida rastgele kullanıcı getirir
+     * Kullanicinin kendisi ve takip ettikleri kullanicilar haricindeki kullanicilari getirir
+     * @param {number} limit - Kullanıcı sayısı
+     * @param {string} requestedUserId - Istegi yapan kullanıcının ID'si
+     * @returns {Promise<User[]>} Kullanıcı modellerini içeren bir dizi döndürür.
+     */
+    async getRandomUsers(limit, requestedUserId) {
+        try {
+            // Kullanicinin takip ettigi kullanicilarin IDlerini al
+            const followeUserIds = await Follow.findAll({
+                where: { followerId: requestedUserId },
+            }).then((follows) => follows.map((follow) => follow.followingId));
+
+            // Kullanicinin kendisi ve takip ettikleri kullanicilar haricinde rastgele kullanicilari getir
+            return User.findAll({
+                order: [fn("RANDOM")],
+                limit,
+                where: {
+                    uid: {
+                        [Op.ne]: requestedUserId,
+                        [Op.notIn]: followeUserIds,
+                    },
+                },
+            });
+        } catch (error) {
+            console.error("Error getting random users in repository:", error);
+            return undefined;
+        }
     },
 };

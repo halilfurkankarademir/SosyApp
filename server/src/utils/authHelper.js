@@ -1,10 +1,14 @@
 import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
 import dotenv from "dotenv";
-
 dotenv.config();
 
-// Kimlik dogrulama fonksiyonu
+/**
+ * Istek (request) icindeki 'access_token' cookie'sini kullanarak kullaniciyi dogrular.
+ * Cookie yoksa, token yoksa, token gecersizse veya token icindeki kullanıcı bulunamazsa null doner.
+ * @param {object} req - Express request nesnesi. Cookie'leri icermesi beklenir.
+ * @returns {Promise<object|null>} Dogrulama basarili olursa bulunan kullanici nesnesini, aksi takdirde null doner.
+ */
 export async function verifyUserFromTokenCookie(req) {
     try {
         if (!req.cookies) {
@@ -30,15 +34,22 @@ export async function verifyUserFromTokenCookie(req) {
         return user;
     } catch (error) {
         console.error("!!! ERROR in verifyUserFromTokenCookie !!!");
-        console.error("Error Name:", error.name); // Hatanın türünü gösterir (örn: TokenExpiredError)
-        console.error("Error Message:", error.message); // Hatanın detayını gösterir
+        console.error("Error Name:", error.name);
+        console.error("Error Message:", error.message);
         console.error("Full Error Object:", error);
 
         return null;
     }
 }
 
-// Response icin http only cookileri ayarlayan fonksiyon
+/**
+ * Verilen access ve refresh token'ları HTTP-only cookie olarak response'a ekler.
+ * Guvenlik icin secure ve sameSite='none' ayarlari kullanilir.
+ * @param {object} res - Express response nesnesi. Cookie'ler bu nesneye eklenecektir.
+ * @param {string} accessToken - Kullanici icin uretilmis access token.
+ * @param {string} refreshToken - Kullanici icin uretilmis refresh token.
+ * @returns {void} Bu fonksiyon dogrudan bir deger donmez, response nesnesini modifiye eder.
+ */
 export const setAuthCookies = (res, accessToken, refreshToken) => {
     res.cookie("access_token", accessToken, {
         httpOnly: true,
@@ -54,13 +65,17 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
     });
 };
 
-// Cookileri temizleyen fonksiyon
+/**
+ * Response uzerindeki 'access_token' ve 'refresh_token' cookie'lerini temizler.
+ * @param {object} res - Express response nesnesi. Cookie'ler bu nesneden silinecektir.
+ * @returns {void} Bu fonksiyon dogrudan bir deger donmez, response nesnesini modifiye eder.
+ */
 export const clearAuthCookies = (res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        path: "/",
+        path: "/", // Cookie'nin hangi path icin ayarlandiysa o path ile silinmeli
     };
     res.clearCookie("access_token", cookieOptions);
     res.clearCookie("refresh_token", cookieOptions);

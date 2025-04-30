@@ -9,6 +9,7 @@ import { ShowToast } from "../../ui/toasts/ShowToast";
 import { imageUpload } from "../../../api/imageUpload";
 import { createNewPost } from "../../../api/postApi";
 import useUserStore from "../../../hooks/useUserStore";
+import resizeImage from "../../../utils/resizeImage";
 
 const NewPost = ({ onPostCreated }) => {
     const [image, setImage] = useState(null);
@@ -48,6 +49,7 @@ const NewPost = ({ onPostCreated }) => {
             // Formu temizle
             setPostContent("");
             setImage(null);
+            setSelectedFilePreview(null);
         } catch (error) {
             console.error("Paylaşım hatası:", error);
             const errorMessage =
@@ -73,10 +75,11 @@ const NewPost = ({ onPostCreated }) => {
         }
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
-            setImage(file);
+            const resizedImage = await resizeImage(file, 1080, 1080);
+            setImage(resizedImage);
             setSelectedFilePreview(URL.createObjectURL(file));
         }
     };

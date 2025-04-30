@@ -12,7 +12,11 @@ const searchController = {
 
     searchPosts: async (req, res) => {
         const { query } = req.query;
-        const posts = await searchService.searchPosts(query);
+
+        const userId = req.user.uid;
+
+        const posts = await searchService.searchPosts(query, userId);
+
         if (!posts) {
             return res.status(404).json({ error: "Search results not found" });
         }

@@ -24,15 +24,11 @@ apiClient.interceptors.response.use(
             }
 
             try {
-                console.log("Refreshing token");
-
                 await apiClient.post("/auth/refresh");
-
-                console.log("Token refreshed");
 
                 return apiClient(originalRequest);
             } catch (error) {
-                console.error("Error refreshing token:", error);
+                return Promise.reject(error);
             }
         }
 

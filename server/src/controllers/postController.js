@@ -59,12 +59,12 @@ const postController = {
         }
     },
 
-    getPostByUserId: async (req, res) => {
+    getPostsByUserId: async (req, res) => {
         try {
             const userId = req.params.userId;
             const page = req.query.page || 1;
             const limit = req.query.limit || 5;
-            const posts = await PostService.getPostByUserId(
+            const posts = await PostService.getPostsByUserId(
                 userId,
                 page,
                 limit

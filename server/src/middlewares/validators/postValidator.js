@@ -3,7 +3,7 @@ import { requestValidator } from "./joiValidator.js";
 
 // Gonderi olusturma semasi
 const postSchema = Joi.object({
-    content: Joi.string().required(),
+    content: Joi.string().allow(null, ""),
     media: Joi.string().allow(null, ""),
 });
 

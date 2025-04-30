@@ -1,12 +1,19 @@
 import winston from "winston";
+import dotenv from "dotenv";
+dotenv.config();
+
 const { combine, label, printf, colorize, json } = winston.format;
 
-// Ortak timestamp formatı
+/**
+ * Tarih formatı
+ */
 const timestampFormat = {
     format: "YYYY-MM-DD HH:mm:ss",
 };
 
-// Gelişmiş log formatı
+/**
+ * Log formatı
+ */
 const logFormat = printf(
     ({ level, message, label, timestamp, ...metadata }) => {
         let msg = `${timestamp} [${label}] ${level}: ${message}`;
@@ -19,8 +26,14 @@ const logFormat = printf(
     }
 );
 
+/**
+ * Logger seviyesi
+ */
 const level = process.env.NODE_ENV === "production" ? "info" : "debug";
 
+/**
+ * Logger nesnesi ve ayarları
+ */
 const logger = winston.createLogger({
     level,
     format: combine(
@@ -52,6 +65,9 @@ const logger = winston.createLogger({
     ],
 });
 
+/**
+ * Unhandled Rejection hatası ayıklama
+ */
 process.on("unhandledRejection", (reason) => {
     logger.error("Unhandled Rejection:", reason);
 });

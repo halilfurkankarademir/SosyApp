@@ -7,6 +7,7 @@ import {
     FaUserFriends,
     FaRegNewspaper,
 } from "react-icons/fa";
+// searchPosts ve searchUsers'ı import ettiğinizden emin olun
 import { searchPosts, searchUsers } from "../../api/searchApi";
 import PostCard from "../../components/features/posts/PostCard";
 import UserCard from "../../components/ui/cards/UserCard";
@@ -15,14 +16,16 @@ const SearchPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState("");
     const [activeTab, setActiveTab] = useState("posts");
-    const [postResults, setPostResults] = useState([]);
+    // postResults'ı başlangıçta count ve boş posts array'i ile tanımla
+    const [postResults, setPostResults] = useState({ count: 0, posts: [] });
     const [userResults, setUserResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const searchFunction = async (query) => {
         if (!query) {
-            setPostResults([]);
+            // State'leri varsayılan yapılarına sıfırla
+            setPostResults({ count: 0, posts: [] });
             setUserResults([]);
             setError(null);
             setIsLoading(false);
@@ -31,16 +34,36 @@ const SearchPage = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const [posts, users] = await Promise.all([
+            // API'den gelen yanıtları al
+            const [postResponse, users] = await Promise.all([
                 searchPosts(query),
                 searchUsers(query),
             ]);
-            setPostResults(Array.isArray(posts) ? posts : []);
-            setUserResults(Array.isArray(users) ? users : []);
+
+            // postResponse'un beklenen yapıda olduğunu kontrol et
+            if (
+                postResponse &&
+                typeof postResponse.count === "number" &&
+                Array.isArray(postResponse.posts)
+            ) {
+                setPostResults(postResponse); // { count: ..., posts: [...] } object'ini state'e ata
+            } else {
+                console.warn("Beklenmedik post yanıt yapısı:", postResponse);
+                setPostResults({ count: 0, posts: [] }); // Hatalı yanıta karşı güvenli varsayılan
+            }
+
+            // users'ın array olduğunu kontrol et
+            if (Array.isArray(users)) {
+                setUserResults(users);
+            } else {
+                console.warn("Beklenmedik user yanıt yapısı:", users);
+                setUserResults([]); // Hatalı yanıta karşı güvenli varsayılan
+            }
         } catch (err) {
             console.error("Error searching:", err);
             setError("Arama sırasında bir hata oluştu. Lütfen tekrar deneyin.");
-            setPostResults([]);
+            // Hata durumunda state'leri sıfırla
+            setPostResults({ count: 0, posts: [] });
             setUserResults([]);
         } finally {
             setIsLoading(false);
@@ -53,32 +76,19 @@ const SearchPage = () => {
         setSearchQuery(query || "");
         searchFunction(query);
         document.title = query ? `${query} için sonuçlar` : "Arama";
-    }, [searchParams]);
-
-    const getResultsCountForActiveTab = () => {
-        if (activeTab === "posts") {
-            return postResults.length;
-        } else if (activeTab === "users") {
-            return userResults.length;
-        }
-        return 0;
-    };
+    }, [searchParams]); // searchFunction'ı dependency array'e eklemeye gerek yok (useCallback ile optimize edilmediği sürece)
 
     return (
         <>
             <div className="page-container py-24 md:py-36 px-4 md:px-0">
-                <div className="page-grid-layout-other">
+                <div className="page-grid-layout-large">
                     <Sidebar />
 
                     <div className="md:col-span-3 md:ml-72 w-full">
-                        {/* --- CARD 1: Search Header & Tabs --- */}
+                        {/* ... Üst Kısım (Başlık vs.) ... */}
                         <div className="bg-neutral-800 rounded-lg mb-4 md:mb-6">
-                            {" "}
-                            {/* Removed padding temporarily */}
-                            {/* Top Header Part */}
                             <div className="p-4 md:p-6">
-                                {" "}
-                                {/* Added padding here */}
+                                {/* ... Başlık içeriği ... */}
                                 <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                                     <div className="flex items-center mb-4 md:mb-0 min-w-0 mr-4">
                                         <div
@@ -99,34 +109,11 @@ const SearchPage = () => {
                                             </h1>
                                         )}
                                     </div>
-                                    <div className="text-xs md:text-sm text-neutral-400 flex-shrink-0">
-                                        {!isLoading &&
-                                            !error &&
-                                            searchQuery && ( // Only show count if there's a query
-                                                <>
-                                                    {getResultsCountForActiveTab()}{" "}
-                                                    sonuç (
-                                                    {activeTab === "posts"
-                                                        ? "Gönderiler"
-                                                        : "Kullanıcılar"}
-                                                    )
-                                                </>
-                                            )}
-                                        {/* Keep loading/error indicators potentially */}
-                                        {/* {isLoading && <span>Yükleniyor...</span>} */}
-                                        {/* {error && <span className="text-red-500">Hata</span>} */}
-                                    </div>
                                 </div>
                             </div>
-                            {/* Tab Navigation Part (only if query exists or loading) */}
-                            {/* Show tabs only if there's a query or loading/error state requires the result area */}
                             {(searchQuery || isLoading || error) && (
                                 <div className="px-4 md:px-6">
-                                    {" "}
-                                    {/* Add padding for tabs */}
                                     <nav className="flex space-x-1 sm:space-x-4 border-b border-neutral-700">
-                                        {" "}
-                                        {/* Keep border here */}
                                         {/* Gönderiler Tab */}
                                         <button
                                             onClick={() =>
@@ -134,7 +121,6 @@ const SearchPage = () => {
                                             }
                                             disabled={isLoading}
                                             className={`flex items-center space-x-1.5 sm:space-x-2 pb-3 pt-1 px-1 sm:px-2 -mb-px text-sm font-medium border-b-2 focus:outline-none transition-colors duration-150 ${
-                                                // Adjusted padding/margin for border alignment
                                                 activeTab === "posts"
                                                     ? "border-purple-500 text-purple-400"
                                                     : "border-transparent text-neutral-400 hover:text-white hover:border-neutral-500"
@@ -150,7 +136,8 @@ const SearchPage = () => {
                                             </span>
                                             {!isLoading && (
                                                 <span className="ml-1.5 sm:ml-2 text-xs bg-neutral-600 text-neutral-200 rounded-full px-2 py-0.5 flex-shrink-0">
-                                                    {postResults.length}
+                                                    {/* Doğrudan postResults.count'u kullan */}
+                                                    {postResults.count}
                                                 </span>
                                             )}
                                         </button>
@@ -161,7 +148,6 @@ const SearchPage = () => {
                                             }
                                             disabled={isLoading}
                                             className={`flex items-center space-x-1.5 sm:space-x-2 pb-3 pt-1 px-1 sm:px-2 -mb-px text-sm font-medium border-b-2 focus:outline-none transition-colors duration-150 ${
-                                                // Adjusted padding/margin for border alignment
                                                 activeTab === "users"
                                                     ? "border-purple-500 text-purple-400"
                                                     : "border-transparent text-neutral-400 hover:text-white hover:border-neutral-500"
@@ -185,10 +171,7 @@ const SearchPage = () => {
                                 </div>
                             )}
                         </div>
-                        {/* --- END CARD 1 --- */}
 
-                        {/* --- CARD 2: Results Content --- */}
-                        {/* Show this card only if there's a query or if still loading/error */}
                         {(searchQuery || isLoading || error) && (
                             <div className=" ">
                                 {/* Results Content Area */}
@@ -208,24 +191,29 @@ const SearchPage = () => {
                                             {/* Gönderiler İçeriği */}
                                             {activeTab === "posts" && (
                                                 <div>
-                                                    {postResults.length > 0 ? (
+                                                    {/* postResults.posts array'inin uzunluğunu kontrol et */}
+                                                    {postResults.posts &&
+                                                    postResults.posts.length >
+                                                        0 ? (
                                                         <div className="space-y-4">
-                                                            {postResults.map(
-                                                                (post) => (
+                                                            {/* postResults.posts üzerinde map yap */}
+                                                            {postResults.posts.map(
+                                                                (
+                                                                    post // postData değişkenine gerek yok, doğrudan post'u kullan
+                                                                ) => (
                                                                     <PostCard
                                                                         key={
-                                                                            post.pid ||
                                                                             post.id
-                                                                        }
+                                                                        } // Post objesinin bir 'id'si olduğunu varsayıyoruz
                                                                         postData={
                                                                             post
-                                                                        }
+                                                                        } // Tüm post objesini PostCard'a gönder
                                                                     />
-                                                                )
+                                                                ) // Return ifadesi map içinde olmalı
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        searchQuery && ( // Only show "not found" if a search was actually made
+                                                        searchQuery && ( // Sadece arama yapıldıysa "bulunamadı" göster
                                                             <div className="text-center py-8 md:py-10">
                                                                 <div className="flex justify-center mb-3 md:mb-4">
                                                                     <FaSearchMinus className="text-5xl md:text-6xl text-neutral-600" />
@@ -259,8 +247,7 @@ const SearchPage = () => {
                                                                 (user) => (
                                                                     <UserCard
                                                                         key={
-                                                                            user.uid ||
-                                                                            user.id
+                                                                            user.uid // User objesinin bir 'uid'si olduğunu varsayıyoruz
                                                                         }
                                                                         user={
                                                                             user
@@ -270,7 +257,7 @@ const SearchPage = () => {
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        searchQuery && ( // Only show "not found" if a search was actually made
+                                                        searchQuery && ( // Sadece arama yapıldıysa "bulunamadı" göster
                                                             <div className="text-center py-8 md:py-10">
                                                                 <div className="flex justify-center mb-3 md:mb-4">
                                                                     <FaSearchMinus className="text-5xl md:text-6xl text-neutral-600" />
@@ -297,12 +284,10 @@ const SearchPage = () => {
                                         </>
                                     )}
                                 </div>
-                                {/* End Results Content Area */}
                             </div>
                         )}
-                        {/* --- END CARD 2 --- */}
 
-                        {/* Optional: Message when no search query is entered */}
+                        {/* ... Arama yapılmadığında gösterilen mesaj ... */}
                         {!searchQuery && !isLoading && !error && (
                             <div className="bg-neutral-800 p-4 md:p-6 rounded-lg text-center text-neutral-400">
                                 Aramak istediğiniz kelimeyi yukarıdaki arama

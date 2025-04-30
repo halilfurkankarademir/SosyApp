@@ -4,6 +4,11 @@ import "../models/postModel.js";
 import "../models/likeModel.js";
 import "../models/followModel.js";
 
+import dotenv from "dotenv";
+dotenv.config();
+
+const isProduction = process.env.NODE_ENV === "production";
+
 // Bu fonksiyon, veritabanı bağlantısını başlatır ve modelleri senkronize eder
 export async function initializeDatabase() {
     try {
@@ -16,7 +21,7 @@ export async function initializeDatabase() {
         console.log("Veritabanı tabloları senkronize ediliyor...");
 
         await sequelize.sync({
-            alter: true,
+            alter: isProduction ? false : true,
         });
 
         console.log("Veritabanı tabloları başarıyla senkronize edildi!");

@@ -8,7 +8,7 @@ import { clearAuthCookies, setAuthCookies } from "../utils/authHelper.js";
 dotenv.config();
 
 const authController = {
-    register: async (req, res) => {
+    register: async (req, res, next) => {
         try {
             // Bodyden gelen verileri ayristir.
             const { email, password, username, firstName, lastName } = req.body;
@@ -58,10 +58,11 @@ const authController = {
                 error: "Registration failed",
                 details: error.message,
             });
+            next(error);
         }
     },
 
-    login: async (req, res) => {
+    login: async (req, res, next) => {
         try {
             // Bodyden gelen verileri ayristir
             const { email, password } = req.body;
@@ -115,20 +116,23 @@ const authController = {
                         ? error.message
                         : undefined,
             });
+
+            next(error);
         }
     },
 
-    logout: async (req, res) => {
+    logout: async (req, res, next) => {
         try {
             clearAuthCookies(res);
             res.status(200).json({ message: "Logout successful" });
         } catch (error) {
             console.error("Error logging out user:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
-    refreshToken: async (req, res) => {
+    refreshToken: async (req, res, next) => {
         try {
             const token = req.cookies.refresh_token;
 
@@ -146,6 +150,7 @@ const authController = {
         } catch (error) {
             console.error("Error refreshing token:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 };

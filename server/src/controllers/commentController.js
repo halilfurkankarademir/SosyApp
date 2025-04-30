@@ -38,7 +38,7 @@ const commentController = {
     getCommentsByPostId: async (req, res) => {
         try {
             const postId = req.params.postId;
-            const comments = await commentService.getAllComments(postId);
+            const comments = await commentService.getCommentsByPostId(postId);
             res.status(200).json(comments);
         } catch (error) {
             console.error("Error getting comments:", error);
@@ -46,10 +46,12 @@ const commentController = {
         }
     },
 
-    getCommentCount: async (req, res) => {
+    getCommentCountByPostId: async (req, res) => {
         try {
             const postId = req.params.postId;
-            const commentCount = await commentService.getCommentCount(postId);
+            const commentCount = await commentService.getCommentCountByPostId(
+                postId
+            );
             res.status(200).json(commentCount);
         } catch (error) {
             console.error("Error getting comment count:", error);

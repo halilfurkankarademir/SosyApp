@@ -19,7 +19,6 @@ export const register = (email, password, username, firstName, lastName) => {
                 return response.data;
             })
             .catch((error) => {
-                console.error("Registration error:", error);
                 throw error;
             });
     } catch (error) {
@@ -40,7 +39,6 @@ export const login = (email, password) => {
                 return response.data;
             })
             .catch((error) => {
-                console.error("Login error:", error);
                 localStorage.setItem("isAuthenticated", false);
                 throw error;
             });

@@ -35,7 +35,7 @@ const SavedPage = () => {
         <>
             <div className="page-container py-24 md:py-36 px-4 md:px-0">
                 {/* Grid Layout */}
-                <div className="page-grid-layout-other">
+                <div className="page-grid-layout-large">
                     {/* Sidebar - Mobilde gizli */}
                     <Sidebar />
 

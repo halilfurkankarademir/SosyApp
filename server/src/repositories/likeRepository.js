@@ -1,9 +1,8 @@
-// repositories/likeRepository.js
 import Like from "../models/likeModel.js";
-import Post from "../models/postModel.js"; // Needed for include in findWithPostsByUserId
-import User from "../models/userModel.js"; // Needed for include in findWithPostsByUserId
-import Comment from "../models/commentModel.js"; // Needed for include in findWithPostsByUserId
-import Saved from "../models/savedModel.js"; // Needed for include in findWithPostsByUserId
+import Post from "../models/postModel.js";
+import User from "../models/userModel.js";
+import Comment from "../models/commentModel.js";
+import Saved from "../models/savedModel.js";
 
 const likeRepository = {
     async create(userId, postId) {

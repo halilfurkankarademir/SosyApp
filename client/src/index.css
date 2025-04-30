@@ -25,11 +25,11 @@ button {
         @apply flex min-h-screen justify-center bg-neutral-900 z-10 pt-20 pb-16 px-4;
     }
     .page-grid-layout {
-        @apply w-full md:grid md:grid-cols-5 grid-rows-5 md:gap-8;
+        @apply w-full md:grid md:grid-cols-5  md:gap-8 justify-between;
         max-width: 85rem;
     }
-    .page-grid-layout-other {
-        @apply w-full md:grid md:grid-cols-4  md:gap-8;
+    .page-grid-layout-large {
+        @apply w-full md:grid md:grid-cols-4 md:gap-8 justify-between;
         max-width: 85rem;
     }
 }

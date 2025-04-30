@@ -19,21 +19,13 @@ const RenderPosts = ({
         setPosts([]); // Yenileme sırasında mevcut postları temizle
         setPage(1); // Sayfayı başa al
         setHasMore(true); // Daha fazla post olabileceğini varsay
-        console.log("Loading initial posts or refreshing...");
         try {
             const response = await fetchOptions(1); // Her zaman 1. sayfayı çek
-            console.log(response);
             setPosts(response.posts);
             setTotalPostsCount(response.count);
             setPage(2); // Bir sonraki sayfa için hazırla
             setHasMore(response.posts.length < response.count);
-            console.log(
-                `Initial load/Reload: ${response.posts.length} posts, total: ${
-                    response.count
-                }, hasMore: ${response.posts.length < response.count}`
-            );
         } catch (error) {
-            console.error("Error fetching initial posts:", error);
             setHasMore(false);
         } finally {
             setIsLoading(false);
@@ -44,7 +36,6 @@ const RenderPosts = ({
     const fetchMoreData = useCallback(async () => {
         if (!hasMore || isLoading) return; // Zaten yükleniyorsa veya daha fazla yoksa dur
 
-        console.log(`Fetching more posts (page ${page})...`);
         setIsLoading(true);
         try {
             const response = await fetchOptions(page);
@@ -54,15 +45,7 @@ const RenderPosts = ({
             const currentTotalLoaded = posts.length + newPosts.length;
             setHasMore(currentTotalLoaded < response.count);
             setPage((prevPage) => prevPage + 1);
-            console.log(
-                `Fetched page ${page}: ${
-                    newPosts.length
-                } posts. New total loaded: ${currentTotalLoaded}, hasMore: ${
-                    currentTotalLoaded < response.count
-                }`
-            );
         } catch (error) {
-            console.error(`Error fetching page ${page}:`, error);
             setHasMore(false); // Hata durumunda durdur
         } finally {
             setIsLoading(false);

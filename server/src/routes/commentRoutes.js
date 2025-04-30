@@ -39,7 +39,7 @@ router.get(
     "/count/:postId",
     validatePostId,
     authenticateToken,
-    commentController.getCommentCount
+    commentController.getCommentCountByPostId
 );
 
 export default router;

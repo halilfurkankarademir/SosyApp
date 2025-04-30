@@ -1,22 +1,22 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo } from "react";
 import { useNavigation } from "../../context/NavigationContext";
 import { BsPeopleFill, BsPersonAdd } from "react-icons/bs";
-import { fakePeople } from "../../constants/fakeDatas";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { followUser } from "../../api/followApi";
+import { ShowToast } from "../ui/toasts/ShowToast";
 
-const SuggestionsCard = () => {
+const SuggestionsCard = ({ suggestions }) => {
     const { navigateToPage } = useNavigation();
-    const [suggestions, setSuggestions] = useState([]);
 
-    const getSuggestions = async () => {
+    const handleFollow = async (userId, username) => {
         try {
+            await followUser(userId);
+            ShowToast("success", `${username} takip edildi.`);
         } catch (error) {
-            console.error("Error fetching suggestions:", error);
+            console.error("Error following user:", error);
         }
     };
-
-    useEffect(() => {
-        getSuggestions();
-    }, []);
 
     return (
         <div className="hidden md:block w-64 bg-neutral-800 h-auto text-white rounded-xl fixed ">
@@ -25,28 +25,39 @@ const SuggestionsCard = () => {
                 <h2 className="font-semibold">Tanıyor Olabilirsin</h2>
             </div>
             {/* Kullanıcı Bilgileri */}
-            {suggestions.map((person, index) => (
+            {suggestions.map((user) => (
                 <div
                     className="flex items-center p-3 cursor-pointer"
-                    key={index}
-                    onClick={() => navigateToPage(`profile/${person.username}`)}
+                    key={user.uid}
                 >
-                    <img
-                        src={person.profilePicture} // Kullanıcı resmi URL'si
+                    <LazyLoadImage
+                        src={user.profilePicture}
                         alt="Kullanıcı Resmi"
                         className="w-10 h-10 rounded-full object-cover"
+                        effect="blur"
+                        onClick={() =>
+                            navigateToPage(`profile/${user.username}`)
+                        }
                     />
-                    <div className="ml-3">
+                    <div
+                        className="ml-3"
+                        onClick={() =>
+                            navigateToPage(`profile/${user.username}`)
+                        }
+                    >
                         <p className="text-sm font-semibold">
-                            {person.firstName + " " + person.lastName}
+                            {user.firstName + " " + user.lastName}
                         </p>{" "}
                         {/* Kullanıcı adı */}
                         <p className="text-xs text-neutral-400">
-                            @{person.username}
+                            @{user.username}
                         </p>{" "}
                         {/* Kullanıcı etiketi */}
                     </div>
-                    <button className="ml-auto cursor-pointer hover:text-pink-500 duration-200 transition-all">
+                    <button
+                        className="ml-auto cursor-pointer hover:text-pink-500 duration-200 transition-all"
+                        onClick={() => handleFollow(user.uid, user.username)}
+                    >
                         <BsPersonAdd size={24} />
                     </button>
                 </div>

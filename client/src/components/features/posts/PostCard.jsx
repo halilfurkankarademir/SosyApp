@@ -60,7 +60,6 @@ const PostCard = ({ postData, onPostRemove }) => {
                 setLikesCount(previousLikeCount);
             }
         } catch (error) {
-            console.error("Like toggle error:", error);
             setIsLiked(previousLikeStatus);
             setLikesCount(previousLikeCount);
             ShowToast("error", "İşlem sırasında bir hata oluştu.");

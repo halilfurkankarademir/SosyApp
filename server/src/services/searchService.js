@@ -1,78 +1,75 @@
-import User from "../models/userModel.js";
-import Post from "../models/postModel.js";
+import postRepository from "../repositories/postRepository.js";
+import searchRepository from "../repositories/searchRepository.js";
 import { Op } from "sequelize";
+import { addPostDetailsForUser } from "../utils/helpers.js";
+import { ErrorMessages } from "../utils/constants.js";
+
+/**
+ * Arama işlemleri için servis katmanı.
+ * Repository katmanını kullanarak iş mantığını yürütür.
+ * @namespace searchService
+ */
 
 const searchService = {
+    /**
+     * Kullanıcıları verilen sorgu metnine göre arar.
+     * @memberof searchService
+     * @param {string} query - Aranacak metin.
+     * @returns {Promise<Array<object>>} Bulunan kullanıcı nesnelerinin dizisi (array).
+     * @throws {Error} Kullanıcı araması sırasında bir hata oluşursa.
+     */
     searchUsers: async (query) => {
         try {
-            console.log("Searching users with query:", query); // Log the input query
+            console.log("Searching users with query:", query);
             if (!query || query.trim() === "") {
                 console.log("Query is empty, returning no users.");
                 return [];
             }
 
-            const users = await User.findAll({
-                where: {
-                    [Op.or]: [
-                        {
-                            username: {
-                                [Op.iLike]: `%${query}%`,
-                            },
-                        },
-                        {
-                            firstName: {
-                                [Op.iLike]: `%${query}%`,
-                            },
-                        },
-                        {
-                            lastName: {
-                                [Op.iLike]: `%${query}%`,
-                            },
-                        },
-                    ],
-                },
-                attributes: [
-                    "uid",
-                    "username",
-                    "firstName",
-                    "lastName",
-                    "profilePicture",
-                ],
-            });
+            const users = await searchRepository.searchUsers(query);
+
+            if (!users || users.length === 0) {
+                console.log("No users found for the query:", query);
+                return [];
+            }
 
             return users;
         } catch (error) {
-            console.error("Error searching users:", error); // Log the full error
-            throw new Error("Error searching for users");
+            console.error("Error searching users:", error);
+            throw new Error(ErrorMessages.USER_SEARCH_ERROR);
         }
     },
 
-    searchPosts: async (query) => {
+    /**
+     * Gönderileri içeriklerine göre arar ve sonuçlara kullanıcıya özel detayları ekler.
+     * @memberof searchService
+     * @param {string} query - Gönderi içeriğinde aranacak metin.
+     * @param {string | number | undefined} requestedUserId - İsteği yapan kullanıcının ID'si (isOwner, isLiked vb. için).
+     * @returns {Promise<{posts: Array<object>, count: number}>} Güncellenmiş gönderileri ve toplam sayıyı içeren bir nesne.
+     * @throws {Error} Gönderi araması sırasında bir hata oluşursa.
+     */
+    searchPosts: async (query, requestedUserId) => {
         try {
-            const posts = await Post.findAll({
-                where: {
-                    content: {
-                        [Op.iLike]: `%${query}%`,
-                    },
+            const postFilters = {
+                content: {
+                    [Op.iLike]: `%${query}%`,
                 },
-                include: [
-                    {
-                        model: User,
-                        attributes: [
-                            "uid",
-                            "username",
-                            "profilePicture",
-                            "firstName",
-                            "lastName",
-                        ],
-                    },
-                ],
-                order: [["createdAt", "DESC"]],
+            };
+            const { rows: posts, count } = await postRepository.findPosts({
+                where: postFilters,
             });
-            return posts;
+
+            if (!Array.isArray(posts) || posts.length === 0) {
+                console.log("No posts found for the query:", query);
+                return { posts: [], count: count || 0 };
+            }
+
+            const updatedPosts = addPostDetailsForUser(posts, requestedUserId);
+
+            return { posts: updatedPosts, count };
         } catch (error) {
             console.log("Error searching:", error);
-            throw new Error("Error searching");
+            throw new Error(ErrorMessages.POST_SEARCH_ERROR);
         }
     },
 };

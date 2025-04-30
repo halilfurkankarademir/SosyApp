@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import LoadingPage from "../public/LoadingPage";
 import { ShowToast } from "../../components/ui/toasts/ShowToast";
 import { imageUpload } from "../../api/imageUpload";
+import resizeImage from "../../utils/resizeImage";
 
 const EditProfilePage = () => {
     const navigate = useNavigate();
@@ -79,12 +80,13 @@ const EditProfilePage = () => {
     };
 
     // Profil resmi değişikliği
-    const handleProfileImageChange = (e) => {
+    const handleProfileImageChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
+            const resizedImage = await resizeImage(file, 300, 300);
             const imageUrl = URL.createObjectURL(file);
             setPreviewProfileImage(imageUrl);
-            setProfileImage(file);
+            setProfileImage(resizedImage);
         }
     };
 

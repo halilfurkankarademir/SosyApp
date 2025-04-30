@@ -19,7 +19,7 @@ import { readFile } from "fs/promises";
 // 1. Uygulama ve temel konfigürasyon
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+
 const server = http.createServer(app);
 
 // Socket io kurulumu
@@ -59,76 +59,76 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 
-async function startServer() {
-    try {
-        console.log("Server baslatiliyor...");
-        // Veritabanı bağlantısı ve modelleri senkronize et
-        await initializeDatabase();
-        // Modeller arasındaki iliskileri ayarla
-        setupAssociations();
-        console.log("✅ Veritabanı ve modeller yuklendi");
+// Tekrar baslatmayi engellemek icin kontrol
+let initPromise = null;
 
-        // Socket token kimlik dogrulama middleware aktivasyonu
-        io.use(socketAuthMiddleware);
-        console.log("✅ Socket kimlik dogrulama middleware aktif");
+export async function initializeServer() {
+    if (initPromise) return initPromise;
+    initPromise = (async () => {
+        try {
+            console.log("Server baslatiliyor...");
+            // Veritabanı bağlantısı ve modelleri senkronize et
+            await initializeDatabase();
+            // Modeller arasındaki iliskileri ayarla
+            setupAssociations();
+            console.log("✅ Veritabanı ve modeller yuklendi");
 
-        io.on("connection", (socket) => {
-            console.log(
-                "Bir kullanıcı bağlandı",
-                socket.id,
-                "User ID:",
-                socket.userId
-            );
-            if (socket.userId) {
-                userSockets[socket.userId] = socket.id;
+            // Socket token kimlik dogrulama middleware aktivasyonu
+            io.use(socketAuthMiddleware);
+            console.log("✅ Socket kimlik dogrulama middleware aktif");
+
+            io.on("connection", (socket) => {
                 console.log(
-                    `User ${socket.userId} mapped to socket ${socket.id}`
-                );
-            }
-
-            socket.on("disconnect", () => {
-                console.log(
-                    "Bir kullanıcı ayrıldı",
+                    "Bir kullanıcı bağlandı",
                     socket.id,
                     "User ID:",
                     socket.userId
                 );
-                if (socket.userId && userSockets[socket.userId] === socket.id) {
-                    delete userSockets[socket.userId];
-                    console.log(`Mapping removed for user ${socket.userId}`);
+                if (socket.userId) {
+                    userSockets[socket.userId] = socket.id;
+                    console.log(
+                        `User ${socket.userId} mapped to socket ${socket.id}`
+                    );
                 }
+
+                socket.on("disconnect", () => {
+                    console.log(
+                        "Bir kullanıcı ayrıldı",
+                        socket.id,
+                        "User ID:",
+                        socket.userId
+                    );
+                    if (
+                        socket.userId &&
+                        userSockets[socket.userId] === socket.id
+                    ) {
+                        delete userSockets[socket.userId];
+                        console.log(
+                            `Mapping removed for user ${socket.userId}`
+                        );
+                    }
+                });
             });
-        });
 
-        // Bildirim servisini baslat
-        initializeNotificationService(io, userSockets);
-        console.log("✅ Bildirim servisi yuklendi");
+            // Bildirim servisini baslat
+            initializeNotificationService(io, userSockets);
+            console.log("✅ Bildirim servisi yuklendi");
 
-        // Rota tanımları
-        app.use("/api", routes);
-        console.log("✅ Rotalar yuklendi");
+            // Rota tanımları
+            app.use("/api", routes);
+            console.log("✅ Rotalar yuklendi");
 
-        // Hata yönetimi
-        app.use(errorHandler);
-        console.log("✅ Hata yonetimi yuklendi");
+            // Hata yönetimi
+            app.use(errorHandler);
+            console.log("✅ Hata yonetimi yuklendi");
 
-        // Sunucuyu baslat
-        server.listen(port, () => {
-            console.log(`Server ${port} portunda çalışıyor`);
-        });
-
-        // Isletim sisteminden kapatma istegi gelirse sunucuyu kapat
-        process.on("SIGTERM", () => {
-            console.log("SIGTERM alındı. Sunucu kapatılıyor...");
-            server.close(() => {
-                console.log("Sunucu kapatıldı");
-                process.exit(0);
-            });
-        });
-    } catch (error) {
-        console.error("❌ Sunucu baslatilamadi", error);
-        process.exit(1);
-    }
+            return { app, server, io };
+        } catch (error) {
+            console.error("❌ Sunucu baslatilamadi", error);
+            process.exit(1);
+        }
+    })();
+    return initPromise;
 }
 
-startServer();
+export default app;

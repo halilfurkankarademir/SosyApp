@@ -18,7 +18,7 @@ router.get("/feed", authenticateToken, postController.getFeedPosts);
 router.get("/:postId", validatePostId, postController.getPostById);
 
 // Kullaniciya ait gonderileri getirme
-router.get("/user/:userId", authenticateToken, postController.getPostByUserId);
+router.get("/user/:userId", authenticateToken, postController.getPostsByUserId);
 
 // Yeni gönderi oluşturma - token doğrulama eklendi
 router.post("/", validatePost, authenticateToken, postController.createPost);
