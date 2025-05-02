@@ -7,19 +7,20 @@ on:
 # Yapilacak islemler
 jobs:
     deploy:
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-22.04 # Kodlarin calismasi icin gereken isletim sistemi
 
         steps:
             - name: Deploy using SSH
               uses: appleboy/ssh-action@v1.0.3
               with:
-                  host: ${{ secrets.DEPLOY_SERVER_HOST }}
-                  username: ${{ secrets.DEPLOY_SERVER_USER }}
-                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  # SSH baglantisi icin gereken bilgiler Github repo secretlerden geliyor
+                  host: ${{ secrets.DEPLOY_SERVER_HOST }} # Serverin IP adresi
+                  username: ${{ secrets.DEPLOY_SERVER_USER }} # Serverin kullanici adi
+                  key: ${{ secrets.SSH_PRIVATE_KEY }} # Servere giris icin kullanilan private key
                   script: |
                       echo "🚀 Starting deployment..."
 
-                      cd /home/hfk/backend/final-proje/server
+                      cd /home/hfk/backend/final-proje/server 
 
                       echo "✅ Navigated to project directory"
 
