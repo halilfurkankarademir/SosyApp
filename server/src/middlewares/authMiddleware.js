@@ -5,6 +5,7 @@
 
 import dotenv from "dotenv";
 import { verifyUserFromTokenCookie } from "../utils/authHelper.js";
+import logger from "../utils/logger.js";
 dotenv.config();
 
 /**
@@ -33,7 +34,7 @@ export const authenticateToken = async (req, res, next) => {
         next();
     } catch (error) {
         // Doğrulama sırasında bir hata oluşursa logla ve 401 dön
-        console.error("Authentication error:", error);
+        logger.error("Error authenticating token:", error);
         return res.status(401).json({ error: "Kimlik doğrulama başarısız." }); // Daha genel mesaj
     }
 };

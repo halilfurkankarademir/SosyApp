@@ -37,7 +37,6 @@ const RegisterPage = () => {
                 return;
             }
             setIsAuthenticated(true);
-            console.log("Kayıt işlemi başarılı!", user);
             // Kayıt başarılıysa yönlendirme
             navigateToPage("/");
         } catch (error) {

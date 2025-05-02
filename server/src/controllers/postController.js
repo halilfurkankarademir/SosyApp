@@ -4,6 +4,7 @@
  */
 
 import PostService from "../services/postService.js";
+import logger from "../utils/logger.js";
 
 /**
  * @description Gönderi CRUD işlemleri ve listeleme için controller fonksiyonlarını içerir.
@@ -15,8 +16,9 @@ const postController = {
      * @param {object} req - Express istek nesnesi. `req.body` gönderi verilerini, `req.user.uid` kullanıcı ID'sini içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    createPost: async (req, res) => {
+    createPost: async (req, res, next) => {
         try {
+            logger.info("Creating post...");
             let postData = req.body;
             postData = {
                 ...postData,
@@ -26,11 +28,12 @@ const postController = {
             if (!newPost) {
                 return res.status(400).json({ error: "Post creation failed" });
             }
+            logger.info("Post created successfully");
             res.status(201).json(newPost);
         } catch (error) {
-            console.log(req.body);
-            console.error("Error creating post:", error);
+            logger.error("Error creating post:", error);
             res.status(500).json({ error: "Error creating post" });
+            next(error);
         }
     },
 
@@ -40,33 +43,16 @@ const postController = {
      * @param {object} req - Express istek nesnesi. `req.params.postId` silinecek gönderinin ID'sini içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    deletePost: async (req, res) => {
+    deletePost: async (req, res, next) => {
         try {
+            logger.info("Deleting post...");
             await PostService.deletePost(req.params.postId);
+            logger.info("Post deleted successfully");
             res.status(200).json({ message: "Post deleted successfully" });
         } catch (error) {
-            console.error("Error deleting post:", error);
+            logger.error("Error deleting post:", error);
             res.status(500).json({ error: "Error deleting post" });
-        }
-    },
-
-    /**
-     * @description Tüm gönderileri (veya belirli bir filtreye göre) listeler. Aktif kullanıcının ID'si de gönderilir.
-     * @route GET /posts/
-     * @param {object} req - Express istek nesnesi. `req.user.uid` aktif kullanıcı ID'sini içerir.
-     * @param {object} res - Express yanıt nesnesi.
-     */
-    findPosts: async (req, res) => {
-        try {
-            const userId = req.user.uid;
-            const posts = await PostService.findPosts(userId);
-            if (!posts) {
-                return res.status(404).json({ error: "No posts found" });
-            }
-            res.status(200).json(posts);
-        } catch (error) {
-            console.error("Error getting posts:", error);
-            res.status(500).json({ error: "Error getting posts" });
+            next(error);
         }
     },
 
@@ -76,17 +62,20 @@ const postController = {
      * @param {object} req - Express istek nesnesi. `req.params.postId` getirilecek gönderinin ID'sini içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    getPostById: async (req, res) => {
+    getPostById: async (req, res, next) => {
         try {
+            logger.info("Getting post...");
             const postId = req.params.postId;
             const post = await PostService.getPostById(postId);
             if (!post) {
                 return res.status(404).json({ error: "Post not found" });
             }
+            logger.info("Post fetched successfully");
             res.status(200).json(post);
         } catch (error) {
-            console.error("Error getting post:", error);
+            logger.error("Error getting post:", error);
             res.status(500).json({ error: "Error getting post" });
+            next(error);
         }
     },
 
@@ -96,8 +85,9 @@ const postController = {
      * @param {object} req - Express istek nesnesi. `req.params.userId` kullanıcı ID'sini, `req.query` sayfalama bilgilerini içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    getPostsByUserId: async (req, res) => {
+    getPostsByUserId: async (req, res, next) => {
         try {
+            logger.info("Getting posts by user ID...");
             const userId = req.params.userId;
             const page = req.query.page || 1;
             const limit = req.query.limit || 5;
@@ -111,10 +101,12 @@ const postController = {
                     .status(404)
                     .json({ error: "No posts found for this user" });
             }
+            logger.info("Posts fetched successfully");
             res.status(200).json(posts);
         } catch (error) {
-            console.error("Error getting posts by user ID:", error);
+            logger.error("Error getting posts by user ID:", error);
             res.status(500).json({ error: "Error getting posts by user ID" });
+            next(error);
         }
     },
 
@@ -124,8 +116,9 @@ const postController = {
      * @param {object} req - Express istek nesnesi. `req.user.uid` aktif kullanıcı ID'sini, `req.query` sayfalama bilgilerini içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    getFeedPosts: async (req, res) => {
+    getFeedPosts: async (req, res, next) => {
         try {
+            logger.info("Getting feed posts...");
             const userId = req.user.uid;
             const page = req.query.page || 1;
             const limit = req.query.limit || 5;
@@ -133,12 +126,14 @@ const postController = {
             if (!posts) {
                 return res
                     .status(404)
-                    .json({ error: "No posts found for this user" }); // Mesaj "Feed" ile ilgili olmalı
+                    .json({ error: "No posts found for this user" });
             }
+            logger.info("Feed posts fetched successfully");
             res.status(200).json(posts);
         } catch (error) {
-            console.error("Error getting feed posts:", error); // Log mesajı düzeltildi
-            res.status(500).json({ error: "Error getting feed posts" }); // Hata mesajı düzeltildi
+            logger.error("Error getting feed posts:", error);
+            res.status(500).json({ error: "Error getting feed posts" });
+            next(error);
         }
     },
 };

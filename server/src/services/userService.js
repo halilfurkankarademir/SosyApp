@@ -25,7 +25,7 @@ const userService = {
      */
     createUser: async (userData) => {
         try {
-            logger.debug("Creating user started", { userData });
+            logger.info("Creating user started");
 
             const newUser = await userRepository.createUser({
                 ...userData,
@@ -150,7 +150,7 @@ const userService = {
      */
     getUserById: async (userId) => {
         try {
-            logger.debug(`Fetching user by ID`, { userId });
+            logger.info(`Fetching user by ID`, { userId });
             const user = await userRepository.findUser({
                 where: { uid: userId },
             });
@@ -185,7 +185,7 @@ const userService = {
      */
     getUserByUsername: async (username) => {
         try {
-            logger.debug(`Fetching user by username`, { username });
+            logger.info(`Fetching user by username`, { username });
             const user = await userRepository.findUser({
                 where: { username },
             });
@@ -220,7 +220,7 @@ const userService = {
      */
     getUserByEmail: async (email) => {
         try {
-            logger.debug("Fetching user by email", { email });
+            logger.info("Fetching user by email", { email });
 
             const user = await userRepository.findUser({
                 where: { email },
@@ -314,7 +314,7 @@ const userService = {
             );
             return users || [];
         } catch (error) {
-            console.error("Error getting all users in repository:", error);
+            logger.error("Error getting random users:", error);
             return undefined;
         }
     },

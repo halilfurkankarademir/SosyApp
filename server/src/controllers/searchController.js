@@ -4,6 +4,7 @@
  */
 
 import searchService from "../services/searchService.js";
+import logger from "../utils/logger.js";
 
 /**
  * @description Arama işlemleri (kullanıcı ve gönderi) için controller fonksiyonlarını içerir.
@@ -18,15 +19,18 @@ const searchController = {
     searchUsers: async (req, res, next) => {
         // next eklendi (hata yönetimi için)
         try {
+            logger.info("Searching users...");
             // Hata yönetimi eklendi
             const { query } = req.query;
             // Servis fonksiyonu çağrılır
             const users = await searchService.searchUsers(query);
 
+            logger.info("Users searched successfully");
+
             // Başarılı yanıt (boş dizi de olabilir)
             res.status(200).json(users);
         } catch (error) {
-            console.error("Error searching users:", error);
+            logger.error("Error searching users:", error);
             next(error); // Hata yönetimi middleware'ine devret
         }
     },
@@ -40,6 +44,7 @@ const searchController = {
     searchPosts: async (req, res, next) => {
         // next eklendi
         try {
+            logger.info("Searching posts...");
             // Hata yönetimi eklendi
             const { query } = req.query;
             const userId = req.user.uid; // Kimlik doğrulamadan gelen kullanıcı ID'si
@@ -47,10 +52,12 @@ const searchController = {
             // Servis fonksiyonu çağrılır
             const posts = await searchService.searchPosts(query, userId);
 
+            logger.info("Posts searched successfully");
+
             // Başarılı yanıt (boş dizi de olabilir)
             res.status(200).json(posts);
         } catch (error) {
-            console.error("Error searching posts:", error);
+            logger.error("Error searching posts:", error);
             next(error); // Hata yönetimi middleware'ine devret
         }
     },

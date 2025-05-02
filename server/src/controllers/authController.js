@@ -69,7 +69,6 @@ const authController = {
                 error: "Registration failed",
                 details: error.message,
             });
-            // Hatayı errorHandler fonksiyonuna gönder
             next(error);
         }
     },
@@ -86,6 +85,8 @@ const authController = {
      */
     login: async (req, res, next) => {
         try {
+            logger.info("Logging in...");
+
             const { email, password } = req.body;
 
             if (!email || !password) {
@@ -110,32 +111,16 @@ const authController = {
 
             const userDTOInstance = new userDTO(user);
 
+            logger.info("Login successful");
+
             res.status(200).json({
                 message: "Login successful",
                 user: userDTOInstance,
             });
         } catch (error) {
-            console.error("Error logging in user:", error);
-
-            // AuthService özel bir hata fırlatıyorsa yakala (örneğin CredentialsError)
-            if (
-                error.message === "Invalid credentials" ||
-                error.name === "CredentialsError"
-            ) {
-                return res
-                    .status(401)
-                    .json({ error: "Invalid email or password." });
-            }
-
-            // Diğer beklenmedik hatalar
-            res.status(500).json({
-                error: "Login failed due to an internal server error.",
-                details:
-                    process.env.NODE_ENV !== "production"
-                        ? error.message
-                        : undefined,
-            });
-            next(error); // Hata middleware'ine ilet
+            logger.error("Error in authController.login:", error);
+            res.status(500).json({ error: "Login failed" });
+            next(error);
         }
     },
 
@@ -150,11 +135,12 @@ const authController = {
      */
     logout: async (req, res, next) => {
         try {
+            logger.info("Logging out...");
             clearAuthCookies(res);
             res.status(200).json({ message: "Logout successful" });
         } catch (error) {
-            console.error("Error logging out user:", error);
-            res.status(500).json({ error: "Logout failed" }); // Genel hata mesajı
+            logger.error("Error in authController.logout:", error);
+            res.status(500).json({ error: "Logout failed" });
             next(error);
         }
     },
@@ -171,6 +157,8 @@ const authController = {
      */
     refreshToken: async (req, res, next) => {
         try {
+            logger.info("Refreshing token...");
+
             const token = req.cookies.refresh_token;
 
             // Token yoksa hata döndür
@@ -190,19 +178,11 @@ const authController = {
             // Yeni tokenları cookie'ye set et
             setAuthCookies(res, accessToken, newRefreshToken);
 
-            console.log("Token refreshed successfully for user:", user.uid);
+            logger.info("Token refreshed successfully");
+
             res.status(200).json({ message: "Token refreshed successfully" });
         } catch (error) {
-            console.error("Error refreshing token:", error);
-            if (
-                error.name === "InvalidTokenError" ||
-                error.message.includes("invalid")
-            ) {
-                clearAuthCookies(res);
-                return res
-                    .status(401)
-                    .json({ error: "Invalid or expired refresh token." });
-            }
+            logger.error("Error refreshing token:", error);
             res.status(500).json({ error: "Token refresh failed" });
             next(error);
         }

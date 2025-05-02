@@ -2,6 +2,7 @@ import { fn, Op } from "@sequelize/core";
 import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
 import Follow from "../models/followModel.js";
+import logger from "../utils/logger.js";
 
 /**
  * Standart iliskili verileri (Posts, Following, Followers)
@@ -39,7 +40,7 @@ export default {
                 include: standartIncludes,
             });
         } catch (error) {
-            console.error("Error finding user in repository:", error);
+            logger.error("Error finding user in repository:", error);
             return undefined;
         }
     },
@@ -53,7 +54,7 @@ export default {
         try {
             return await User.create(userData);
         } catch (error) {
-            console.error("Error creating user in repository:", error);
+            logger.error("Error creating user in repository:", error);
             return undefined;
         }
     },
@@ -68,7 +69,7 @@ export default {
         try {
             return await User.update(updates, { where: { uid: userId } });
         } catch (error) {
-            console.error("Error updating user in repository:", error);
+            logger.error("Error updating user in repository:", error);
             return undefined;
         }
     },
@@ -82,7 +83,7 @@ export default {
         try {
             return User.destroy({ where: { uid: userId } });
         } catch (error) {
-            console.error("Error deleting user in repository:", error);
+            logger.error("Error deleting user in repository:", error);
             return undefined;
         }
     },
@@ -101,7 +102,7 @@ export default {
                 ...options, // Limit ve offset dışındaki diğer findAll seçeneklerini de ekle
             });
         } catch (error) {
-            console.error("Error getting all users in repository:", error);
+            logger.error("Error getting all users in repository:", error);
             return undefined;
         }
     },
@@ -132,7 +133,7 @@ export default {
                 },
             });
         } catch (error) {
-            console.error("Error getting random users in repository:", error);
+            logger.error("Error getting random users in repository:", error);
             return undefined;
         }
     },

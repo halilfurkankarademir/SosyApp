@@ -21,6 +21,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 import { socketAuthMiddleware } from "./middlewares/socketAuth.js";
 import swaggerUi from "swagger-ui-express";
 import { readFile } from "fs/promises";
+import logger from "./utils/logger.js";
 
 // 1. Uygulama ve temel konfigürasyon
 dotenv.config();
@@ -103,20 +104,20 @@ export async function initializeServer() {
     if (initPromise) return initPromise;
     initPromise = (async () => {
         try {
-            console.log("Server baslatiliyor...");
+            logger.info("Veritabanı ve modeller yukleniyor...");
             // Veritabanı bağlantısı ve modelleri senkronize et
             await initializeDatabase();
             // Modeller arasındaki iliskileri ayarla
             setupAssociations();
-            console.log("✅ Veritabanı ve modeller yuklendi");
+            logger.info("✅ Veritabanı ve modeller yuklendi");
 
             // Socket token kimlik dogrulama middleware aktivasyonu
             io.use(socketAuthMiddleware);
-            console.log("✅ Socket kimlik dogrulama middleware aktif");
+            logger.info("✅ Socket kimlik dogrulama middleware aktif");
 
             // Yeni socket bağlantılarını dinle
             io.on("connection", (socket) => {
-                console.log(
+                logger.info(
                     "Bir kullanıcı bağlandı",
                     socket.id,
                     "User ID:",
@@ -125,14 +126,14 @@ export async function initializeServer() {
                 // Kullanıcı doğrulanmışsa userSockets'e ekle
                 if (socket.userId) {
                     userSockets[socket.userId] = socket.id;
-                    console.log(
+                    logger.info(
                         `User ${socket.userId} mapped to socket ${socket.id}`
                     );
                 }
 
                 // Socket bağlantısı kesildiğinde dinle
                 socket.on("disconnect", () => {
-                    console.log(
+                    logger.info(
                         "Bir kullanıcı ayrıldı",
                         socket.id,
                         "User ID:",
@@ -144,7 +145,7 @@ export async function initializeServer() {
                         userSockets[socket.userId] === socket.id
                     ) {
                         delete userSockets[socket.userId];
-                        console.log(
+                        logger.info(
                             `Mapping removed for user ${socket.userId}`
                         );
                     }
@@ -153,20 +154,20 @@ export async function initializeServer() {
 
             // Bildirim servisini baslat ve io ile userSockets'i ilet
             initializeNotificationService(io, userSockets);
-            console.log("✅ Bildirim servisi yuklendi");
+            logger.info("✅ Bildirim servisi yuklendi");
 
             // API rotalarını tanımla
             app.use("/api", routes);
-            console.log("✅ Rotalar yuklendi");
+            logger.info("✅ Rotalar yuklendi");
 
             // Merkezi hata yönetimi middleware'ini tanımla
             app.use(errorHandler);
-            console.log("✅ Hata yonetimi yuklendi");
+            logger.info("✅ Hata yonetimi yuklendi");
 
             // Başlatma başarılıysa ilgili nesneleri döndür
             return { app, server, io };
         } catch (error) {
-            console.error("❌ Sunucu baslatilamadi", error);
+            logger.error("❌ Sunucu baslatilamadi", error);
             process.exit(1); // Başlatma hatasında uygulamayı sonlandır
         }
     })();

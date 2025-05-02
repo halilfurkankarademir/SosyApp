@@ -1,3 +1,5 @@
+import logger from "../utils/logger.js";
+
 let ioInstance = null;
 let userSocketsRef = {};
 
@@ -22,24 +24,20 @@ export function initializeNotificationService(io, userSockets) {
  */
 function sendNotification(targetUserId, data) {
     if (!ioInstance) {
-        console.error("Notification service is not initialized!");
+        logger.error("Notification service not initialized");
         return;
     }
-    console.log("Sending notification to user:", targetUserId);
+    logger.info(`Sending notification to user ${targetUserId}`);
     // console.log(userSocketsRef); // Geliştirme sırasında loglama için bırakılabilir
     const targetSocketId = userSocketsRef[targetUserId];
 
     if (!targetSocketId) {
-        console.error(
-            `Target user socket not found for user ID: ${targetUserId}`
-        );
+        logger.error(`User ${targetUserId} not found`);
         return;
     }
 
     ioInstance.to(targetSocketId).emit("new_notification", data);
-    console.log(
-        `Notification sent to user ${targetUserId} on socket ${targetSocketId}`
-    );
+    logger.info(`Notification sent to user ${targetUserId}`);
 }
 
 /**
@@ -52,13 +50,13 @@ function sendNotification(targetUserId, data) {
  */
 export function sendLikeNotification(likerUser, postOwnerId, postId) {
     if (!likerUser || typeof likerUser !== "object" || !likerUser.uid) {
-        console.error(
+        logger.error(
             "Invalid likerUser object provided to sendLikeNotification"
         );
         return;
     }
     if (likerUser.uid === postOwnerId) {
-        console.log("User liked their own post. No notification sent.");
+        logger.log("User liked their own post. No notification sent.");
         return;
     }
 
@@ -85,15 +83,13 @@ export const sendFollowNotification = (followerUser, followedUserId) => {
         typeof followerUser !== "object" ||
         !followerUser.uid
     ) {
-        console.error(
+        logger.error(
             "Invalid followerUser object provided to sendFollowNotification"
         );
         return;
     }
     if (followerUser.uid === followedUserId) {
-        console.log(
-            "User attempted to follow themselves. No notification sent."
-        );
+        logger.log("User followed themselves. No notification sent.");
         return;
     }
     console.log(
@@ -125,13 +121,13 @@ export const sendCommentNotification = (commenterUser, postOwnerId, postId) => {
         typeof commenterUser !== "object" ||
         !commenterUser.uid
     ) {
-        console.error(
+        logger.error(
             "Invalid commenterUser object provided to sendCommentNotification"
         );
         return;
     }
     if (commenterUser.uid === postOwnerId) {
-        console.log("User commented on their own post. No notification sent.");
+        logger.log("User commented on their own post. No notification sent.");
         return;
     }
     console.log(

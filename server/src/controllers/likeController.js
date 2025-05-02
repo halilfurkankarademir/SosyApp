@@ -3,11 +3,11 @@
  * @module controllers/likeController
  */
 
-// begeni islemleri icin controllerlar
-import postRepository from "../repositories/postRepository.js"; // Kullanılıyor
+import postRepository from "../repositories/postRepository.js";
 import likeService from "../services/likeService.js";
-import { sendLikeNotification } from "../services/notificationService.js"; // Kullanılıyor
-import PostService from "../services/postService.js"; // Kullanılıyor
+import { sendLikeNotification } from "../services/notificationService.js";
+import PostService from "../services/postService.js";
+import logger from "../utils/logger.js";
 
 /**
  * @description Beğeni işlemleri (oluşturma, silme, listeleme, kontrol) için controller fonksiyonlarını içerir.
@@ -19,8 +19,10 @@ const likeController = {
      * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    createLike: async (req, res) => {
+    createLike: async (req, res, next) => {
         try {
+            logger.info("Creating like...");
+
             //Kullanicinin begenecigi postun idsini aliyoruz
             const { postId } = req.params;
             // Kullanıcının kimliği JWT'den alınıyor
@@ -28,9 +30,10 @@ const likeController = {
 
             const like = await likeService.createLike(userId, postId);
 
-            console.log("Like created:", like);
+            logger.info("Like created successfully");
 
             const post = await postRepository.findById(postId);
+
             if (!post) {
                 return res.status(404).json({ error: "Post not found" });
             }
@@ -39,10 +42,11 @@ const likeController = {
 
             res.status(201).json(like);
         } catch (error) {
-            console.error("Error creating like:", error);
+            logger.error("Error creating like:", error);
             res.status(500).json({
                 error: "Like oluşturulurken bir hata oluştu.",
             });
+            next(error);
         }
     },
     /**
@@ -51,17 +55,20 @@ const likeController = {
      * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    deleteLike: async (req, res) => {
+    deleteLike: async (req, res, next) => {
         try {
+            logger.info("Deleting like...");
             const { postId } = req.params;
             const userId = req.user.uid; // Kullanıcının kimliği JWT'den alınıyor
             await likeService.deleteLike(userId, postId);
+            logger.info("Like deleted successfully");
             res.status(200).json({ message: "Begeni iptal edildi." });
         } catch (error) {
-            console.error("Error deleting like:", error);
+            logger.error("Error deleting like:", error);
             res.status(500).json({
                 error: "Begeni iptal edilirken bir hata oluştu.",
             });
+            next(error);
         }
     },
 
@@ -71,16 +78,19 @@ const likeController = {
      * @param {object} req - Express istek nesnesi. `req.params.postId` gönderi ID'sini içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    getAllLikes: async (req, res) => {
+    getAllLikes: async (req, res, next) => {
         try {
+            logger.info("Getting likes...");
             const postId = req.params.postId;
             const likes = await likeService.getLikesForPost(postId);
+            logger.info("Likes fetched successfully");
             res.status(200).json(likes);
         } catch (error) {
-            console.error("Error getting likes:", error);
+            logger.error("Error getting likes:", error);
             res.status(500).json({
                 error: "Begenileri alırken bir hata oluştu.",
             });
+            next(error);
         }
     },
 
@@ -90,8 +100,9 @@ const likeController = {
      * @param {object} req - Express istek nesnesi. `req.user.uid` kullanıcı ID'sini, `req.query` sayfalama bilgilerini içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    getLikesByUserId: async (req, res) => {
+    getLikesByUserId: async (req, res, next) => {
         try {
+            logger.info("Getting likes by user ID...");
             const userId = req.user.uid;
             const page = req.query.page || 1;
             const limit = req.query.limit || 5;
@@ -104,32 +115,14 @@ const likeController = {
                 page,
                 limit
             );
+            logger.info("Likes fetched successfully");
             res.status(200).json(likes);
         } catch (error) {
-            console.error("Error getting likes by user ID:", error);
+            logger.error("Error getting likes by user ID:", error);
             res.status(500).json({
                 error: "Kullanıcının begenilerini alırken bir hata oluştu.",
             });
-        }
-    },
-
-    /**
-     * @description Aktif kullanıcının belirli bir gönderiyi beğenip beğenmediğini kontrol eder.
-     * @route GET /like/check/:postId (Varsayılan route, kontrol edilmeli)
-     * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
-     * @param {object} res - Express yanıt nesnesi.
-     */
-    checkLike: async (req, res) => {
-        try {
-            const { postId } = req.params;
-            const userId = req.user.uid;
-            const isLiked = await likeService.hasUserLikedPost(userId, postId);
-            res.status(200).json({ isLiked });
-        } catch (error) {
-            console.error("Error checking like:", error);
-            res.status(500).json({
-                error: "Begeni kontrol edilirken bir hata oluştu.",
-            });
+            next(error);
         }
     },
 };

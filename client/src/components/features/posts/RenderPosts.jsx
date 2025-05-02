@@ -86,14 +86,6 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
 
     // React Icons ile görselleştirilmiş içerik render fonksiyonu
     const renderContent = () => {
-        if (isLoading && posts.length === 0) {
-            return (
-                <div className="text-center text-white py-12">
-                    Yükleniyor...
-                </div>
-            );
-        }
-
         // Hiç gönderi yoksa
         if (
             filteredPosts.length === 0 &&
@@ -179,9 +171,6 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
                 endMessage={
                     !hasMore && filteredPosts.length > 0 ? (
                         <p className="text-center text-white py-4 font-light">
-                            <span role="img" aria-label="Bitiş">
-                                🏁
-                            </span>{" "}
                             Başka gönderi yok.
                         </p>
                     ) : null

@@ -7,6 +7,7 @@
 import commentService from "../services/commentService.js";
 import { sendCommentNotification } from "../services/notificationService.js";
 import PostService from "../services/postService.js";
+import logger from "../utils/logger.js";
 
 /**
  * @description Yorum oluşturma, silme ve listeleme/sayma işlemleri için controller fonksiyonlarını içerir.
@@ -18,8 +19,10 @@ const commentController = {
      * @param {object} req - Express istek nesnesi. `req.params.postId`, `req.body.content` ve `req.user.uid` içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    createComment: async (req, res) => {
+    createComment: async (req, res, next) => {
         try {
+            logger.info("Creating comment...");
+
             const userId = req.user.uid;
             const postId = req.params.postId;
             const content = req.body.content;
@@ -31,10 +34,12 @@ const commentController = {
             const postDetails = await PostService.getPostById(postId);
             const postOwnerId = postDetails.user.uid;
             sendCommentNotification(req.user, postOwnerId, postId);
+            logger.info("Comment created successfully");
             res.status(201).json(comment);
         } catch (error) {
-            console.error("Error creating comment:", error);
+            logger.error("Error creating comment:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -44,14 +49,17 @@ const commentController = {
      * @param {object} req - Express istek nesnesi. `req.params.commentId` silinecek yorum ID'sini içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    deleteComment: async (req, res) => {
+    deleteComment: async (req, res, next) => {
         try {
+            logger.info("Deleting comment...");
             const commentId = req.params.commentId;
             await commentService.deleteComment(commentId);
+            logger.info("Comment deleted successfully");
             res.status(200).json({ message: "Comment deleted successfully" });
         } catch (error) {
-            console.error("Error deleting comment:", error);
+            logger.error("Error deleting comment:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -61,18 +69,21 @@ const commentController = {
      * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    getCommentsByPostId: async (req, res) => {
+    getCommentsByPostId: async (req, res, next) => {
         try {
+            logger.info("Getting comments...");
             const postId = req.params.postId;
             const requestUserId = req.user.uid;
             const comments = await commentService.getCommentsByPostId(
                 postId,
                 requestUserId
             );
+            logger.info("Comments fetched successfully");
             res.status(200).json(comments);
         } catch (error) {
-            console.error("Error getting comments:", error);
+            logger.error("Error getting comments:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -82,16 +93,18 @@ const commentController = {
      * @param {object} req - Express istek nesnesi. `req.params.postId` içerir.
      * @param {object} res - Express yanıt nesnesi.
      */
-    getCommentCountByPostId: async (req, res) => {
+    getCommentCountByPostId: async (req, res, next) => {
         try {
+            logger.info("Getting comment count...");
             const postId = req.params.postId;
             const commentCount = await commentService.getCommentCountByPostId(
                 postId
             );
-            res.status(200).json(commentCount); // Sadece sayıyı veya { count: ... } objesini dönebilir
+            res.status(200).json(commentCount);
         } catch (error) {
-            console.error("Error getting comment count:", error);
+            logger.error("Error getting comment count:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 };

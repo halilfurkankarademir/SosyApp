@@ -1,4 +1,5 @@
 import savedRepository from "../repositories/savedRepository.js";
+import logger from "../utils/logger.js";
 import PostService from "./postService.js";
 
 /**
@@ -19,7 +20,7 @@ const savedService = {
         try {
             return await savedRepository.createSaved(userId, postId);
         } catch (error) {
-            console.error("Error saving post:", error);
+            logger.error("Error saving post:", error);
             throw error;
         }
     },
@@ -36,7 +37,7 @@ const savedService = {
         try {
             return await savedRepository.deleteSaved(userId, postId);
         } catch (error) {
-            console.error("Error un-saving post:", error);
+            logger.error("Error unsaving post:", error);
             throw error;
         }
     },
@@ -52,7 +53,7 @@ const savedService = {
         try {
             return await PostService.getSavedPostsByUserId(userId);
         } catch (error) {
-            console.error("Error getting saved posts:", error);
+            logger.error("Error in savedService.getSavedPosts:", error);
             throw error;
         }
     },
@@ -68,7 +69,10 @@ const savedService = {
         try {
             return await savedRepository.findAllSavedPostIdsByUser(userId);
         } catch (error) {
-            console.log("Error finding saved post IDs by user ID:", error);
+            logger.error(
+                "Error in savedService.findSavedPostIdsByUserId:",
+                error
+            );
             throw error;
         }
     },

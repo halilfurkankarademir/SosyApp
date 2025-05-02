@@ -4,11 +4,13 @@
  */
 
 import sequelize from "./sequelize.js";
+
 import "../models/userModel.js";
 import "../models/postModel.js";
 import "../models/likeModel.js";
 import "../models/followModel.js";
 
+import logger from "../utils/logger.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -25,12 +27,12 @@ const isProduction = process.env.NODE_ENV === "production";
 export async function initializeDatabase() {
     try {
         // Veritabanı bağlantısını kontrol et
-        console.log("Veritabanı bağlantısı doğrulanıyor...");
+        logger.info("Veritabanı bağlantısı kontrol ediliyor...");
         await sequelize.authenticate();
-        console.log("Veritabanı bağlantısı başarılı!");
+        logger.info("Veritabanı bağlantısı başarılı!");
 
         // Tabloları senkronize et
-        console.log("Veritabanı tabloları senkronize ediliyor...");
+        logger.info("Veritabanı tabloları senkronize ediliyor...");
 
         // Geliştirme ortamında alter: true ile mevcut tablolarda değişiklik yap,
         // üretimde alter: false ile veri kaybını önle (sadece yeni tablolar oluşturulur).
@@ -38,23 +40,13 @@ export async function initializeDatabase() {
             alter: isProduction ? false : true,
         });
 
-        console.log("Veritabanı tabloları başarıyla senkronize edildi!");
+        logger.info("Veritabanı tabloları başarıyla senkronize edildi!");
         return sequelize;
     } catch (error) {
-        console.error(
+        logger.error(
             "Veritabanı bağlantı/senkronizasyon hatası:",
             error.message
         );
-
-        if (error.name) {
-            console.error(`Hata tipi: ${error.name}`);
-        }
-        if (error.original) {
-            console.error(
-                `Altta yatan hata: ${error.original.message || error.original}`
-            );
-        }
-
         throw error;
     }
 }

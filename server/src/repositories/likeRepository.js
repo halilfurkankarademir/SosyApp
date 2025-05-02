@@ -40,7 +40,7 @@ const likeRepository = {
             const result = await Like.destroy({ where: { userId, postId } });
             return result;
         } catch (error) {
-            console.error(
+            logger.error(
                 "Error in likeRepository.deleteByUserIdAndPostId:",
                 error
             );
@@ -59,7 +59,7 @@ const likeRepository = {
             const likes = await Like.findAll({ where: { postId } });
             return likes;
         } catch (error) {
-            console.error("Error in likeRepository.findByPostId:", error);
+            logger.error("Error in likeRepository.findByPostId:", error);
             throw new Error(
                 "Database error finding likes by post ID: " + error.message
             );
@@ -78,7 +78,7 @@ const likeRepository = {
             const like = await Like.findOne({ where: { userId, postId } });
             return like;
         } catch (error) {
-            console.error(
+            logger.error(
                 "Error in likeRepository.findOneByUserIdAndPostId:",
                 error
             );
@@ -158,7 +158,7 @@ const likeRepository = {
             });
             return likes;
         } catch (error) {
-            console.error(
+            logger.error(
                 "Error in likeRepository.findWithPostsByUserId:",
                 error
             );

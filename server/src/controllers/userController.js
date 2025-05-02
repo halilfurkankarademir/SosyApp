@@ -5,6 +5,7 @@
 
 import userDTO from "../dtos/userDTO.js";
 import userService from "../services/userService.js";
+import logger from "../utils/logger.js";
 
 /**
  * @description Kullanıcı işlemleri için controller fonksiyonlarını içerir.
@@ -15,15 +16,18 @@ const userController = {
      * @description Tüm kullanıcıları listeler.
      * @route GET /users/
      */
-    getAllUsers: async (req, res) => {
+    getAllUsers: async (req, res, next) => {
         try {
+            logger.info("Getting all users...");
             const users = await userService.getAllUsers();
             // DTO ile hassas verileri filtrele
             const usersDTOInstance = users.map((user) => new userDTO(user));
+            logger.info("Users fetched successfully");
             res.status(200).json(usersDTOInstance);
         } catch (error) {
-            console.error("Error getting users:", error);
-            res.status(500).json({ error: error.message }); // Hata yönetimi middleware'ine devretmek daha iyi olabilir
+            logger.error("Error getting users:", error);
+            res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -31,19 +35,21 @@ const userController = {
      * @description Belirli bir kullanıcıyı ID ile getirir.
      * @route GET /users/id/:userId
      */
-    getUserById: async (req, res) => {
+    getUserById: async (req, res, next) => {
         try {
+            logger.info("Getting user...");
             const userId = req.params.userId;
             const user = await userService.getUserById(userId);
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
-            // DTO ile formatla
+            logger.info("User fetched successfully");
             const userDTOInstance = new userDTO(user);
             res.status(200).json(userDTOInstance);
         } catch (error) {
-            console.error("Error getting user:", error);
+            logger.error("Error getting user:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -51,8 +57,9 @@ const userController = {
      * @description Oturum açmış (mevcut) kullanıcıyı getirir.
      * @route GET /users/me
      */
-    getCurrentUser: async (req, res) => {
+    getCurrentUser: async (req, res, next) => {
         try {
+            logger.info("Getting current user...");
             const userId = req.user.uid; // Kimlik doğrulama middleware'inden gelir
             const user = await userService.getUserById(userId);
             if (!user) {
@@ -60,10 +67,12 @@ const userController = {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
             const userDTOInstance = new userDTO(user);
+            logger.info("Current user fetched successfully");
             res.status(200).json(userDTOInstance);
         } catch (error) {
-            console.error("Error getting current user:", error); // Hata mesajı düzeltildi
+            logger.error("Error getting current user:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -71,18 +80,21 @@ const userController = {
      * @description Belirli bir kullanıcıyı e-posta adresi ile getirir.
      * @route GET /users/email/:email
      */
-    getUserByEmail: async (req, res) => {
+    getUserByEmail: async (req, res, next) => {
         try {
+            logger.info("Getting user by email...");
             const email = req.params.email;
             const user = await userService.getUserByEmail(email);
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
             const userDTOInstance = new userDTO(user);
+            logger.info("User fetched successfully");
             res.status(200).json(userDTOInstance);
         } catch (error) {
-            console.error("Error getting user by email:", error); // Hata mesajı düzeltildi
+            logger.error("Error getting user by email:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -91,8 +103,9 @@ const userController = {
      * İstek yapan kullanıcının takip durumunu da içerebilir.
      * @route GET /users/username/:username
      */
-    getUserProfileDetails: async (req, res) => {
+    getUserProfileDetails: async (req, res, next) => {
         try {
+            logger.info("Getting user profile details...");
             const username = req.params.username;
             const requestedUserId = req.user.uid; // İstek yapan kullanıcı
             const userProfile = await userService.getUserProfileDetails(
@@ -102,14 +115,13 @@ const userController = {
             if (!userProfile) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
-            // Servis zaten DTO benzeri bir yapı döndürebilir veya burada DTO'ya çevrilebilir.
-            // userDTO'nun profil detaylarına uygun olup olmadığını kontrol et.
-            // Belki farklı bir ProfileDTO gerekebilir.
-            const userDTOInstance = new userDTO(userProfile); // userDTO bu yapıya uygun mu?
+            const userDTOInstance = new userDTO(userProfile);
+            logger.info("User profile details fetched successfully");
             res.status(200).json(userDTOInstance);
         } catch (error) {
-            console.error("Error getting user profile:", error); // Hata mesajı düzeltildi
+            logger.error("Error getting user profile details:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -117,24 +129,22 @@ const userController = {
      * @description Yeni bir kullanıcı oluşturur (Genellikle register endpoint'i ile ilişkilidir).
      * @route POST /users/ (veya /auth/register)
      */
-    createUser: async (req, res) => {
+    createUser: async (req, res, next) => {
         try {
+            logger.info("Creating user...");
             const userData = req.body;
-            // Not: Bu fonksiyon authController.register içinde çağrılıyor olabilir.
-            // Eğer doğrudan /users'a POST yapılıyorsa admin yetkisi kontrolü gerekebilir.
+
             const newUser = await userService.createUser(userData);
-            // `createUser` başarısız olursa hata fırlatmalı, null dönmemeli.
-            // if (!newUser) {
-            //     return res
-            //         .status(400)
-            //         .json({ error: "User cannot be created" });
-            // }
+
             const userDTOInstance = new userDTO(newUser);
+
+            logger.info("User created successfully");
+
             res.status(201).json(userDTOInstance);
         } catch (error) {
-            console.error("Error creating user:", error);
-            // Servisten gelen hataya göre uygun status kod (örn: 409 Conflict) dönülebilir.
+            logger.error("Error creating user:", error);
             res.status(error.status || 500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -142,8 +152,9 @@ const userController = {
      * @description Oturum açmış kullanıcının bilgilerini günceller.
      * @route PUT /users/me
      */
-    updateUserById: async (req, res) => {
+    updateUserById: async (req, res, next) => {
         try {
+            logger.info("Updating user...");
             const userId = req.user.uid;
             const updates = req.body;
             const updatedUser = await userService.updateUserById(
@@ -152,11 +163,12 @@ const userController = {
             );
             // Başarılı güncelleme sonrası güncellenmiş kullanıcıyı DTO ile dön
             const userDTOInstance = new userDTO(updatedUser);
+            logger.info("User updated successfully");
             res.status(200).json(userDTOInstance);
         } catch (error) {
-            console.error("Error updating user:", error);
-            // Validasyon veya veritabanı hatalarına göre uygun status kod dönülebilir.
+            logger.error("Error updating user:", error);
             res.status(error.status || 500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -164,17 +176,20 @@ const userController = {
      * @description Oturum açmış kullanıcının hesabını siler.
      * @route DELETE /users/me
      */
-    deleteUser: async (req, res) => {
+    deleteUser: async (req, res, next) => {
         try {
+            logger.info("Deleting user...");
             const userId = req.user.uid;
             await userService.deleteUser(userId);
             // Başarılı silme sonrası cookie'leri temizle ve onay mesajı dön
             res.clearCookie("access_token");
             res.clearCookie("refresh_token");
+            logger.info("User deleted successfully");
             res.status(200).json({ message: "Kullanıcı başarıyla silindi" }); // 204 No Content de olabilir
         } catch (error) {
-            console.error("Error deleting user:", error);
+            logger.error("Error deleting user:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 
@@ -182,15 +197,18 @@ const userController = {
      * @description Rastgele kullanıcıları getirir (Öneri vb. için). Aktif kullanıcı hariç tutulur.
      * @route GET /users/random
      */
-    getRandomUsers: async (req, res) => {
+    getRandomUsers: async (req, res, next) => {
         try {
+            logger.info("Getting random users...");
             const requestedUserId = req.user.uid; // Aktif kullanıcıyı hariç tutmak için
             const users = await userService.getRandomUsers(requestedUserId);
             const usersDTOInstance = users.map((user) => new userDTO(user));
+            logger.info("Random users fetched successfully");
             res.status(200).json(usersDTOInstance);
         } catch (error) {
-            console.error("Error getting random users:", error); // Hata mesajı düzeltildi
+            logger.error("Error getting random users:", error);
             res.status(500).json({ error: error.message });
+            next(error);
         }
     },
 };

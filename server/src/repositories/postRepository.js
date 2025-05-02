@@ -8,6 +8,7 @@ import Like from "../models/likeModel.js";
 import Post from "../models/postModel.js";
 import Saved from "../models/savedModel.js";
 import User from "../models/userModel.js";
+import logger from "../utils/logger.js";
 
 /**
  * Gönderi sorgularında sık kullanılan ilişkileri içeren standart include dizisi.
@@ -58,7 +59,7 @@ export default {
         try {
             return await Post.create(postData);
         } catch (error) {
-            console.error("Repository create post error:", error);
+            logger.error("Repository create post error:", error);
             throw new Error(`Gönderi oluşturulamadı.`); // Servis katmanı daha anlamlı hata verebilir
         }
     },
@@ -79,7 +80,7 @@ export default {
             await post.destroy();
             return { success: true };
         } catch (error) {
-            console.error("Repository delete post error:", error);
+            logger.error("Repository delete post by id error:", error);
             // Hata mesajını koruyarak tekrar fırlat
             throw new Error(`Gönderi silinemedi: ${error.message}`);
         }
@@ -100,7 +101,7 @@ export default {
                 distinct: true, // Count'un doğru çalışması için (özellikle many-to-many ilişkilerde)
             });
         } catch (error) {
-            console.error("Repository findPosts error:", error);
+            logger.error("Repository find posts error:", error);
             throw new Error(`Gönderiler getirilemedi.`);
         }
     },
@@ -118,7 +119,7 @@ export default {
             });
             return post;
         } catch (error) {
-            console.error("Repository findById post error:", error);
+            logger.error("Repository find post by id error:", error);
             throw new Error(`Gönderi getirilemedi.`);
         }
     },

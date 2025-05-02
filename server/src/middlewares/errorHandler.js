@@ -4,6 +4,7 @@
  */
 
 import dotenv from "dotenv";
+import logger from "../utils/logger.js";
 dotenv.config();
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -18,7 +19,7 @@ const isProduction = process.env.NODE_ENV === "production";
  */
 export default function errorHandler(err, req, res, next) {
     // Hatanın stack trace'ini veya mesajını sunucu loglarına yazdır
-    console.error("Hata:", err.stack || err);
+    logger.error(err.stack || err.message);
 
     // Hatanın durum kodunu veya varsayılan olarak 500'ü kullan
     const statusCode = err.status || 500;

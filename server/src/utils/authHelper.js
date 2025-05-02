@@ -6,6 +6,7 @@
 import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
 import dotenv from "dotenv";
+import logger from "./logger.js";
 dotenv.config();
 
 /**
@@ -17,12 +18,12 @@ dotenv.config();
 export async function verifyUserFromTokenCookie(req) {
     try {
         if (!req.cookies) {
-            console.log("Cookies not found in request");
+            logger.warn("Cookies not found in request");
             return null;
         }
         const token = req.cookies.access_token;
         if (!token) {
-            console.log("Access token not found in cookies");
+            logger.warn("Access token not found in cookies");
             return null;
         }
 
@@ -32,17 +33,13 @@ export async function verifyUserFromTokenCookie(req) {
         });
 
         if (!user) {
-            console.log("User not found");
+            logger.warn("User not found in database");
             return null;
         }
 
         return user;
     } catch (error) {
-        console.error("!!! ERROR in verifyUserFromTokenCookie !!!");
-        console.error("Error Name:", error.name);
-        console.error("Error Message:", error.message);
-        console.error("Full Error Object:", error);
-
+        logger.error("Error verifying user from token cookie:", error);
         return null;
     }
 }
@@ -60,7 +57,7 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        maxAge: 1000 * 60 * 15, // 15 dakika suresi var
+        maxAge: 1000 * 60 * 120, // 2 saat suresi var
     });
     res.cookie("refresh_token", refreshToken, {
         httpOnly: true,

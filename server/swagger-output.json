@@ -44,6 +44,48 @@
             }
           }
         }
+    }
+    },
+    "/api/users/me":{
+      "get": {
+        "description": "Oturum açmış olan mevcut kullanıcıyı getirir.",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mevcut kullanıcı bilgileri.",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden - Yetkisiz erişim",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found - Kullanıcı bulunamadı",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       },
       "put": {
         "description": "Mevcut kullanıcının (oturum açmış) bilgilerini günceller.",
@@ -124,6 +166,7 @@
         }
       }
     },
+
     "/api/users/id/{userId}": {
       "get": {
         "description": "Belirtilen UID'ye sahip kullanıcıyı getirir.",
@@ -182,48 +225,6 @@
             "description": "Kullanıcı bilgileri.",
             "schema": {
               "$ref": "#/definitions/UserResponse"
-            }
-          },
-          "404": {
-            "description": "Not Found - Kullanıcı bulunamadı",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/api/users/current": {
-      "get": {
-        "description": "Oturum açmış olan mevcut kullanıcıyı getirir.",
-        "tags": [
-          "Users"
-        ],
-        "parameters": [
-          {
-            "name": "cookie",
-            "in": "header",
-            "type": "string",
-            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Mevcut kullanıcı bilgileri.",
-            "schema": {
-              "$ref": "#/definitions/UserResponse"
-            }
-          },
-          "403": {
-            "description": "Forbidden - Yetkisiz erişim",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
             }
           },
           "404": {
@@ -318,9 +319,9 @@
         }
       }
     },
-    "/api/posts/": {
+    "/api/posts/feed": {
       "get": {
-        "description": "Oturum açmış kullanıcının takip ettiği kişilerin gönderilerini (akış) getirir.",
+        "description": "Aktif kullanıcının takip ettiği kişilerin gönderilerini (feed) listeler (sayfalama ile).",
         "tags": [
           "Posts"
         ],
@@ -352,7 +353,9 @@
             "schema": { "$ref": "#/definitions/ErrorResponse" }
           }
         }
-      },
+      }
+    },
+    "/api/posts": {
       "post": {
         "description": "Yeni bir gönderi oluşturur.",
         "tags": [
@@ -606,6 +609,35 @@
         }
       }
     },
+    "/api/auth/refresh": {
+      "post": {
+        "description": "Access tokeni yeniler.",
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "description": "Cookie token bilgileri",
+             "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Yeni tokenler oluşturuldu."
+          },
+          "400": {
+            "description": "Token Oluşturulamadı",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
     "/api/likes/post/{postId}": {
       "get": {
         "description": "Belirtilen gönderiyi beğenen kullanıcıların listesini getirir.",
@@ -648,53 +680,6 @@
             "description": "Not Found - Gönderi bulunamadı",
             "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
-          "500": {
-            "description": "Internal Server Error",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-          }
-        }
-      }
-    },
-    "/api/likes/{postId}/check": {
-      "get": {
-        "description": "Mevcut kullanıcının belirtilen gönderiyi beğenip beğenmediğini kontrol eder.",
-        "tags": [
-          "Likes"
-        ],
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-             "type": "integer",
-             "format": "int32",
-            "description": "Beğenme durumu kontrol edilecek gönderinin ID'si."
-          },
-          {
-            "name": "cookie",
-            "in": "header",
-            "type": "string",
-            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK - Yanıtta beğenme durumu (true/false) döner.",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "liked": { "type": "boolean", "example": true }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Yetkisiz erişim",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-          },
-           "404": {
-             "description": "Not Found - Gönderi bulunamadı",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-           },
           "500": {
             "description": "Internal Server Error",
              "schema": { "$ref": "#/definitions/ErrorResponse" }
@@ -892,94 +877,6 @@
         }
       }
     },
-    "/api/follows/followers/{userId}": {
-      "get": {
-        "description": "Belirtilen kullanıcıyı takip eden kullanıcıların listesini getirir.",
-        "tags": [
-          "Follows"
-        ],
-        "parameters": [
-          {
-            "name": "userId", 
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "uuid",
-            "description": "Takipçileri listelenecek kullanıcının UID'si."
-          },
-          {
-            "name": "cookie",
-            "in": "header",
-            "type": "string",
-            "description": "Kimlik doğrulama için kullanıcı oturum çerezi (isteğe bağlı)."
-          }
-           
-        ],
-        "responses": {
-          "200": {
-            "description": "Takipçi listesi.",
-             "schema": {
-               "type": "array",
-               "items": {
-                 "$ref": "#/definitions/UserResponse"
-               }
-             }
-          },
-          "403": {
-            "description": "Forbidden - Yetkisiz erişim (eğer profil gizliyse)",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-          },
-          "404": {
-             "description": "Not Found - Kullanıcı bulunamadı",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-           }
-        }
-      }
-    },
-    "/api/follows/following/{userId}": { 
-      "get": {
-        "description": "Belirtilen kullanıcının takip ettiği kullanıcıların listesini getirir.",
-        "tags": [
-          "Follows"
-        ],
-        "parameters": [
-          {
-            "name": "userId", 
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "uuid",
-            "description": "Takip ettikleri listelenecek kullanıcının UID'si."
-          },
-          {
-            "name": "cookie",
-            "in": "header",
-            "type": "string",
-            "description": "Kimlik doğrulama için kullanıcı oturum çerezi (isteğe bağlı)."
-          }
-          
-        ],
-        "responses": {
-          "200": {
-            "description": "Takip edilen listesi.",
-            "schema": {
-               "type": "array",
-               "items": {
-                 "$ref": "#/definitions/UserResponse"
-               }
-             }
-          },
-          "403": {
-            "description": "Forbidden - Yetkisiz erişim (eğer profil gizliyse)",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-          },
-           "404": {
-              "description": "Not Found - Kullanıcı bulunamadı",
-              "schema": { "$ref": "#/definitions/ErrorResponse" }
-            }
-        }
-      }
-    },
     "/api/follows/{userId}": {
       "post": {
         "description": "Mevcut kullanıcının belirtilen kullanıcıyı takip etmesini sağlar.",
@@ -1067,20 +964,20 @@
         }
       }
     },
-    "/api/follows/check/{followingUserId}": {
-      "get": {
-        "description": "Mevcut kullanıcının belirtilen kullanıcıyı takip edip etmediğini kontrol eder.",
+    "/api/follows/follower/{followerId}": {
+      "delete": {
+        "description" : "Mevcut kulanicinin belirtilen takipcini siler.",
         "tags": [
           "Follows"
         ],
-        "parameters": [
+        "parameters" : [
           {
-            "name": "followingUserId", 
+            "name": "followerId",
             "in": "path",
             "required": true,
             "type": "string",
             "format": "uuid",
-            "description": "Takip durumu kontrol edilecek kullanıcının UID'si."
+            "description": "Takipcini silinecek kullanıcının UID'si."
           },
           {
             "name": "cookie",
@@ -1089,22 +986,16 @@
             "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
           }
         ],
-        "responses": {
+        "responses" : {
           "200": {
-            "description": "OK - Yanıtta takip durumu (true/false) döner.",
-             "schema": {
-               "type": "object",
-               "properties": {
-                 "following": { "type": "boolean", "example": false }
-               }
-             }
+            "description": "Kullanıcı başarıyla takipcilerden silindi."
           },
           "403": {
             "description": "Forbidden - Yetkisiz erişim",
              "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
-           "404": {
-             "description": "Not Found - Kullanıcı bulunamadı",
+          "404": {
+             "description": "Not Found - Kullanıcı veya takipcilik ilişkisi bulunamadı",
              "schema": { "$ref": "#/definitions/ErrorResponse" }
            }
         }
@@ -1226,53 +1117,6 @@
              "description": "Not Found - Gönderi veya kayıt bulunamadı",
              "schema": { "$ref": "#/definitions/ErrorResponse" }
            },
-          "500": {
-            "description": "Internal Server Error",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-          }
-        }
-      }
-    },
-    "/api/saved/check/{postId}": {
-      "get": {
-        "description": "Mevcut kullanıcının belirtilen gönderiyi kaydedip kaydetmediğini kontrol eder.",
-        "tags": [
-          "Saved"
-        ],
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-             "type": "integer",
-             "format": "int32",
-            "description": "Kaydetme durumu kontrol edilecek gönderinin ID'si."
-          },
-          {
-            "name": "cookie",
-            "in": "header",
-            "type": "string",
-            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK - Yanıtta kaydetme durumu (true/false) döner.",
-            "schema": {
-               "type": "object",
-               "properties": {
-                 "saved": { "type": "boolean", "example": true }
-               }
-             }
-          },
-          "403": {
-            "description": "Forbidden - Yetkisiz erişim",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-          },
-           "404": {
-              "description": "Not Found - Gönderi bulunamadı",
-              "schema": { "$ref": "#/definitions/ErrorResponse" }
-            },
           "500": {
             "description": "Internal Server Error",
              "schema": { "$ref": "#/definitions/ErrorResponse" }

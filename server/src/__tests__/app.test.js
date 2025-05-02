@@ -6,8 +6,8 @@ let agent;
 let authCookie;
 
 const validUser = {
-    email: "dert@gmail.com",
-    password: "123456",
+    email: "test1@gmail.com",
+    password: "test123",
 };
 
 beforeAll(async () => {

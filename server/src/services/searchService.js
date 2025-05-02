@@ -3,6 +3,7 @@ import searchRepository from "../repositories/searchRepository.js";
 import { Op } from "sequelize";
 import { addPostDetailsForUser } from "../utils/helpers.js";
 import { ErrorMessages } from "../utils/constants.js";
+import logger from "../utils/logger.js";
 
 /**
  * Arama işlemleri için servis katmanı.
@@ -20,22 +21,22 @@ const searchService = {
      */
     searchUsers: async (query) => {
         try {
-            console.log("Searching users with query:", query);
+            logger.info("Searching users...");
             if (!query || query.trim() === "") {
-                console.log("Query is empty, returning no users.");
+                logger.info("No query provided.");
                 return [];
             }
 
             const users = await searchRepository.searchUsers(query);
 
             if (!users || users.length === 0) {
-                console.log("No users found for the query:", query);
+                logger.info("No users found for the query:", query);
                 return [];
             }
 
             return users;
         } catch (error) {
-            console.error("Error searching users:", error);
+            logger.error("Error searching users:", error);
             throw new Error(ErrorMessages.USER_SEARCH_ERROR);
         }
     },
@@ -60,7 +61,7 @@ const searchService = {
             });
 
             if (!Array.isArray(posts) || posts.length === 0) {
-                console.log("No posts found for the query:", query);
+                logger.info("No posts found for the query:", query);
                 return { posts: [], count: count || 0 };
             }
 
@@ -68,7 +69,7 @@ const searchService = {
 
             return { posts: updatedPosts, count };
         } catch (error) {
-            console.log("Error searching:", error);
+            logger.error("Error searching posts:", error);
             throw new Error(ErrorMessages.POST_SEARCH_ERROR);
         }
     },

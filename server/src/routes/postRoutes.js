@@ -15,14 +15,6 @@ import { validateUserId } from "../middlewares/validators/userValidator.js";
 const router = express.Router();
 
 /**
- * Tüm gönderileri getirir (sayfalama olabilir).
- * @route {GET} /posts/
- * @description Tüm gönderileri listeler. Kimlik doğrulama gerektirir.
- * @returns {void} Başarılı olursa `200 OK` ile gönderi dizisi, hata durumunda (401, 500).
- */
-router.get("/", authenticateToken, postController.findPosts);
-
-/**
  * Aktif kullanıcının takip ettiği kişilerin gönderilerini (feed) getirir.
  * @route {GET} /posts/feed
  * @description Kullanıcının ana akışını (takip edilenlerin gönderileri) listeler. Kimlik doğrulama gerektirir.
