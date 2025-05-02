@@ -10,35 +10,35 @@ jobs:
         runs-on: ubuntu-22.04
 
         steps:
-            -name: Deploy using SSH
-            uses: appleboy/ssh-action@v1.0.3
-            with:
-                host: ${{ secrets.DEPLOY_SERVER_HOST }}
-                username: ${{ secrets.USERNAME }}
-                key: ${{ secrets.KEY }}
-                script: |
-                    echo "🚀 Starting deployment..."
+            - name: Deploy using SSH
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.DEPLOY_SERVER_HOST }}
+                  username: ${{ secrets.DEPLOY_SERVER_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: |
+                      echo "🚀 Starting deployment..."
 
-                    cd /home/hfk/backend/final-proje/server
+                      cd /home/hfk/backend/final-proje/server
 
-                    echo "✅ Navigated to project directory"
+                      echo "✅ Navigated to project directory"
 
-                    echo " pulling latest changes..."
+                      echo " pulling latest changes..."
 
-                    git pull origin master
+                      git pull origin master
 
-                    echo "✅ Code updated"
+                      echo "✅ Code updated"
 
-                    echo "📦 Installing/updating dependencies..."
+                      echo "📦 Installing/updating dependencies..."
 
-                    npm install
+                      npm install
 
-                    echo "✅ Dependencies installed"
+                      echo "✅ Dependencies installed"
 
-                    echo "🔄 Reloading PM2 application..."
+                      echo "🔄 Reloading PM2 application..."
 
-                    pm2 reload my-api
+                      pm2 reload my-api
 
-                    echo "✅ PM2 application reloaded"
+                      echo "✅ PM2 application reloaded"
 
-                    echo "🎉 Deployment finished!"
+                      echo "🎉 Deployment finished!"
