@@ -27,19 +27,16 @@ import logger from "./utils/logger.js";
 dotenv.config();
 /**
  * Express uygulama örneği.
- * @type {express.Application}
  */
 const app = express();
 
 /**
  * Node.js HTTP sunucusu. Express uygulamasını sarmalar.
- * @type {http.Server}
  */
 const server = http.createServer(app);
 
 /**
  * Socket.IO sunucu örneği. Gerçek zamanlı iletişim için kullanılır.
- * @type {Server}
  */
 const io = new Server(server, {
     cors: corsConfig,
@@ -48,13 +45,11 @@ const io = new Server(server, {
 /**
  * Aktif kullanıcıların socket ID'lerini kullanıcı ID'leriyle eşleştiren nesne.
  * Bildirim göndermek için kullanılır.
- * @type {Object.<string, string>}
  */
 const userSockets = {};
 
 /**
  * Swagger API dokümantasyon verisi.
- * @type {object}
  */
 const swaggerDocument = JSON.parse(
     await readFile(new URL("../swagger-output.json", import.meta.url))
@@ -86,7 +81,6 @@ app.use("/api/auth/register", authLimiter);
 
 /**
  * Sunucunun birden fazla kez başlatılmasını önlemek için kullanılan Promise.
- * @type {Promise<{app: express.Application, server: http.Server, io: Server}> | null}
  */
 let initPromise = null;
 
@@ -97,7 +91,6 @@ let initPromise = null;
  * Sunucunun sadece bir kez başlatılmasını sağlar.
  * @async
  * @function initializeServer
- * @returns {Promise<{app: express.Application, server: http.Server, io: Server}>} Başlatılan Express uygulaması, HTTP sunucusu ve Socket.IO örneğini içeren bir nesne döndürür.
  * @throws {Error} Başlatma sırasında bir hata oluşursa programı sonlandırır.
  */
 export async function initializeServer() {
