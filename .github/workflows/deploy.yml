@@ -17,6 +17,9 @@ jobs:
                   username: ${{ secrets.DEPLOY_SERVER_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
+                      export NVM_DIR=~/.nvm
+                      source ~/.nvm/nvm.sh
+                      npm --help
                       echo "🚀 Starting deployment..."
                       cd /home/hfk/backend/final-proje/server
                       echo "✅ Navigated to project directory"
