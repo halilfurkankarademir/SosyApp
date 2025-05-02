@@ -1,45 +1,52 @@
 name: VDS Deploy
-# Sadece master branchine pushlanınca deploy edilsin
+
 on:
     push:
         branches:
             - master
-# Yapilacak islemler
+
 jobs:
     deploy:
-        runs-on: ubuntu-22.04 # Kodlarin calismasi icin gereken isletim sistemi
+        runs-on: ubuntu-22.04
 
         steps:
             - name: Deploy using SSH
               uses: appleboy/ssh-action@v1.0.3
               with:
-                  # SSH baglantisi icin gereken bilgiler Github repo secretlerden geliyor
-                  host: ${{ secrets.DEPLOY_SERVER_HOST }} # Serverin IP adresi
-                  username: ${{ secrets.DEPLOY_SERVER_USER }} # Serverin kullanici adi
-                  key: ${{ secrets.SSH_PRIVATE_KEY }} # Servere giris icin kullanilan private key
+                  host: ${{ secrets.DEPLOY_SERVER_HOST }}
+                  username: ${{ secrets.DEPLOY_SERVER_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
                       echo "🚀 Starting deployment..."
-
-                      cd /home/hfk/backend/final-proje/server 
-
+                      cd /home/hfk/backend/final-proje/server
                       echo "✅ Navigated to project directory"
 
+                      # Eğer hala VDS'de manuel değişiklik yapma ihtimalin varsa,
+                      # bu satırları aktif bırakmak iyi olabilir.
+                      echo "🔄 Discarding local changes (if any)..."
+                      git reset --hard HEAD
+                      git clean -fd
+                      echo "✅ Local changes discarded"
+
                       echo " pulling latest changes..."
-
                       git pull origin master
-
                       echo "✅ Code updated"
 
-                      echo "📦 Installing/updating dependencies..."
 
-                      npm install
+                      export NVM_DIR="$HOME/.nvm"
+                      if [ -s "$NVM_DIR/nvm.sh" ]; then
+                        echo "✅ NVM installation found."
+                      else
+                        echo "❌ NVM installation not found at $NVM_DIR"
+                        exit 1
+                      fi
 
+                      echo "📦 Installing/updating dependencies using nvm exec..."
+                      nvm exec default npm ci 
                       echo "✅ Dependencies installed"
 
-                      echo "🔄 Reloading PM2 application..."
-
-                      pm2 reload my-api
-
+                      echo "🔄 Reloading PM2 application using nvm exec..."
+                      nvm exec default pm2 reload my-api 
                       echo "✅ PM2 application reloaded"
 
                       echo "🎉 Deployment finished!"
