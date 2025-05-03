@@ -1,9 +1,5 @@
 import { Op } from "@sequelize/core";
-import likeRepository from "../repositories/likeRepository.js";
-import postRepository from "../repositories/postRepository.js";
 import logger from "../utils/logger.js";
-import savedRepository from "../repositories/savedRepository.js";
-import followService from "./followService.js";
 import { addPostDetailsForUser } from "../utils/helpers.js";
 import { ErrorMessages } from "../utils/constants.js";
 
@@ -13,7 +9,12 @@ import { ErrorMessages } from "../utils/constants.js";
  * @namespace postService
  */
 
-const PostService = {
+const postService = (
+    likeRepository,
+    postRepository,
+    savedRepository,
+    followService
+) => ({
     /**
      * Verilen verilerle yeni bir gönderi oluşturur.
      * @memberof postService
@@ -261,6 +262,6 @@ const PostService = {
             throw new Error("Error getting posts by user ID");
         }
     },
-};
+});
 
-export default PostService;
+export default postService;

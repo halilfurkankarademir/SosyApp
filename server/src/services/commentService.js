@@ -1,6 +1,3 @@
-import Comment from "../models/commentModel.js";
-import User from "../models/userModel.js";
-import commentRepository from "../repositories/commentRepository.js";
 import { ErrorMessages } from "../utils/constants.js";
 import { addCommentDetailsForUser } from "../utils/helpers.js";
 import logger from "../utils/logger.js";
@@ -10,7 +7,7 @@ import logger from "../utils/logger.js";
  * Repository katmanını kullanarak iş mantığını yürütür.
  * @namespace commentService
  */
-const commentService = {
+const commentService = (commentRepository) => ({
     /**
      * Yorum olusturma işlemini yapar.
      * @memberof commentService
@@ -94,6 +91,6 @@ const commentService = {
             throw new Error("Error getting comment count: " + error.message);
         }
     },
-};
+});
 
 export default commentService;

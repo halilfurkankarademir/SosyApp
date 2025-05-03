@@ -3,11 +3,11 @@
  * @module controllers/followController
  */
 
-// takip islemleri icin controllerlar
-import followService from "../services/followService.js";
+import diContainer from "../config/dependencyInjection.js";
 import { sendFollowNotification } from "../services/notificationService.js";
-import UserService from "../services/userService.js";
 import logger from "../utils/logger.js";
+
+const { followService, userService } = diContainer;
 
 /**
  * @description Takip etme/çıkarma, takipçi/takip edilen listeleme ve kontrol işlemleri için controller fonksiyonlarını içerir.
@@ -30,7 +30,7 @@ const followController = {
                 followerId,
                 followedUserId
             );
-            const followerUser = await UserService.getUserById(
+            const followerUser = await userService.getUserById(
                 followerId,
                 req.ip
             ); // req.ip kullanımı? Gerekli mi?

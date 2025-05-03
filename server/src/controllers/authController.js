@@ -4,7 +4,7 @@
  * @module controllers/authController
  */
 
-import authService from "../services/authService.js";
+import diContainer from "../config/dependencyInjection.js";
 import dotenv from "dotenv";
 import userDTO from "../dtos/userDTO.js";
 import { getAnonymizedIp } from "../utils/helpers.js";
@@ -14,6 +14,8 @@ import logger from "../utils/logger.js";
 import { ErrorMessages } from "../utils/constants.js";
 
 dotenv.config();
+
+const { authService } = diContainer;
 
 /**
  * Kimlik doğrulama ile ilgili HTTP isteklerini işleyen controller metotları.

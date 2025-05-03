@@ -47,7 +47,6 @@ export async function verifyUserFromTokenCookie(req) {
 /**
  * Verilen access ve refresh token'ları HTTP-only cookie olarak response'a ekler.
  * Guvenlik icin secure ve sameSite='none' ayarlari kullanilir.
- * @param {object} res - Express response nesnesi. Cookie'ler bu nesneye eklenecektir.
  * @param {string} accessToken - Kullanici icin uretilmis access token.
  * @param {string} refreshToken - Kullanici icin uretilmis refresh token.
  * @returns {void} Bu fonksiyon dogrudan bir deger donmez, response nesnesini modifiye eder.

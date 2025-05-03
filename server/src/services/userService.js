@@ -1,4 +1,3 @@
-import userRepository from "../repositories/userRepository.js";
 import { ErrorMessages } from "../utils/constants.js";
 import logger from "../utils/logger.js";
 
@@ -8,7 +7,7 @@ import logger from "../utils/logger.js";
  * @namespace userService
  */
 
-const userService = {
+const userService = (userRepository) => ({
     /**
      * Yeni kullanıcı oluşturur.
      * @memberof userService
@@ -318,6 +317,6 @@ const userService = {
             return undefined;
         }
     },
-};
+});
 
 export default userService;

@@ -3,9 +3,10 @@
  * @module controllers/savedController
  */
 
-import PostService from "../services/postService.js"; // Bu import kullanılıyor olarak varsayıldı
-import savedService from "../services/savedService.js";
+import diContainer from "../config/dependencyInjection.js";
 import logger from "../utils/logger.js";
+
+const { savedService, postService } = diContainer;
 
 /**
  * @description Kaydedilen gönderi işlemleri (kaydetme, kaldırma, listeleme, kontrol etme) için controller fonksiyonlarını içerir.
@@ -65,8 +66,7 @@ const savedController = {
             const userId = req.user.uid;
             const page = req.query.page || 1;
             const limit = req.query.limit || 5;
-            // PostService'in bu fonksiyonu çağırdığı varsayılıyor.
-            const savedPosts = await PostService.getSavedPostsByUserId(
+            const savedPosts = await postService.getSavedPostsByUserId(
                 userId,
                 page,
                 limit

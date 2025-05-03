@@ -1,10 +1,8 @@
 import logger from "../utils/logger.js";
 import bcrypt from "bcrypt";
-import userService from "./userService.js";
-import userRepository from "../repositories/userRepository.js";
 import jwt from "jsonwebtoken";
 import { ErrorMessages } from "../utils/constants.js";
-import { getAnonymizedIp } from "../utils/helpers.js"; // Bu import kalmalı
+import { getAnonymizedIp } from "../utils/helpers.js";
 
 /**
  * Kimlik doğrulama (authentication) işlemleri için servis katmanı.
@@ -12,7 +10,7 @@ import { getAnonymizedIp } from "../utils/helpers.js"; // Bu import kalmalı
  * ve kullanıcı varlığı kontrolü/oluşturma için `userService`'i kullanır.
  * @namespace AuthService
  */
-const AuthService = {
+const authService = (userRepository, userService) => ({
     /**
      * Yeni bir kullanıcıyı kaydeder.
      * Kullanıcı adı ve e-postanın benzersizliğini kontrol eder, şifreyi hashler
@@ -168,6 +166,6 @@ const AuthService = {
             throw new Error(error.message || ErrorMessages.ERROR_OCCURRED);
         }
     },
-};
+});
 
-export default AuthService;
+export default authService;

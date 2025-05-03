@@ -1,13 +1,11 @@
-import followRepository from "../repositories/followRepository.js";
 import logger from "../utils/logger.js";
 import { sendFollowNotification } from "./notificationService.js"; // Bildirim için
-import userRepository from "../repositories/userRepository.js"; // Kullanıcı bilgisi almak için
 
 /**
  * Takip (follow) işlemleri için servis katmanı.
  * @namespace followService
  */
-const followService = {
+const followService = (followRepository, userRepository) => ({
     /**
      * Bir kullanıcının başka bir kullanıcıyı takip etmesini sağlar.
      * Kendi kendini takip etmeyi engeller ve bildirim gönderir.
@@ -221,6 +219,6 @@ const followService = {
             throw new Error("Failed to get following user IDs.");
         }
     },
-};
+});
 
 export default followService;

@@ -1,5 +1,3 @@
-import postRepository from "../repositories/postRepository.js";
-import searchRepository from "../repositories/searchRepository.js";
 import { Op } from "sequelize";
 import { addPostDetailsForUser } from "../utils/helpers.js";
 import { ErrorMessages } from "../utils/constants.js";
@@ -11,7 +9,7 @@ import logger from "../utils/logger.js";
  * @namespace searchService
  */
 
-const searchService = {
+const searchService = (postRepository, searchRepository) => ({
     /**
      * Kullanıcıları verilen sorgu metnine göre arar.
      * @memberof searchService
@@ -73,6 +71,6 @@ const searchService = {
             throw new Error(ErrorMessages.POST_SEARCH_ERROR);
         }
     },
-};
+});
 
 export default searchService;

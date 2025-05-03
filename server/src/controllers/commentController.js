@@ -3,11 +3,11 @@
  * @module controllers/commentController
  */
 
-// yorum ekleme islemleri icin controllerlar
-import commentService from "../services/commentService.js";
+import diContainer from "../config/dependencyInjection.js";
 import { sendCommentNotification } from "../services/notificationService.js";
-import PostService from "../services/postService.js";
 import logger from "../utils/logger.js";
+
+const { commentService, postService } = diContainer;
 
 /**
  * @description Yorum oluşturma, silme ve listeleme/sayma işlemleri için controller fonksiyonlarını içerir.
@@ -31,7 +31,7 @@ const commentController = {
                 postId,
                 content
             );
-            const postDetails = await PostService.getPostById(postId);
+            const postDetails = await postService.getPostById(postId);
             const postOwnerId = postDetails.user.uid;
             sendCommentNotification(req.user, postOwnerId, postId);
             logger.info("Comment created successfully");

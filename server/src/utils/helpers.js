@@ -81,3 +81,13 @@ export const addCommentDetailsForUser = (comments, userId) => {
         };
     });
 };
+
+/**
+ * Kullanıcıların aynı kullanıcı olup olmadıgını kontrol eder
+ * @param {string} userId1 - Birinci kullanıcının ID'si.
+ * @param {string} userId2 - Ikinci kullanıcının ID'si.
+ * @returns {boolean} Aynı kullanıcı ise `true`, aksi halde `false` döndürür.
+ * */
+export const areIdsEqual = (userId1, userId2) => {
+    return userId1 === userId2;
+};

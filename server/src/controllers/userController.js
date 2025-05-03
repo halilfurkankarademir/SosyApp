@@ -3,9 +3,11 @@
  * @module controllers/userController
  */
 
+import diContainer from "../config/dependencyInjection.js";
 import userDTO from "../dtos/userDTO.js";
-import userService from "../services/userService.js";
 import logger from "../utils/logger.js";
+
+const { userService } = diContainer;
 
 /**
  * @description Kullanıcı işlemleri için controller fonksiyonlarını içerir.

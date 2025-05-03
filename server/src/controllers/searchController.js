@@ -3,8 +3,10 @@
  * @module controllers/searchController
  */
 
-import searchService from "../services/searchService.js";
+import diContainer from "../config/dependencyInjection.js";
 import logger from "../utils/logger.js";
+
+const { searchService } = diContainer;
 
 /**
  * @description Arama işlemleri (kullanıcı ve gönderi) için controller fonksiyonlarını içerir.

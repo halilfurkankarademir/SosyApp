@@ -56,7 +56,7 @@ export function sendLikeNotification(likerUser, postOwnerId, postId) {
         return;
     }
     if (likerUser.uid === postOwnerId) {
-        logger.log("User liked their own post. No notification sent.");
+        logger.warn("User liked their own post. No notification sent.");
         return;
     }
 
@@ -89,7 +89,7 @@ export const sendFollowNotification = (followerUser, followedUserId) => {
         return;
     }
     if (followerUser.uid === followedUserId) {
-        logger.log("User followed themselves. No notification sent.");
+        logger.warn("User followed themselves. No notification sent.");
         return;
     }
     console.log(
@@ -127,7 +127,7 @@ export const sendCommentNotification = (commenterUser, postOwnerId, postId) => {
         return;
     }
     if (commenterUser.uid === postOwnerId) {
-        logger.log("User commented on their own post. No notification sent.");
+        logger.warn("User commented on their own post. No notification sent.");
         return;
     }
     console.log(

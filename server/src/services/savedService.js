@@ -1,13 +1,11 @@
-import savedRepository from "../repositories/savedRepository.js";
 import logger from "../utils/logger.js";
-import PostService from "./postService.js";
 
 /**
  * Kaydetme ve silme işlemleriyle ilgili servis fonksiyonları.
  * @namespace savedService
  */
 
-const savedService = {
+const savedService = (savedRepository, PostService) => ({
     /**
      * Belirli bir kullanıcının belirli bir gönderiyi kaydetmesini sağlar.
      * @memberof savedService
@@ -76,6 +74,6 @@ const savedService = {
             throw error;
         }
     },
-};
+});
 
 export default savedService;

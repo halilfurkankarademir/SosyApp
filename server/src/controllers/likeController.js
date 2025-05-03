@@ -3,11 +3,12 @@
  * @module controllers/likeController
  */
 
+import diContainer from "../config/dependencyInjection.js";
 import postRepository from "../repositories/postRepository.js";
-import likeService from "../services/likeService.js";
 import { sendLikeNotification } from "../services/notificationService.js";
-import PostService from "../services/postService.js";
 import logger from "../utils/logger.js";
+
+const { likeService, postService } = diContainer;
 
 /**
  * @description Beğeni işlemleri (oluşturma, silme, listeleme, kontrol) için controller fonksiyonlarını içerir.
@@ -110,7 +111,7 @@ const likeController = {
                 return res.status(401).json({ error: "Unauthorized" });
             }
             // PostService'in bu fonksiyonu çağırdığı varsayılıyor.
-            const likes = await PostService.getLikedPostsByUserId(
+            const likes = await postService.getLikedPostsByUserId(
                 userId,
                 page,
                 limit

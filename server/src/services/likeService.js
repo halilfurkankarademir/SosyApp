@@ -1,11 +1,9 @@
-import likeRepository from "../repositories/likeRepository.js";
-
 /**
  * Beğeni (like) işlemleri için servis katmanı.
  * Repository katmanını kullanarak iş mantığını yürütür.
  * @namespace likeService
  */
-const likeService = {
+const likeService = (likeRepository) => ({
     /**
      * Bir kullanıcının bir gönderiyi beğenmesini sağlar.
      * Repository üzerinden yeni bir beğeni kaydı oluşturur.
@@ -74,6 +72,6 @@ const likeService = {
             throw new Error("Error getting likes by user ID: " + error.message);
         }
     },
-};
+});
 
 export default likeService;

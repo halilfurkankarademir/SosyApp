@@ -3,8 +3,10 @@
  * @module controllers/postController
  */
 
-import PostService from "../services/postService.js";
+import diContainer from "../config/dependencyInjection.js";
 import logger from "../utils/logger.js";
+
+const { postService } = diContainer;
 
 /**
  * @description Gönderi CRUD işlemleri ve listeleme için controller fonksiyonlarını içerir.
@@ -24,7 +26,7 @@ const postController = {
                 ...postData,
                 userId: req.user.uid,
             };
-            const newPost = await PostService.createPost(postData);
+            const newPost = await postService.createPost(postData);
             if (!newPost) {
                 return res.status(400).json({ error: "Post creation failed" });
             }
@@ -46,7 +48,7 @@ const postController = {
     deletePost: async (req, res, next) => {
         try {
             logger.info("Deleting post...");
-            await PostService.deletePost(req.params.postId);
+            await postService.deletePost(req.params.postId);
             logger.info("Post deleted successfully");
             res.status(200).json({ message: "Post deleted successfully" });
         } catch (error) {
@@ -66,7 +68,7 @@ const postController = {
         try {
             logger.info("Getting post...");
             const postId = req.params.postId;
-            const post = await PostService.getPostById(postId);
+            const post = await postService.getPostById(postId);
             if (!post) {
                 return res.status(404).json({ error: "Post not found" });
             }
@@ -91,7 +93,7 @@ const postController = {
             const userId = req.params.userId;
             const page = req.query.page || 1;
             const limit = req.query.limit || 5;
-            const posts = await PostService.getPostsByUserId(
+            const posts = await postService.getPostsByUserId(
                 userId,
                 page,
                 limit
@@ -122,7 +124,7 @@ const postController = {
             const userId = req.user.uid;
             const page = req.query.page || 1;
             const limit = req.query.limit || 5;
-            const posts = await PostService.getFeedPosts(userId, page, limit);
+            const posts = await postService.getFeedPosts(userId, page, limit);
             if (!posts) {
                 return res
                     .status(404)
