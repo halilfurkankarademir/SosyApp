@@ -6,6 +6,7 @@
 import diContainer from "../config/dependencyInjection.js";
 import postRepository from "../repositories/postRepository.js";
 import { sendLikeNotification } from "../services/notificationService.js";
+import { checkAdmin, getFilters, getPagination } from "../utils/helpers.js";
 import logger from "../utils/logger.js";
 
 const { likeService, postService } = diContainer;
@@ -81,10 +82,20 @@ const likeController = {
      */
     getAllLikes: async (req, res, next) => {
         try {
+            const isAdmin = checkAdmin(req);
+
+            if (!isAdmin) {
+                return res.status(403).json({ error: "Access denied" });
+            }
+
             logger.info("Getting likes...");
+
             const postId = req.params.postId;
-            const likes = await likeService.getLikesForPost(postId);
+
+            const likes = await likeService.getAllLikes(postId);
+
             logger.info("Likes fetched successfully");
+
             res.status(200).json(likes);
         } catch (error) {
             logger.error("Error getting likes:", error);
@@ -105,16 +116,17 @@ const likeController = {
         try {
             logger.info("Getting likes by user ID...");
             const userId = req.user.uid;
-            const page = req.query.page || 1;
-            const limit = req.query.limit || 5;
+            const { limit, offset } = getPagination(req);
+            const { filterQuery } = getFilters(req);
             if (!userId) {
                 return res.status(401).json({ error: "Unauthorized" });
             }
             // PostService'in bu fonksiyonu çağırdığı varsayılıyor.
             const likes = await postService.getLikedPostsByUserId(
                 userId,
-                page,
-                limit
+                offset,
+                limit,
+                filterQuery
             );
             logger.info("Likes fetched successfully");
             res.status(200).json(likes);

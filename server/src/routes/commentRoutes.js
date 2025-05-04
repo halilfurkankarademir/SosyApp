@@ -58,18 +58,4 @@ router.get(
     commentController.getCommentsByPostId
 );
 
-/**
- * Bir gönderideki yorum sayısını getirir.
- * @route {GET} /comments/count/:postId
- * @description Gönderinin yorum sayısını döndürür. Kimlik doğrulama ve postId doğrulaması gerektirir.
- * @param {string} req.params.postId - Yorum sayısı alınacak gönderinin ID'si.
- * @returns {void} Başarılı olursa `200 OK` ile `{ count: ... }`, hata durumunda ilgili status kodları (400, 401, 404, 500).
- */
-router.get(
-    "/count/:postId",
-    validatePostId,
-    authenticateToken,
-    commentController.getCommentCountByPostId
-);
-
 export default router;

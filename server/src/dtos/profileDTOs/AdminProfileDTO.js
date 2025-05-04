@@ -1,10 +1,10 @@
 /**
  * Admin yetkisine sahip kullanici tarafindan tam erisimli kullanici verilerini temsil eden DTO sınıfı.
  * API yanıtlarında döndürülecek kullanıcı verilerini yapılandırır.
- * @class AdminUserDTO
+ * @class AdminProfileDTO
  */
 
-class AdminUserDTO {
+class AdminProfileDTO {
     constructor(user) {
         if (!user) throw new Error("User object is required");
         this.uid = user.uid;
@@ -25,4 +25,4 @@ class AdminUserDTO {
     }
 }
 
-export default AdminUserDTO;
+export default AdminProfileDTO;

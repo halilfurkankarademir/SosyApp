@@ -5,6 +5,7 @@
 
 import diContainer from "../config/dependencyInjection.js";
 import { sendFollowNotification } from "../services/notificationService.js";
+import { getFilters } from "../utils/helpers.js";
 import logger from "../utils/logger.js";
 
 const { followService, userService } = diContainer;
@@ -101,7 +102,11 @@ const followController = {
         try {
             logger.info("Getting authenticated user followers...");
             const userId = req.user.uid;
-            const followers = await followService.getFollowers(userId);
+            const { filterQuery } = getFilters(req);
+            const followers = await followService.getFollowers(
+                userId,
+                filterQuery
+            );
             logger.info("Authenticated user followers fetched successfully");
             res.json(followers);
         } catch (error) {
@@ -124,7 +129,11 @@ const followController = {
         try {
             logger.info("Getting authenticated user following...");
             const userId = req.user.uid;
-            const following = await followService.getFollowing(userId);
+            const { filterQuery } = getFilters(req);
+            const following = await followService.getFollowing(
+                userId,
+                filterQuery
+            );
             logger.info("Authenticated user following fetched successfully");
             res.json(following);
         } catch (error) {

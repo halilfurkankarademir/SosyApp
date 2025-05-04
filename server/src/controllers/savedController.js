@@ -4,6 +4,7 @@
  */
 
 import diContainer from "../config/dependencyInjection.js";
+import { getFilters, getPagination } from "../utils/helpers.js";
 import logger from "../utils/logger.js";
 
 const { savedService, postService } = diContainer;
@@ -64,12 +65,13 @@ const savedController = {
         try {
             logger.info("Getting saved posts...");
             const userId = req.user.uid;
-            const page = req.query.page || 1;
-            const limit = req.query.limit || 5;
+            const { offset, limit } = getPagination(req);
+            const { filterQuery } = getFilters(req);
             const savedPosts = await postService.getSavedPostsByUserId(
                 userId,
-                page,
-                limit
+                offset,
+                limit,
+                filterQuery
             );
             logger.info("Saved posts fetched successfully");
             res.status(200).json(savedPosts);

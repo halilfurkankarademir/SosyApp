@@ -11,7 +11,6 @@
  */
 export const requestValidator = (schema, property) => {
     return (req, res, next) => {
-        // İsteğin belirtilen özelliğini şemaya göre doğrula
         const { error, value } = schema.validate(req[property]);
 
         if (error) {
@@ -19,14 +18,12 @@ export const requestValidator = (schema, property) => {
             const errorMessage = error.details
                 .map((detail) => detail.message)
                 .join(", ");
-            // Yeni bir hata nesnesi oluştur ve sonraki middleware'e ilet
             const validationError = new Error(
                 `Validation error: ${errorMessage}`
             );
-            validationError.statusCode = 400; // Bad Request
+            validationError.statusCode = 400;
             return next(validationError);
         }
-        // Doğrulama başarılı, Joi'nin döndürdüğü değeri ata ve devam et
         req[property] = value;
         next();
     };

@@ -57,15 +57,13 @@ const postService = (
      * Kullanıcının takip ettiği kişilerin ve kendisinin gönderilerini sayfalanmış olarak getirir (Feed).
      * @memberof postService
      * @param {string} userId - Akışı görüntülenecek kullanıcının ID'si.
-     * @param {number} page - Getirilecek sayfa numarası (1'den başlar).
      * @param {number} limit - Sayfa başına gönderi sayısı.
+     * @param {number} offset - Atlanacak gönderi sayısı.
      * @returns {Promise<{posts: Array<Post>, count: number}>} Kullanıcının akışındaki gönderileri ve toplam gönderi sayısını içeren nesne.
      * @throws {Error} Akış gönderilerini getirme sırasında bir hata oluşursa.
      */
-    getFeedPosts: async (userId, page, limit) => {
+    getFeedPosts: async (userId, limit, offset) => {
         try {
-            const offset = (page - 1) * limit;
-
             const followingUsersIds = await followService.getFollowingUsersId(
                 userId
             );
@@ -86,7 +84,6 @@ const postService = (
                 where: postsFilter,
                 offset,
                 limit,
-                // Sıralama eklemek genellikle feed için önemlidir, örn: order: [['createdAt', 'DESC']]
             });
 
             // Hata fırlatmak yerine boş sonuç dönmek daha iyi olabilir.
@@ -139,10 +136,8 @@ const postService = (
      * @returns {Promise<{posts: Array<Post>, count: number}>} Kullanıcının beğendiği gönderileri ve toplam sayıyı içeren nesne.
      * @throws {Error} Beğenilen gönderileri getirme sırasında bir hata oluşursa.
      */
-    getLikedPostsByUserId: async (userId, page, limit) => {
+    getLikedPostsByUserId: async (userId, offset, limit, filter) => {
         try {
-            const offset = (page - 1) * limit;
-
             const postIds = await likeRepository.findLikedPostIdsByUserId(
                 userId
             );
@@ -154,7 +149,10 @@ const postService = (
                 // throw new Error("No liked posts found for this user");
             }
 
-            const postsFilter = { id: { [Op.in]: postIds } };
+            const postsFilter = {
+                id: { [Op.in]: postIds },
+                content: { [Op.iLike]: `%${filter}%` },
+            };
 
             const { rows: posts, count } = await postRepository.findPosts({
                 where: postsFilter,
@@ -187,10 +185,8 @@ const postService = (
      * @returns {Promise<{posts: Array<Post>, count: number}>} Kullanıcının kaydettiği gönderileri ve toplam sayıyı içeren nesne.
      * @throws {Error} Kaydedilmiş gönderileri getirme sırasında bir hata oluşursa.
      */
-    getSavedPostsByUserId: async (userId, page, limit) => {
+    getSavedPostsByUserId: async (userId, offset, limit, filters) => {
         try {
-            const offset = (page - 1) * limit;
-
             const postIds = await savedRepository.findAllSavedPostIdsByUser(
                 userId
             );
@@ -202,7 +198,10 @@ const postService = (
                 // throw new Error("No saved posts found for this user");
             }
 
-            const postsFilter = { id: { [Op.in]: postIds } };
+            const postsFilter = {
+                id: { [Op.in]: postIds },
+                content: { [Op.iLike]: `%${filters}%` },
+            };
 
             const { rows: posts, count } = await postRepository.findPosts({
                 where: postsFilter,
@@ -228,14 +227,13 @@ const postService = (
      * Belirli bir kullanıcıya ait gönderileri sayfalanmış olarak getirir.
      * @memberof postService
      * @param {string} userId - Gönderileri getirilecek kullanıcının ID'si.
-     * @param {number} page - Getirilecek sayfa numarası (1'den başlar).
+     * @param {number} offset - Atlanacak gönderi sayısı.
      * @param {number} limit - Sayfa başına gönderi sayısı.
      * @returns {Promise<{posts: Array<Post>, count: number}>} Kullanıcının gönderilerini ve toplam gönderi sayısını içeren nesne.
      * @throws {Error} Gönderileri getirme sırasında bir hata oluşursa.
      */
-    getPostsByUserId: async (userId, page, limit) => {
+    getPostsByUserId: async (userId, offset, limit) => {
         try {
-            const offset = (page - 1) * limit;
             const postsFilter = { userId: userId };
 
             const { rows: posts, count } = await postRepository.findPosts({

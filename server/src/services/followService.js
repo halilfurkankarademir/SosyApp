@@ -1,3 +1,4 @@
+import { Op } from "@sequelize/core";
 import logger from "../utils/logger.js";
 import { sendFollowNotification } from "./notificationService.js"; // Bildirim için
 
@@ -165,10 +166,22 @@ const followService = (followRepository, userRepository) => ({
      * @returns {Promise<Array<Follow>>} Takip eden kullanıcı bilgilerini içeren 'Follow' model örneklerinin dizisi.
      * @throws {Error} Takipçileri getirirken bir hata oluşursa.
      */
-    async getFollowers(userId) {
+    async getFollowers(userId, filter) {
         try {
-            logger.debug(`Fetching followers for user ${userId}`);
-            return await followRepository.findFollowersWithDetails(userId);
+            logger.info(`Fetching followers for user ${userId}`);
+
+            const userFilter = {
+                [Op.or]: {
+                    username: { [Op.iLike]: `%${filter}%` },
+                    firstName: { [Op.iLike]: `%${filter}%` },
+                    lastName: { [Op.iLike]: `%${filter}%` },
+                },
+            };
+
+            return await followRepository.findFollowersWithDetails(
+                userId,
+                userFilter
+            );
         } catch (error) {
             logger.error(
                 `Error getting followers for user ${userId}: ${error.message}`
@@ -185,10 +198,22 @@ const followService = (followRepository, userRepository) => ({
      * @returns {Promise<Array<Follow>>} Takip edilen kullanıcı bilgilerini içeren 'Follow' model örneklerinin dizisi.
      * @throws {Error} Takip edilenleri getirirken bir hata oluşursa.
      */
-    async getFollowing(userId) {
+    async getFollowing(userId, filter) {
         try {
             logger.debug(`Fetching following list for user ${userId}`);
-            return await followRepository.findFollowingWithDetails(userId);
+
+            const userFilter = {
+                [Op.or]: {
+                    username: { [Op.iLike]: `%${filter}%` },
+                    firstName: { [Op.iLike]: `%${filter}%` },
+                    lastName: { [Op.iLike]: `%${filter}%` },
+                },
+            };
+
+            return await followRepository.findFollowingWithDetails(
+                userId,
+                userFilter
+            );
         } catch (error) {
             logger.error(
                 `Error getting following list for user ${userId}: ${error.message}`

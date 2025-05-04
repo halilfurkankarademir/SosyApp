@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { GoHeartFill } from "react-icons/go";
-import { FaHeartBroken } from "react-icons/fa";
-import PostCard from "../../components/features/posts/PostCard";
 import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
 import { useDebounce } from "use-debounce";
 import { getLikesByUserId } from "../../api/likeApi";

@@ -22,37 +22,12 @@ const ConnectionsPage = () => {
 
     const setUser = useUserStore((state) => state.setUser);
 
-    // Takipçi Filtreleme
-    const filteredFollowers = allFollowers.filter((follower) => {
-        const userData = follower.FollowerUser;
-        if (!userData) return false;
-        const searchTerm = debouncedSearch.toLowerCase().trim();
-        return (
-            userData.username?.toLowerCase().includes(searchTerm) ||
-            userData.firstName?.toLowerCase().includes(searchTerm) ||
-            userData.lastName?.toLowerCase().includes(searchTerm)
-        );
-    });
-
-    // Takip Edilen Filtreleme
-    const filteredFollowing = allFollowing.filter((following) => {
-        const userData = following.FollowedUser;
-        if (!userData) return false;
-        const searchTerm = debouncedSearch.toLowerCase().trim();
-        return (
-            userData.username?.toLowerCase().includes(searchTerm) ||
-            userData.firstName?.toLowerCase().includes(searchTerm) ||
-            userData.lastName?.toLowerCase().includes(searchTerm)
-        );
-    });
-
-    // ... (Mevcut fetchData fonksiyonu) ...
     const fetchData = async () => {
         try {
             const [user, followers, followings] = await Promise.all([
                 getCurrentUser(),
-                getFollowers(),
-                getFollowings(),
+                getFollowers(debouncedSearch),
+                getFollowings(debouncedSearch),
             ]);
             setUser(user);
             setAllFollowers(followers || []);
@@ -73,7 +48,7 @@ const ConnectionsPage = () => {
         document.title =
             activeTab === "followers" ? "Takipçilerim" : "Takip Ettiklerim";
         fetchData();
-    }, []);
+    }, [debouncedSearch, activeTab]);
 
     useEffect(() => {
         document.title =
@@ -90,7 +65,7 @@ const ConnectionsPage = () => {
         }
 
         const listToDisplay =
-            activeTab === "followers" ? filteredFollowers : filteredFollowing;
+            activeTab === "followers" ? allFollowers : allFollowing;
         const emptyMessage =
             activeTab === "followers"
                 ? "Arama kriterlerinize uygun takipçi bulunamadı."

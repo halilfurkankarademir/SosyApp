@@ -36,10 +36,10 @@ export const checkLike = async (postId) => {
     }
 };
 
-export const getLikesByUserId = async (page) => {
+export const getLikesByUserId = async (page, filter) => {
     try {
         const response = await apiClient.get("/likes/user", {
-            params: { page },
+            params: { page, filter },
         });
         return response.data;
     } catch (error) {

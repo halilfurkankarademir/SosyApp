@@ -3,6 +3,10 @@
  * @module utils/helpers
  */
 
+import AdminProfileDTO from "../dtos/profileDTOs/AdminProfileDTO.js";
+import OwnProfileDTO from "../dtos/profileDTOs/OwnProfileDTO.js";
+import PublicProfileDTO from "../dtos/profileDTOs/PublicProfileDTO.js";
+
 /**
  * Istemcinin IP adresinin son bölümünü ".XXX" ile değiştirerek anonimleştirir.
  * Bu genellikle IPv4 adresleri için kullanılır.
@@ -88,6 +92,74 @@ export const addCommentDetailsForUser = (comments, userId) => {
  * @param {string} userId2 - Ikinci kullanıcının ID'si.
  * @returns {boolean} Aynı kullanıcı ise `true`, aksi halde `false` döndürür.
  * */
-export const areIdsEqual = (userId1, userId2) => {
+export const checkOwner = (userId1, userId2) => {
     return userId1 === userId2;
+};
+
+export const checkAdmin = (req) => {
+    const role = req.user.role;
+    if (role === "admin") {
+        return true;
+    }
+    return false;
+};
+
+export const getPagination = (req) => {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 5;
+    const offset = (page - 1) * limit;
+    return { page, limit, offset };
+};
+
+export const getFilters = (req) => {
+    const filterQuery = req.query.filter;
+    if (typeof filterQuery === "string") {
+        return { filterQuery: filterQuery.trim() };
+    }
+    return { filterQuery };
+};
+
+const permissionLevels = {
+    NONE: 0,
+    NORMAL_USER: 1,
+    SELF_USER: 2,
+    ADMIN: 3,
+};
+Object.freeze(permissionLevels);
+
+/**
+ * Post gosterim yetkilerini belirler
+ * @param {object} req
+ * @param {string} userIdToCheck
+ * @returns {number} 1 - Normal kullanıcı, 2 - Istegi yapan kullanıcı, 3 - Admin
+ */
+export const getPermissionLevel = (req, userIdToCheck) => {
+    if (!req.user) {
+        return permissionLevels.NONE;
+    }
+
+    const userRole = req.user.role.toLowerCase();
+
+    const isSelfUser = req.user.uid === userIdToCheck;
+
+    if (userRole === "admin") {
+        return permissionLevels.ADMIN;
+    } else if (isSelfUser) {
+        return permissionLevels.SELF_USER;
+    } else {
+        return permissionLevels.NORMAL_USER;
+    }
+};
+
+export const getUserDTOInstanceByPermissionLevel = (permissionLevel, user) => {
+    switch (permissionLevel) {
+        case 1:
+            return new PublicProfileDTO(user);
+        case 2:
+            return new OwnProfileDTO(user);
+        case 3:
+            return new AdminProfileDTO(user);
+        default:
+            return new PublicProfileDTO(user);
+    }
 };

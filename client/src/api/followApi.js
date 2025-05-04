@@ -43,22 +43,26 @@ export const checkFollowStatus = async (followingId) => {
     }
 };
 
-export const getFollowers = async () => {
+export const getFollowers = async (filter) => {
     // Aktif kullanıcının tum takipcilerini getirme
     try {
         return await apiClient
-            .get("/follows/followers")
+            .get("/follows/followers", {
+                params: { filter },
+            })
             .then((response) => response.data);
     } catch (error) {
         console.error("Error getting followers:", error);
     }
 };
 
-export const getFollowings = async () => {
+export const getFollowings = async (filter) => {
     // Aktif kullanıcının tum takip ettiklerini getirme
     try {
         return await apiClient
-            .get("/follows/following")
+            .get("/follows/following", {
+                params: { filter },
+            })
             .then((response) => response.data);
     } catch (error) {
         console.error("Error getting followings:", error);

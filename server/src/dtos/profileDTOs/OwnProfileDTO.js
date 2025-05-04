@@ -1,11 +1,12 @@
 /**
  * Sadece kullanıcının kendisi tarafından erişilebilecek olan kullanıcı verilerini temsil eden DTO sınıfı.
  * API yanıtlarında döndürülecek kullanıcı verilerini yapılandırır.
- * @class OwnerUserDTO
+ * @class OwnProfileDTO
  */
-class OwnerUserDTO {
+class OwnProfileDTO {
     constructor(user) {
         if (!user) throw new Error("User object is required");
+        this.uid = user.uid;
         this.firstName = user.firstName;
         this.lastName = user.lastName;
         this.email = user.email;
@@ -22,4 +23,4 @@ class OwnerUserDTO {
     }
 }
 
-export default OwnerUserDTO;
+export default OwnProfileDTO;

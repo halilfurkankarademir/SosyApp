@@ -1,12 +1,13 @@
 /**
  * Herkes tarafından erişilebilecek olan kullanıcı verilerini temsil eden DTO sınıfı.
  * API yanıtlarında döndürülecek kullanıcı verilerini yapılandırır.
- * @class PublicUserDTO
+ * @class PublicProfileDTO
  */
 
-class PublicUserDTO {
+class PublicProfileDTO {
     constructor(user) {
         if (!user) throw new Error("User object is required");
+        this.uid = user.uid;
         this.firstName = user.firstName;
         this.lastName = user.lastName;
         this.username = user.username;
@@ -21,4 +22,4 @@ class PublicUserDTO {
     }
 }
 
-export default PublicUserDTO;
+export default PublicProfileDTO;

@@ -4,7 +4,13 @@
  */
 
 import diContainer from "../config/dependencyInjection.js";
+import AdminProfileDTO from "../dtos/profileDTOs/AdminProfileDTO.js";
 import userDTO from "../dtos/userDTO.js";
+import {
+    checkAdmin,
+    getPermissionLevel,
+    getUserDTOInstanceByPermissionLevel,
+} from "../utils/helpers.js";
 import logger from "../utils/logger.js";
 
 const { userService } = diContainer;
@@ -20,11 +26,23 @@ const userController = {
      */
     getAllUsers: async (req, res, next) => {
         try {
+            const isAdmin = checkAdmin(req);
+
+            if (!isAdmin) {
+                return res.status(403).json({ error: "Access denied" });
+            }
+
             logger.info("Getting all users...");
+
             const users = await userService.getAllUsers();
+
             // DTO ile hassas verileri filtrele
-            const usersDTOInstance = users.map((user) => new userDTO(user));
+            const usersDTOInstance = users.map(
+                (user) => new AdminProfileDTO(user)
+            );
+
             logger.info("Users fetched successfully");
+
             res.status(200).json(usersDTOInstance);
         } catch (error) {
             logger.error("Error getting users:", error);
@@ -34,19 +52,31 @@ const userController = {
     },
 
     /**
-     * @description Belirli bir kullanıcıyı ID ile getirir.
+     * @description Belirli bir kullanıcıyı ID ile getirir. SADECE ADMIN
      * @route GET /users/id/:userId
      */
     getUserById: async (req, res, next) => {
         try {
+            const isAdmin = checkAdmin(req);
+
+            if (!isAdmin) {
+                return res.status(403).json({ error: "Access denied" });
+            }
+
             logger.info("Getting user...");
+
             const userId = req.params.userId;
+
             const user = await userService.getUserById(userId);
+
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
+
             logger.info("User fetched successfully");
-            const userDTOInstance = new userDTO(user);
+
+            const userDTOInstance = new AdminProfileDTO(user);
+
             res.status(200).json(userDTOInstance);
         } catch (error) {
             logger.error("Error getting user:", error);
@@ -109,7 +139,7 @@ const userController = {
         try {
             logger.info("Getting user profile details...");
             const username = req.params.username;
-            const requestedUserId = req.user.uid; // İstek yapan kullanıcı
+            const requestedUserId = req.user.uid;
             const userProfile = await userService.getUserProfileDetails(
                 username,
                 requestedUserId
@@ -117,8 +147,16 @@ const userController = {
             if (!userProfile) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
-            const userDTOInstance = new userDTO(userProfile);
+
+            const permissionLevel = getPermissionLevel(req, userProfile.uid);
+
+            const userDTOInstance = getUserDTOInstanceByPermissionLevel(
+                permissionLevel,
+                userProfile
+            );
+
             logger.info("User profile details fetched successfully");
+
             res.status(200).json(userDTOInstance);
         } catch (error) {
             logger.error("Error getting user profile details:", error);

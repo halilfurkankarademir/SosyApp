@@ -29,7 +29,6 @@ router.get("/me", authenticateToken, userController.getCurrentUser);
  * @param {string} req.params.userId - Bilgileri alınacak kullanıcının ID'si.
  * @returns {void} Başarılı olursa `200 OK` ile kullanıcı objesi, hata durumunda (400, 401, 404, 500).
  */
-// Belki validateUserId eklenmeli
 router.get(
     "/id/:userId",
     validateUserId,
@@ -90,7 +89,7 @@ router.get("/random", authenticateToken, userController.getRandomUsers);
  * @returns {void} Başarılı olursa `200 OK` ile güncellenmiş kullanıcı objesi, hata durumunda (400, 401, 409, 500).
  */
 // Belki validateUpdateUser gibi bir middleware eklenmeli
-router.put("/me", authenticateToken, userController.updateUserById); // Controller ismi /me ile uyumlu olmalı, belki updateUserProfile daha iyi?
+router.put("/me", authenticateToken, userController.updateUserById);
 
 /**
  * Aktif kullanıcının hesabını siler.
@@ -98,6 +97,6 @@ router.put("/me", authenticateToken, userController.updateUserById); // Controll
  * @description Oturum açmış kullanıcının kendi hesabını kalıcı olarak siler. Kimlik doğrulama gerektirir.
  * @returns {void} Başarılı olursa `204 No Content`, hata durumunda (401, 500).
  */
-router.delete("/me", authenticateToken, userController.deleteUser); // Controller ismi genel deleteUser, belki deleteCurrentUser daha iyi?
+router.delete("/me", authenticateToken, userController.deleteUser);
 
 export default router;

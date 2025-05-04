@@ -1,6 +1,5 @@
 import Follow from "../models/followModel.js";
 import User from "../models/userModel.js"; // Gerekli olacak ilişkiler için
-import logger from "../utils/logger.js"; // Opsiyonel loglama için
 
 /**
  * Follow modeli için veritabanı işlemleri deposu.
@@ -46,10 +45,9 @@ const followRepository = {
      * @param {string} followingId - Takip edilen kullanıcının UUID'si.
      * @returns {Promise<Array<Follow>>} Takip eden kullanıcı bilgilerini içeren 'Follow' model örneklerinin dizisi ('FollowerUser' ilişkisi dahil).
      */
-    async findFollowersWithDetails(followingId) {
+    async findFollowersWithDetails(followingId, userFilter) {
         return Follow.findAll({
             where: { followingId },
-            // Modelinizdeki ilişki adının 'FollowerUser' olduğunu varsayıyoruz.
             include: [
                 {
                     model: User, // Doğrudan model kullanarak daha net olabilir.
@@ -60,7 +58,9 @@ const followRepository = {
                         "profilePicture",
                         "firstName",
                         "lastName",
-                    ], // İstenilen alanları belirtin
+                    ],
+                    // Kullanici filtresinden gelen degere göre filtreler
+                    where: userFilter,
                 },
             ],
         });
@@ -72,21 +72,22 @@ const followRepository = {
      * @param {string} followerId - Takip eden kullanıcının UUID'si.
      * @returns {Promise<Array<Follow>>} Takip edilen kullanıcı bilgilerini içeren 'Follow' model örneklerinin dizisi ('FollowedUser' ilişkisi dahil).
      */
-    async findFollowingWithDetails(followerId) {
+    async findFollowingWithDetails(followerId, userFilter) {
         return Follow.findAll({
             where: { followerId },
-            // Modelinizdeki ilişki adının 'FollowedUser' olduğunu varsayıyoruz.
             include: [
                 {
-                    model: User, // Doğrudan model kullanarak daha net olabilir.
-                    as: "FollowedUser", // Modeldeki 'as' tanımıyla eşleşmeli.
+                    model: User,
+                    as: "FollowedUser",
                     attributes: [
                         "uid",
                         "username",
                         "profilePicture",
                         "firstName",
                         "lastName",
-                    ], // İstenilen alanları belirtin
+                    ],
+                    // Kullanici filtresinden gelen degere göre filtreler
+                    where: userFilter,
                 },
             ],
         });

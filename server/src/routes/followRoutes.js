@@ -6,11 +6,7 @@
 import express from "express";
 import { authenticateToken } from "../middlewares/authMiddleware.js";
 import followController from "../controllers/followController.js";
-import {
-    validateFollow,
-    validateFollowerUserId,
-    validateFollowingUserId,
-} from "../middlewares/validators/followValidator.js";
+import { validateFollowerUserId } from "../middlewares/validators/followValidator.js";
 import { validateUserId } from "../middlewares/validators/userValidator.js";
 
 const router = express.Router();

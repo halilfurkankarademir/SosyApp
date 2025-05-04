@@ -4,6 +4,7 @@
  */
 
 import diContainer from "../config/dependencyInjection.js";
+import { getPagination } from "../utils/helpers.js";
 import logger from "../utils/logger.js";
 
 const { postService } = diContainer;
@@ -21,16 +22,22 @@ const postController = {
     createPost: async (req, res, next) => {
         try {
             logger.info("Creating post...");
+
             let postData = req.body;
+
             postData = {
                 ...postData,
                 userId: req.user.uid,
             };
+
             const newPost = await postService.createPost(postData);
+
             if (!newPost) {
                 return res.status(400).json({ error: "Post creation failed" });
             }
+
             logger.info("Post created successfully");
+
             res.status(201).json(newPost);
         } catch (error) {
             logger.error("Error creating post:", error);
@@ -76,7 +83,7 @@ const postController = {
             res.status(200).json(post);
         } catch (error) {
             logger.error("Error getting post:", error);
-            res.status(500).json({ error: "Error getting post" });
+            res.status(error.status).json({ error: "Error getting post" });
             next(error);
         }
     },
@@ -91,11 +98,10 @@ const postController = {
         try {
             logger.info("Getting posts by user ID...");
             const userId = req.params.userId;
-            const page = req.query.page || 1;
-            const limit = req.query.limit || 5;
+            const { offset, limit } = getPagination(req);
             const posts = await postService.getPostsByUserId(
                 userId,
-                page,
+                offset,
                 limit
             );
             if (!posts) {
@@ -115,16 +121,13 @@ const postController = {
     /**
      * @description Aktif kullanıcının takip ettiği kişilerin gönderilerini (feed) listeler (sayfalama ile).
      * @route GET /posts/feed?page={pageNumber}&limit={pageSize}
-     * @param {object} req - Express istek nesnesi. `req.user.uid` aktif kullanıcı ID'sini, `req.query` sayfalama bilgilerini içerir.
-     * @param {object} res - Express yanıt nesnesi.
      */
     getFeedPosts: async (req, res, next) => {
         try {
             logger.info("Getting feed posts...");
             const userId = req.user.uid;
-            const page = req.query.page || 1;
-            const limit = req.query.limit || 5;
-            const posts = await postService.getFeedPosts(userId, page, limit);
+            const { limit, offset } = getPagination(req);
+            const posts = await postService.getFeedPosts(userId, limit, offset);
             if (!posts) {
                 return res
                     .status(404)

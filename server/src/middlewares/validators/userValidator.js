@@ -11,7 +11,6 @@ import { requestValidator } from "./joiValidator.js"; // requestValidator'ın im
  * Alfanümerik, min 3, max 20 karakter uzunluğunda ve zorunlu olmalıdır.
  */
 const usernameSchema = Joi.object({
-    // username: Joi.string().min(3).max(20).required(), // Alfanümerik kontrolü olmadan
     username: Joi.string().alphanum().min(3).max(20).required(),
 });
 
@@ -29,8 +28,6 @@ const emailSchema = Joi.object({
  * (Eğer farklı bir ID formatı kullanıyorsanız şemayı güncelleyin).
  */
 const userIdSchema = Joi.object({
-    // userId: Joi.string().required() // Eğer basit string ID ise
-    // userId: Joi.number().integer().positive().required() // Eğer sayısal ID ise
     userId: Joi.string().uuid().required(),
 });
 
