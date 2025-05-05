@@ -46,4 +46,12 @@ router.post("/logout", authController.logout);
  */
 router.post("/refresh", authController.refreshToken);
 
+/**
+ * Erişim token'ını yenileme.
+ * @route {get} /auth/csrf-token
+ * @description Bir csrf token alır.
+ * @returns {void} Başarılı olursa `200 OK` ile yeni erişim token'ı, hata durumunda ilgili status kodları (401, 403, 500).
+ */
+router.get("/csrf-token", authController.getCSRFToken);
+
 export default router;

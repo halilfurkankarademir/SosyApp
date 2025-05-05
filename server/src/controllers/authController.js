@@ -70,6 +70,7 @@ const authController = {
             res.status(201).json({
                 message: "User registered successfully",
                 user: userDTOInstance,
+                csrfToken,
             });
         } catch (error) {
             logger.error("Error registering user:", error);
@@ -126,6 +127,7 @@ const authController = {
             res.status(200).json({
                 message: "Login successful",
                 user: userDTOInstance,
+                csrfToken,
             });
         } catch (error) {
             logger.error("Error in authController.login:", error);
@@ -196,6 +198,11 @@ const authController = {
             res.status(500).json({ error: "Token refresh failed" });
             next(error);
         }
+    },
+
+    getCSRFToken: (req, res, next) => {
+        const csrfToken = generateCSRFToken();
+        res.status(200).json({ csrfToken });
     },
 };
 

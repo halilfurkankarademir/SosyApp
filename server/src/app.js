@@ -22,7 +22,6 @@ import { socketAuthMiddleware } from "./middlewares/socketAuth.js";
 import swaggerUi from "swagger-ui-express";
 import { readFile } from "fs/promises";
 import logger from "./utils/logger.js";
-import { authenticateToken } from "./middlewares/authMiddleware.js";
 
 // 1. Uygulama ve temel konfigürasyon
 dotenv.config();

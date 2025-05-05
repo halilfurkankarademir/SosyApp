@@ -66,7 +66,7 @@ export const setAuthCookies = (res, accessToken, refreshToken, csrfToken) => {
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 gunluk suresi var
     });
     res.cookie("csrf_token", csrfToken, {
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         sameSite: "Strict",
     });
@@ -82,7 +82,7 @@ export const clearAuthCookies = (res) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        path: "/", // Cookie'nin hangi path icin ayarlandiysa o path ile silinmeli
+        path: "/",
     };
     res.clearCookie("access_token", cookieOptions);
     res.clearCookie("refresh_token", cookieOptions);

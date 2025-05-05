@@ -38,9 +38,13 @@ export const authenticateToken = async (req, res, next) => {
 };
 
 export const verifyCSRF = (req, res, next) => {
+    console.log("Verifying CSRF token...");
     const csrfFromCookie = req.cookies.csrf_token;
+    console.log("CSRF token from cookie:", csrfFromCookie);
     const csrfFromHeaders = req.headers["x-csrf-token"];
+    console.log("CSRF token from headers:", csrfFromHeaders);
     const isMatch = csrfFromCookie === csrfFromHeaders;
+    console.log("CSRF tokens match:", isMatch);
     if (!csrfFromCookie || !csrfFromHeaders || !isMatch)
         return res.status(403).json({ error: "CSRF token not found." });
     console.log("CSRF token verified");
