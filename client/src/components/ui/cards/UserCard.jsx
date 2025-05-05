@@ -1,10 +1,10 @@
 import React, { memo } from "react";
 import { FaUserTimes } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
-import { removeFollower } from "../../../api/followApi";
+import { removeFollower, unfollowUser } from "../../../api/followApi";
 import { ShowToast } from "../toasts/ShowToast";
 
-const UserCard = ({ user, isFollowerCard, onRemoveClick }) => {
+const UserCard = ({ user, isFollowerCard, isFollowingCard, onRemoveClick }) => {
     const { navigateToPage } = useNavigation();
 
     // Veri varsa ve yüklenmiyorsa gerçek kartı göster
@@ -13,15 +13,31 @@ const UserCard = ({ user, isFollowerCard, onRemoveClick }) => {
         console.log(`Clicked on user: ${user.username}`);
     };
 
-    const handleRemoveClick = async (e) => {
+    const handleRemoveFollower = async (e) => {
         e.stopPropagation();
-        console.log(`Remove user button clicked for: ${user.username}`);
         try {
             const response = await removeFollower(user?.uid);
             if (!response) {
                 throw new Error("Kullanıcı takipçilerinizden kaldırılamadı.");
             }
             ShowToast("success", "Kullanıcı takipçilerinizden kaldırıldı.");
+            onRemoveClick();
+        } catch (error) {
+            console.log("Error removing user:", error);
+            if (error.response.data.message) {
+                ShowToast("error", error.response.data.message);
+            }
+        }
+    };
+
+    const handleUnfollow = async (e) => {
+        e.stopPropagation();
+        try {
+            const response = await unfollowUser(user?.uid);
+            if (!response) {
+                throw new Error("Kullanıcı takipçilerinizden kaldırılamadı.");
+            }
+            ShowToast("success", "Kullanıcıyı artık takip etmiyorsunuz.");
             onRemoveClick();
         } catch (error) {
             console.log("Error removing user:", error);
@@ -63,9 +79,18 @@ const UserCard = ({ user, isFollowerCard, onRemoveClick }) => {
 
             {isFollowerCard && (
                 <button
-                    onClick={handleRemoveClick} // Ayrılmış handleRemoveClick fonksiyonunu kullan
+                    onClick={handleRemoveFollower}
                     className="p-2 rounded-full bg-neutral-600 text-white hover:bg-red-600 transition flex-shrink-0" // flex-shrink-0 eklemek iyi olabilir
                     title="Takipçiyi kaldır"
+                >
+                    <FaUserTimes size={16} />
+                </button>
+            )}
+            {isFollowingCard && (
+                <button
+                    onClick={handleUnfollow}
+                    className="p-2 rounded-full bg-neutral-600 text-white hover:bg-red-600 transition flex-shrink-0" // flex-shrink-0 eklemek iyi olabilir
+                    title="Takipten çık"
                 >
                     <FaUserTimes size={16} />
                 </button>

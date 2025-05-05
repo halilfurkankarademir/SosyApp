@@ -9,7 +9,11 @@ import dotenv from "dotenv";
 import userDTO from "../dtos/userDTO.js";
 import { getAnonymizedIp } from "../utils/helpers.js";
 import jwtUtils from "../utils/jwtUtils.js";
-import { clearAuthCookies, setAuthCookies } from "../utils/authHelper.js";
+import {
+    clearAuthCookies,
+    generateCSRFToken,
+    setAuthCookies,
+} from "../utils/authHelper.js";
 import logger from "../utils/logger.js";
 import { ErrorMessages } from "../utils/constants.js";
 
@@ -55,7 +59,9 @@ const authController = {
                 user.uid
             );
 
-            setAuthCookies(res, accessToken, refreshToken);
+            const csrfToken = generateCSRFToken();
+
+            setAuthCookies(res, accessToken, refreshToken, csrfToken);
 
             const userDTOInstance = new userDTO(user);
 
@@ -109,7 +115,9 @@ const authController = {
                 user.uid
             );
 
-            setAuthCookies(res, accessToken, refreshToken);
+            const csrfToken = generateCSRFToken();
+
+            setAuthCookies(res, accessToken, refreshToken, csrfToken);
 
             const userDTOInstance = new userDTO(user);
 

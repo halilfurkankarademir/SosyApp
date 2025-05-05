@@ -1,8 +1,19 @@
+import { getCookie } from "../utils/helpers";
 import apiClient from "./apiClient";
 
 export const savePost = async (postId) => {
     try {
-        return await apiClient.post(`/saved/${postId}`);
+        const csrfToken = getCookie("csrf_token");
+        return await apiClient.post(
+            `/saved/${postId}`,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken,
+                },
+            }
+        );
     } catch (error) {
         console.error("Error saving post:", error);
         throw error; // Re-throw to allow error handling in components
@@ -11,7 +22,13 @@ export const savePost = async (postId) => {
 
 export const unsavePost = async (postId) => {
     try {
-        return await apiClient.delete(`/saved/${postId}`);
+        const csrfToken = getCookie("csrf_token");
+        return await apiClient.delete(`/saved/${postId}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken,
+            },
+        });
     } catch (error) {
         console.error("Error un-saving post:", error);
         throw error;

@@ -5,7 +5,10 @@
 
 import express from "express";
 import postController from "../controllers/postController.js";
-import { authenticateToken } from "../middlewares/authMiddleware.js";
+import {
+    authenticateToken,
+    verifyCSRF,
+} from "../middlewares/authMiddleware.js";
 import {
     validatePost,
     validatePostId,
@@ -29,7 +32,12 @@ router.get("/feed", authenticateToken, postController.getFeedPosts);
  * @param {string} req.params.postId - Getirilecek gönderinin ID'si.
  * @returns {void} Başarılı olursa `200 OK` ile gönderi objesi, hata durumunda (400, 404, 500).
  */
-router.get("/:postId", validatePostId, postController.getPostById);
+router.get(
+    "/:postId",
+    authenticateToken,
+    validatePostId,
+    postController.getPostById
+);
 
 /**
  * Belirli bir kullanıcının gönderilerini getirir.
@@ -41,8 +49,8 @@ router.get("/:postId", validatePostId, postController.getPostById);
 // Eğer userId için ayrı validator varsa eklenmeli: validateUserId
 router.get(
     "/user/:userId",
-    validateUserId,
     authenticateToken,
+    validateUserId,
     postController.getPostsByUserId
 );
 
@@ -53,7 +61,13 @@ router.get(
  * @param {object} req.body - Gönderi içeriği, örn: `{ content: "...", imageUrl: "..." }`.
  * @returns {void} Başarılı olursa `201 Created` ile gönderi objesi, hata durumunda (400, 401, 500).
  */
-router.post("/", validatePost, authenticateToken, postController.createPost);
+router.post(
+    "/",
+    authenticateToken,
+    verifyCSRF,
+    validatePost,
+    postController.createPost
+);
 
 /**
  * Belirli bir gönderiyi siler.
@@ -64,8 +78,9 @@ router.post("/", validatePost, authenticateToken, postController.createPost);
  */
 router.delete(
     "/:postId",
-    validatePostId,
     authenticateToken,
+    verifyCSRF,
+    validatePostId,
     postController.deletePost
 );
 

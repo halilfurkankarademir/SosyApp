@@ -13,7 +13,6 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
 
     // loadInitialPosts, fetchOptions VE filters'a bağlı olmalı
     const loadInitialPosts = useCallback(async () => {
-        console.log(`Loading initial posts with filter: "${filters}"`); // Filtreyi logla
         setIsLoading(true);
         setPosts([]);
         setPage(1);
@@ -22,7 +21,6 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
         try {
             // fetchOptions'a page ve filters'ı geçiyoruz
             const response = await fetchOptions(1, filters); // filters'ı burada kullan
-            console.log("Initial posts response:", response);
             // Gelen verinin beklenen formatta olduğundan emin olalım
             const fetchedPosts = response?.posts || [];
             const fetchedCount = response?.count ?? 0;
@@ -42,18 +40,13 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
     // fetchMoreData da fetchOptions VE filters'a bağlı olmalı
     const fetchMoreData = useCallback(async () => {
         if (!hasMore || isLoading) {
-            console.log("Fetch more aborted:", { hasMore, isLoading });
             return;
         }
 
-        console.log(
-            `Fetching more data for page ${page} with filter: "${filters}"`
-        ); // Filtreyi logla
         setIsLoading(true);
         try {
             // fetchOptions'a page ve filters'ı geçiyoruz
             const response = await fetchOptions(page, filters); // filters'ı burada kullan
-            console.log("More posts response:", response);
             // Gelen verinin beklenen formatta olduğundan emin olalım
             const newPosts = response?.posts || [];
             const fetchedCount = response?.count ?? totalPostsCount; // Count değişmemiş olabilir, önceki değeri koru
@@ -84,7 +77,6 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
 
     // Refresh fonksiyonu loadInitialPosts'a bağlı kalmalı
     const refreshPosts = useCallback(() => {
-        console.log("Refreshing posts...");
         loadInitialPosts();
     }, [loadInitialPosts]);
 

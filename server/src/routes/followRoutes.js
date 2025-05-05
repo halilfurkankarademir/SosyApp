@@ -4,7 +4,10 @@
  */
 
 import express from "express";
-import { authenticateToken } from "../middlewares/authMiddleware.js";
+import {
+    authenticateToken,
+    verifyCSRF,
+} from "../middlewares/authMiddleware.js";
 import followController from "../controllers/followController.js";
 import { validateFollowerUserId } from "../middlewares/validators/followValidator.js";
 import { validateUserId } from "../middlewares/validators/userValidator.js";
@@ -44,8 +47,9 @@ router.get(
  */
 router.post(
     "/:userId",
-    validateUserId,
     authenticateToken,
+    verifyCSRF,
+    validateUserId,
     followController.createFollow
 );
 
@@ -58,9 +62,9 @@ router.post(
  */
 router.delete(
     "/:userId",
-    // validateFollow yerine belki validateUserId(userId) daha uygun?
-    validateUserId,
     authenticateToken,
+    verifyCSRF,
+    validateUserId,
     followController.deleteFollow
 );
 
@@ -73,9 +77,9 @@ router.delete(
  */
 router.delete(
     "/follower/:followerId",
-    // validateFollow yerine belki validateUserId(followerId) daha uygun?
-    validateFollowerUserId,
     authenticateToken,
+    verifyCSRF,
+    validateFollowerUserId,
     followController.deleteFollower
 );
 

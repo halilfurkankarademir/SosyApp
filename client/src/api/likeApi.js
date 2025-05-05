@@ -1,8 +1,19 @@
+import { getCookie } from "../utils/helpers";
 import apiClient from "./apiClient";
 
 export const addLikePost = async (postId) => {
     try {
-        return await apiClient.post(`/likes/${postId}`);
+        const csrfToken = getCookie("csrf_token");
+        return await apiClient.post(
+            `/likes/${postId}`,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken,
+                },
+            }
+        );
     } catch (error) {
         console.error("Error liking post:", error);
         throw error; // Re-throw the error to handle it in the component
@@ -11,7 +22,13 @@ export const addLikePost = async (postId) => {
 
 export const removeLikeFromPost = async (postId) => {
     try {
-        return await apiClient.delete(`/likes/${postId}`);
+        const csrfToken = getCookie("csrf_token");
+        return await apiClient.delete(`/likes/${postId}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken,
+            },
+        });
     } catch (error) {
         console.error("Error unliking post:", error);
         throw error;

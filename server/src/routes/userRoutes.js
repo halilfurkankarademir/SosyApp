@@ -5,7 +5,10 @@
 
 import express from "express";
 import userController from "../controllers/userController.js";
-import { authenticateToken } from "../middlewares/authMiddleware.js";
+import {
+    authenticateToken,
+    verifyCSRF,
+} from "../middlewares/authMiddleware.js";
 import {
     validateEmail,
     validateUsername,
@@ -89,7 +92,7 @@ router.get("/random", authenticateToken, userController.getRandomUsers);
  * @returns {void} Başarılı olursa `200 OK` ile güncellenmiş kullanıcı objesi, hata durumunda (400, 401, 409, 500).
  */
 // Belki validateUpdateUser gibi bir middleware eklenmeli
-router.put("/me", authenticateToken, userController.updateUserById);
+router.put("/me", authenticateToken, verifyCSRF, userController.updateUserById);
 
 /**
  * Aktif kullanıcının hesabını siler.
@@ -97,6 +100,6 @@ router.put("/me", authenticateToken, userController.updateUserById);
  * @description Oturum açmış kullanıcının kendi hesabını kalıcı olarak siler. Kimlik doğrulama gerektirir.
  * @returns {void} Başarılı olursa `204 No Content`, hata durumunda (401, 500).
  */
-router.delete("/me", authenticateToken, userController.deleteUser);
+router.delete("/me", authenticateToken, verifyCSRF, userController.deleteUser);
 
 export default router;

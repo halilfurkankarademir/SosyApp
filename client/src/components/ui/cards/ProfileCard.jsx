@@ -5,17 +5,21 @@ import { PrimaryButton, SecondaryButton } from "../buttons";
 import { FaCog, FaEdit, FaUserPlus } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
 
-const ProfileCard = ({
-    user,
-    postCount,
-    followerCount,
-    followingCount,
-    isOwnProfile,
-    handleFollow,
-    handleShareProfile,
-    isFollowing,
-}) => {
+const ProfileCard = ({ user, handleFollow, handleShareProfile }) => {
     const { navigateToPage } = useNavigation();
+
+    const {
+        postsCount,
+        followerCount,
+        followingCount,
+        isOwnProfile,
+        isFollowing,
+    } = user;
+
+    const handleConnections = () => {
+        if (!isOwnProfile) return;
+        navigateToPage("/connections");
+    };
 
     return (
         <div className="w-full md:w-1/3">
@@ -53,13 +57,18 @@ const ProfileCard = ({
                 <div className="grid grid-cols-3 gap-2 my-4 text-center">
                     <div className="p-2 rounded-lg bg-neutral-700/50">
                         <div className="font-bold text-lg md:text-xl">
-                            {postCount || 0}
+                            {postsCount || 0}
                         </div>
                         <div className="text-xs md:text-sm text-gray-400">
                             Gönderi
                         </div>
                     </div>
-                    <div className="p-2 rounded-lg bg-neutral-700/50">
+                    <div
+                        className={`p-2 rounded-lg bg-neutral-700/50 ${
+                            isOwnProfile ? "cursor-pointer" : ""
+                        }`}
+                        onClick={() => handleConnections()}
+                    >
                         <div className="font-bold text-lg md:text-xl">
                             {followerCount || 0}
                         </div>
@@ -67,7 +76,12 @@ const ProfileCard = ({
                             Takipçi
                         </div>
                     </div>
-                    <div className="p-2 rounded-lg bg-neutral-700/50">
+                    <div
+                        className={`p-2 rounded-lg bg-neutral-700/50 ${
+                            isOwnProfile ? "cursor-pointer" : ""
+                        }`}
+                        onClick={() => handleConnections()}
+                    >
                         <div className="font-bold text-lg md:text-xl">
                             {followingCount || 0}
                         </div>

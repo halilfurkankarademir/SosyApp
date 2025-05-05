@@ -59,7 +59,7 @@ const commentService = (commentRepository) => ({
             const comments = await commentRepository.getCommentsByPostId(
                 postId
             );
-            logger.info("Comments found", comments);
+            logger.info("Comments found");
 
             const updatedComments = addCommentDetailsForUser(comments, userId);
 

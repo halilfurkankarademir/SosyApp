@@ -4,7 +4,10 @@
  */
 
 import commentController from "../controllers/commentController.js";
-import { authenticateToken } from "../middlewares/authMiddleware.js";
+import {
+    authenticateToken,
+    verifyCSRF,
+} from "../middlewares/authMiddleware.js";
 import express from "express";
 import {
     validateComment,
@@ -24,9 +27,10 @@ const router = express.Router();
  */
 router.post(
     "/:postId",
+    authenticateToken,
+    verifyCSRF,
     validatePostId,
     validateComment,
-    authenticateToken,
     commentController.createComment
 );
 
@@ -39,8 +43,9 @@ router.post(
  */
 router.delete(
     "/:commentId",
-    validateCommentId,
     authenticateToken,
+    verifyCSRF,
+    validateCommentId,
     commentController.deleteComment
 );
 

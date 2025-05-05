@@ -98,7 +98,7 @@ export default {
                 include: standartIncludes,
                 order: [["createdAt", "DESC"]],
                 ...options, // Gelen where, limit, offset vb. uygula
-                distinct: true, // Count'un doğru çalışması için (özellikle many-to-many ilişkilerde)
+                distinct: true,
             });
         } catch (error) {
             logger.error("Repository find posts error:", error);

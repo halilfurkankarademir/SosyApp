@@ -47,7 +47,6 @@ const logger = winston.createLogger({
         logFormat
     ),
     transports: [
-        // Konsol çıktısı (renkli)
         new winston.transports.Console({
             format: combine(
                 colorize(),

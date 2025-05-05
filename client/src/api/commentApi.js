@@ -1,7 +1,9 @@
+import { getCookie } from "../utils/helpers";
 import apiClient from "./apiClient";
 
 export const createComment = async (params) => {
     try {
+        const csrfToken = getCookie("csrf_token");
         const { postId, content } = params;
         const response = await apiClient.post(
             `/comments/${postId}`,
@@ -9,7 +11,10 @@ export const createComment = async (params) => {
                 content,
             },
             {
-                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken,
+                },
             }
         );
         return response.data;
@@ -23,8 +28,12 @@ export const createComment = async (params) => {
 
 export const deleteComment = async (commentId) => {
     try {
+        const csrfToken = getCookie("csrf_token");
         const response = await apiClient.delete(`/comments/${commentId}`, {
-            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken,
+            },
         });
         return response.data;
     } catch (error) {
@@ -45,9 +54,7 @@ export const getCommentsByPostId = async (postId) => {
 
 export const getCommentCount = async (postId) => {
     try {
-        const response = await apiClient.get(`/comments/count/${postId}`, {
-            withCredentials: true,
-        });
+        const response = await apiClient.get(`/comments/count/${postId}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching comment count:", error);

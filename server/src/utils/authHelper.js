@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
 import dotenv from "dotenv";
 import logger from "./logger.js";
+import crypto from "crypto";
 dotenv.config();
 
 /**
@@ -51,18 +52,23 @@ export async function verifyUserFromTokenCookie(req) {
  * @param {string} refreshToken - Kullanici icin uretilmis refresh token.
  * @returns {void} Bu fonksiyon dogrudan bir deger donmez, response nesnesini modifiye eder.
  */
-export const setAuthCookies = (res, accessToken, refreshToken) => {
+export const setAuthCookies = (res, accessToken, refreshToken, csrfToken) => {
     res.cookie("access_token", accessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "Strict",
         maxAge: 1000 * 60 * 120, // 2 saat suresi var
     });
     res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "Strict",
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 gunluk suresi var
+    });
+    res.cookie("csrf_token", csrfToken, {
+        httpOnly: false,
+        secure: true,
+        sameSite: "Strict",
     });
 };
 
@@ -80,4 +86,9 @@ export const clearAuthCookies = (res) => {
     };
     res.clearCookie("access_token", cookieOptions);
     res.clearCookie("refresh_token", cookieOptions);
+    res.clearCookie("csrf_token", cookieOptions);
+};
+
+export const generateCSRFToken = () => {
+    return crypto.randomBytes(32).toString("hex");
 };

@@ -1,9 +1,16 @@
+import { getCookie } from "../utils/helpers";
 import apiClient from "./apiClient";
 
 export const createNewPost = async (postData) => {
     try {
+        const csrfToken = getCookie("csrf_token");
         return apiClient
-            .post("/posts/", postData)
+            .post("/posts/", postData, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken,
+                },
+            })
             .then((response) => response.data);
     } catch (error) {
         console.error("Error creating post:", error);
@@ -11,21 +18,16 @@ export const createNewPost = async (postData) => {
     }
 };
 
-export const updatePost = async (postId, postData) => {
-    try {
-        return apiClient
-            .put(`/posts/${postId}`, postData)
-            .then((response) => response.data);
-    } catch (error) {
-        console.error("Error updating post:", error);
-        throw error;
-    }
-};
-
 export const removePost = async (postId) => {
     try {
+        const csrfToken = getCookie("csrf_token");
         return apiClient
-            .delete(`/posts/${postId}`)
+            .delete(`/posts/${postId}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken,
+                },
+            })
             .then((response) => response.data);
     } catch (error) {
         console.error("Error deleting post:", error);

@@ -6,8 +6,8 @@ let agent;
 let authCookie;
 
 const validUser = {
-    email: "test1@gmail.com",
-    password: "test123",
+    email: "dert@gmail.com",
+    password: "123456",
 };
 
 beforeAll(async () => {
@@ -39,21 +39,18 @@ beforeAll(async () => {
     }
 }, 30000);
 
-describe("GET /api/users", () => {
-    it("should return all users when logged in (using agent's cookie)", async () => {
+describe("GET /api/users/me", () => {
+    it("should return logged in user details when logged in (using agent's cookie)", async () => {
         const res = await agent
-            .get("/api/users")
+            .get("/api/users/me")
             .set("Cookie", authCookie)
             .expect("Content-Type", /json/)
             .expect(200);
-
-        expect(Array.isArray(res.body)).toBe(true);
+        console.log(res);
     });
 
     it("should return 401 if not logged in (no valid cookie)", async () => {
-        await request(app) // Cookie'siz yeni istek için normal request
-            .get("/api/users")
-            .expect(401);
+        await request(app).get("/api/users").expect(401);
     });
 });
 

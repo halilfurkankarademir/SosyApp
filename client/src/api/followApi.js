@@ -1,10 +1,21 @@
+import { getCookie } from "../utils/helpers";
 import apiClient from "./apiClient";
 
 export const followUser = async (followingId) => {
     // Belirli bir id'li kullanıcıyı takip etme
     try {
+        const csrfToken = getCookie("csrf_token");
         return await apiClient
-            .post(`/follows/${followingId}`, {})
+            .post(
+                `/follows/${followingId}`,
+                {},
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+                }
+            )
             .then((response) => response.data);
     } catch (error) {
         console.error("Error following user:", error);
@@ -12,10 +23,16 @@ export const followUser = async (followingId) => {
 };
 
 export const unfollowUser = async (followingId) => {
-    // Belirli bir id'li kullanıcıyı takipten cikartma
+    // Belirli bir id'li kullanıcıyı takipten cikma
     try {
+        const csrfToken = getCookie("csrf_token");
         return await apiClient
-            .delete(`/follows/${followingId}`)
+            .delete(`/follows/${followingId}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                },
+            })
             .then((response) => response.data);
     } catch (error) {
         console.error("Error unfollowing user:", error);
@@ -24,22 +41,21 @@ export const unfollowUser = async (followingId) => {
 
 export const removeFollower = async (followerId) => {
     try {
+        const csrfToken = getCookie("csrf_token");
         return await apiClient
-            .delete(`/follows/follower/${followerId}`)
+            .delete(
+                `/follows/follower/${followerId}`,
+
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+                }
+            )
             .then((response) => response.data);
     } catch (error) {
         console.error("Error unfollowing user:", error);
-    }
-};
-
-export const checkFollowStatus = async (followingId) => {
-    // Aktif kullanıcının ilgili kullanıcıyı takip edip takip etmedigini kontrol eder
-    try {
-        return await apiClient
-            .get(`/follows/check/${followingId}`)
-            .then((response) => response.data);
-    } catch (error) {
-        console.error("Error checking follow status:", error);
     }
 };
 

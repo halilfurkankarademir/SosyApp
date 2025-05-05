@@ -86,6 +86,7 @@ const ProfileForm = ({ formData, onChange, onSubmit, onCancel }) => {
                     <textarea
                         name="bio"
                         placeholder="Kendiniz hakkında birkaç paragraf yazabilirsiniz."
+                        value={formData.bio || ""}
                         onChange={onChange}
                         rows="3"
                         className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white resize-none"

@@ -4,7 +4,10 @@
  */
 
 import express from "express";
-import { authenticateToken } from "../middlewares/authMiddleware.js";
+import {
+    authenticateToken,
+    verifyCSRF,
+} from "../middlewares/authMiddleware.js";
 import likeController from "../controllers/likeController.js";
 import { validatePostId } from "../middlewares/validators/postValidator.js";
 
@@ -19,8 +22,8 @@ const router = express.Router();
  */
 router.get(
     "/post/:postId",
-    validatePostId,
     authenticateToken,
+    validatePostId,
     likeController.getAllLikes
 );
 
@@ -41,8 +44,9 @@ router.get("/user", authenticateToken, likeController.getLikesByUserId);
  */
 router.post(
     "/:postId",
-    validatePostId,
     authenticateToken,
+    verifyCSRF,
+    validatePostId,
     likeController.createLike
 );
 
@@ -55,8 +59,9 @@ router.post(
  */
 router.delete(
     "/:postId",
-    validatePostId,
     authenticateToken,
+    verifyCSRF,
+    validatePostId,
     likeController.deleteLike
 );
 

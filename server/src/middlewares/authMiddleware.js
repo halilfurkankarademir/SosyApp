@@ -20,14 +20,12 @@ export const authenticateToken = async (req, res, next) => {
     try {
         // Cookie'deki token'ı doğrula ve kullanıcıyı al
         const user = await verifyUserFromTokenCookie(req);
-
         // Kullanıcı bulunamazsa veya token geçersizse 401 hatası dön
         if (!user) {
             return res
                 .status(401)
                 .json({ error: "Geçersiz veya Süresi Dolmuş Token" });
         }
-
         // Kullanıcı bilgisini isteğe ekle
         req.user = user;
         // Sonraki middleware'e geç
@@ -35,6 +33,16 @@ export const authenticateToken = async (req, res, next) => {
     } catch (error) {
         // Doğrulama sırasında bir hata oluşursa logla ve 401 dön
         logger.error("Error authenticating token:", error);
-        return res.status(401).json({ error: "Kimlik doğrulama başarısız." }); // Daha genel mesaj
+        return res.status(401).json({ error: "Kimlik doğrulama başarısız." });
     }
+};
+
+export const verifyCSRF = (req, res, next) => {
+    const csrfFromCookie = req.cookies.csrf_token;
+    const csrfFromHeaders = req.headers["x-csrf-token"];
+    const isMatch = csrfFromCookie === csrfFromHeaders;
+    if (!csrfFromCookie || !csrfFromHeaders || !isMatch)
+        return res.status(403).json({ error: "CSRF token not found." });
+    console.log("CSRF token verified");
+    next();
 };

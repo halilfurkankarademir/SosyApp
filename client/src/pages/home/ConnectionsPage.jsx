@@ -32,8 +32,6 @@ const ConnectionsPage = () => {
             setUser(user);
             setAllFollowers(followers || []);
             setAllFollowing(followings || []);
-            console.log("Followers:", followers);
-            console.log("Followings:", followings);
         } catch (error) {
             console.error("Error fetching connection data:", error);
             setAllFollowers([]);
@@ -101,6 +99,7 @@ const ConnectionsPage = () => {
             <UserCard
                 user={item[userKey]}
                 isFollowerCard={activeTab === "followers"}
+                isFollowingCard={activeTab === "following"}
                 key={item[userKey]?.uid || item.id}
             />
         ));

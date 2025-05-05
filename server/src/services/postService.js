@@ -180,8 +180,9 @@ const postService = (
      * Belirli bir kullanıcının kaydettiği gönderileri sayfalanmış olarak getirir.
      * @memberof postService
      * @param {string} userId - Kaydedilmiş gönderileri getirilecek kullanıcının ID'si.
-     * @param {number} page - Getirilecek sayfa numarası (1'den başlar).
+     * @param {number} offset - Atlanacak gönderi sayısı.
      * @param {number} limit - Sayfa başına gönderi sayısı.
+     * @param {string} filters - Filtreleme yapılacak metin.
      * @returns {Promise<{posts: Array<Post>, count: number}>} Kullanıcının kaydettiği gönderileri ve toplam sayıyı içeren nesne.
      * @throws {Error} Kaydedilmiş gönderileri getirme sırasında bir hata oluşursa.
      */
