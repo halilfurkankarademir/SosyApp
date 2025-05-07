@@ -3,7 +3,7 @@ import apiClient from "./apiClient";
 
 export const createComment = async (params) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         const { postId, content } = params;
         const response = await apiClient.post(
             `/comments/${postId}`,
@@ -28,7 +28,7 @@ export const createComment = async (params) => {
 
 export const deleteComment = async (commentId) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         const response = await apiClient.delete(`/comments/${commentId}`, {
             headers: {
                 "Content-Type": "application/json",

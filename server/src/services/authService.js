@@ -97,20 +97,12 @@ const authService = (userRepository, userService) => ({
                 user.password
             );
 
-            if (!isPasswordValid) {
-                logger.warn("Invalid password attempt for user.", {
-                    email,
-                    userId: user.uid,
-                });
-                throw new Error(ErrorMessages.INVALID_CREDENTIALS);
-            }
-
             logger.info("User authenticated successfully", {
                 userId: user.uid,
                 email: user.email,
             });
 
-            return user;
+            return { user, isPasswordValid };
         } catch (error) {
             logger.error("Error during user login in AuthService:", {
                 message: error.message,

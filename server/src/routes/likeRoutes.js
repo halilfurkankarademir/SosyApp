@@ -33,7 +33,7 @@ router.get(
  * @description Oturum açmış kullanıcının beğendiği gönderileri listeler. Kimlik doğrulama gerektirir.
  * @returns {void} Başarılı olursa `200 OK` ile gönderi dizisi, hata durumunda ilgili status kodları (401, 500).
  */
-router.get("/user", authenticateToken, likeController.getLikesByUserId);
+router.get("/me", authenticateToken, likeController.getLikesByUserId);
 
 /**
  * Bir gönderiyi beğenir.

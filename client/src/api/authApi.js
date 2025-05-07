@@ -13,7 +13,7 @@ export const register = (email, password, username, firstName, lastName) => {
             })
             .then((response) => {
                 const csrfToken = response.data.csrfToken;
-                document.cookie = `csrf_token=${csrfToken}`;
+                document.cookie = `csrfToken=${csrfToken}`;
                 localStorage.setItem("isAuthenticated", true);
                 return response.data;
             })
@@ -31,7 +31,7 @@ export const login = (email, password) => {
             .post("/auth/login", { email, password })
             .then((response) => {
                 const csrfToken = response.data.csrfToken;
-                document.cookie = `csrf_token=${csrfToken}`;
+                document.cookie = `csrfToken=${csrfToken}`;
                 localStorage.setItem("isAuthenticated", true);
                 return response.data;
             })

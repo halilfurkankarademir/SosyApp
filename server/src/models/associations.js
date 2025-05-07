@@ -24,30 +24,21 @@ export default function setupAssociations() {
         targetKey: "uid",
     });
 
-    // User - User (Follow) ilişkileri (N-M)
-    /**@description kullanici farklı kullanıcıları takip edebilir */
     User.belongsToMany(User, {
         as: "Following",
         through: Follow,
-        foreignKey: "followerId",
-        otherKey: "followingId",
+        foreignKey: {
+            name: "followerId",
+            onDelete: "CASCADE",
+        },
+        otherKey: {
+            name: "followingId",
+            onDelete: "CASCADE",
+        },
         sourceKey: "uid",
         targetKey: "uid",
         inverse: {
             as: "Followers",
-        },
-    });
-
-    /**@description kullanicinin farklı takipcileri olabilir */
-    User.belongsToMany(User, {
-        as: "Followers",
-        through: Follow,
-        foreignKey: "followingId",
-        otherKey: "followerId",
-        sourceKey: "uid",
-        targetKey: "uid",
-        inverse: {
-            as: "Following",
         },
     });
 

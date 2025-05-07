@@ -3,7 +3,7 @@ import apiClient from "./apiClient";
 
 export const createNewPost = async (postData) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return apiClient
             .post("/posts/", postData, {
                 headers: {
@@ -20,7 +20,7 @@ export const createNewPost = async (postData) => {
 
 export const removePost = async (postId) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return apiClient
             .delete(`/posts/${postId}`, {
                 headers: {

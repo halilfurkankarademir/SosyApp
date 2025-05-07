@@ -60,7 +60,7 @@ const followController = {
                 userId
             );
             logger.info("Follow deleted successfully");
-            res.json(follower);
+            res.status(200).json(follower);
         } catch (error) {
             logger.error("Error in followController.deleteFollow:", error);
             res.status(500).json({ error: error.message });
@@ -108,7 +108,7 @@ const followController = {
                 filterQuery
             );
             logger.info("Authenticated user followers fetched successfully");
-            res.json(followers);
+            res.status(200).json(followers);
         } catch (error) {
             logger.error(
                 "Error in followController.getAuthenticatedUserFollowers:",

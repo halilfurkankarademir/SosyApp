@@ -51,9 +51,7 @@ const userSockets = {};
 /**
  * Swagger API dokümantasyon verisi.
  */
-const swaggerDocument = JSON.parse(
-    await readFile(new URL("../swagger-output.json", import.meta.url))
-);
+// let swaggerDocument;
 
 // 2. Middleware'ler
 
@@ -73,7 +71,7 @@ app.use(helmet());
 app.use(cookieParser());
 
 // Swagger UI kullanarak API dokümantasyonunu sunar.
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // DDOS saldırılarına karşı belirli auth rotalarında hız sınırlaması uygular.
 app.use("/api/auth/login", authLimiter);
@@ -97,6 +95,14 @@ export async function initializeServer() {
     if (initPromise) return initPromise;
     initPromise = (async () => {
         try {
+            // if (!swaggerDocument) {
+            //     swaggerDocument = JSON.parse(
+            //         await readFile(
+            //             new URL("../swagger-output.json", import.meta.url)
+            //         )
+            //     );
+            // }
+
             logger.info("Veritabanı ve modeller yukleniyor...");
             // Veritabanı bağlantısı ve modelleri senkronize et
             await initializeDatabase();

@@ -98,15 +98,12 @@ const authController = {
 
             const { email, password } = req.body;
 
-            if (!email || !password) {
-                return res
-                    .status(400)
-                    .json({ error: "Email and password are required" });
-            }
+            const { user, isPasswordValid } = await authService.login(
+                email,
+                password
+            );
 
-            const user = await authService.login(email, password);
-
-            if (!user) {
+            if (!isPasswordValid) {
                 return res
                     .status(401)
                     .json({ error: ErrorMessages.INVALID_CREDENTIALS });

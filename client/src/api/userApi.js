@@ -41,7 +41,7 @@ export const getRandomUsers = async () => {
 export const updateUserProfile = async (updatedData) => {
     // Aktif giris yapan kullanıcının profilini güncelleme
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         const response = await apiClient.put("/users/me", updatedData, {
             headers: {
                 "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const updateUserProfile = async (updatedData) => {
 export const deleteUser = async () => {
     // Aktif giris yapan kullanıcının hesabını silme
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         const response = await apiClient.delete("/users/me", {
             headers: {
                 "Content-Type": "application/json",

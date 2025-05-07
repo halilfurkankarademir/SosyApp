@@ -4,7 +4,7 @@ import apiClient from "./apiClient";
 export const followUser = async (followingId) => {
     // Belirli bir id'li kullanıcıyı takip etme
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return await apiClient
             .post(
                 `/follows/${followingId}`,
@@ -25,7 +25,7 @@ export const followUser = async (followingId) => {
 export const unfollowUser = async (followingId) => {
     // Belirli bir id'li kullanıcıyı takipten cikma
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return await apiClient
             .delete(`/follows/${followingId}`, {
                 headers: {
@@ -41,7 +41,7 @@ export const unfollowUser = async (followingId) => {
 
 export const removeFollower = async (followerId) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return await apiClient
             .delete(
                 `/follows/follower/${followerId}`,

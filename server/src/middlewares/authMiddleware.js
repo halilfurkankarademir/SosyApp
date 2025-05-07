@@ -38,6 +38,15 @@ export const authenticateToken = async (req, res, next) => {
 };
 
 export const verifyCSRF = (req, res, next) => {
+    const isProd = process.env.NODE_ENV === "production";
+    // Eger geliştirme modunda ise csrf token doğrulamayı atla RISKLI   !
+    if (!isProd) {
+        logger.warn(
+            "⚠️ ⚠️ ⚠️ CSRF token verification skipped in development mode. ⚠️ ⚠️ ⚠️"
+        );
+        return next();
+    }
+
     console.log("Verifying CSRF token...");
     const csrfFromCookie = req.cookies.csrf_token;
     console.log("CSRF token from cookie:", csrfFromCookie);

@@ -3,7 +3,7 @@ import apiClient from "./apiClient";
 
 export const savePost = async (postId) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return await apiClient.post(
             `/saved/${postId}`,
             {},
@@ -22,7 +22,7 @@ export const savePost = async (postId) => {
 
 export const unsavePost = async (postId) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return await apiClient.delete(`/saved/${postId}`, {
             headers: {
                 "Content-Type": "application/json",
@@ -37,22 +37,12 @@ export const unsavePost = async (postId) => {
 
 export const getSavedPosts = async (page, filter) => {
     try {
-        const response = await apiClient.get("/saved/", {
+        const response = await apiClient.get("/saved/me", {
             params: { page, filter },
         });
         return response.data;
     } catch (error) {
         console.error("Error getting saved posts:", error);
-        throw error;
-    }
-};
-
-export const isPostSaved = async (postId) => {
-    try {
-        const response = await apiClient.get(`/saved/check/${postId}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error checking if post is saved:", error);
         throw error;
     }
 };

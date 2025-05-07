@@ -3,7 +3,7 @@ import apiClient from "./apiClient";
 
 export const addLikePost = async (postId) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return await apiClient.post(
             `/likes/${postId}`,
             {},
@@ -22,7 +22,7 @@ export const addLikePost = async (postId) => {
 
 export const removeLikeFromPost = async (postId) => {
     try {
-        const csrfToken = getCookie("csrf_token");
+        const csrfToken = getCookie("csrfToken");
         return await apiClient.delete(`/likes/${postId}`, {
             headers: {
                 "Content-Type": "application/json",
@@ -55,7 +55,7 @@ export const checkLike = async (postId) => {
 
 export const getLikesByUserId = async (page, filter) => {
     try {
-        const response = await apiClient.get("/likes/user", {
+        const response = await apiClient.get("/likes/me", {
             params: { page, filter },
         });
         return response.data;

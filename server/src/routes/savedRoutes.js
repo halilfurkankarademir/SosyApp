@@ -19,7 +19,7 @@ const router = express.Router();
  * @description Oturum açmış kullanıcının kaydettiği gönderileri listeler. Kimlik doğrulama gerektirir.
  * @returns {void} Başarılı olursa `200 OK` ile kaydedilen gönderi(ler)/ilişki dizisi, hata durumunda (401, 500).
  */
-router.get("/", authenticateToken, savedController.getSavedPosts);
+router.get("/me", authenticateToken, savedController.getSavedPosts);
 
 /**
  * Bir gönderiyi kaydeder.
