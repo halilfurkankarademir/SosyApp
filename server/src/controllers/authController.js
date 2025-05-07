@@ -184,8 +184,10 @@ const authController = {
             const { accessToken, refreshToken: newRefreshToken } =
                 jwtUtils.generateTokens(user.uid);
 
+            const csrfToken = generateCSRFToken();
+
             // Yeni tokenları cookie'ye set et
-            setAuthCookies(res, accessToken, newRefreshToken);
+            setAuthCookies(res, accessToken, newRefreshToken, csrfToken);
 
             logger.info("Token refreshed successfully");
 

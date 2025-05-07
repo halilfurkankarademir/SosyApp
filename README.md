@@ -2,7 +2,6 @@
 
 ![logo](https://github.com/user-attachments/assets/c4a83553-09bb-42b4-8221-8485e57e8889)
 
-
 ## 📋 Proje Hakkında
 
 SosyApp, kullanıcıların gönderi paylaşabildiği, beğeni yapabildiği, yorum ekleyebildiği, diğer kullanıcıları takip edebildiği ve içerikleri kaydedip daha sonra erişebildiği modern bir sosyal medya platformudur.
@@ -11,25 +10,56 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 
 ## 🚀 Özellikler
 
--   👤 Kullanıcı hesabı oluşturma ve yönetme
--   📝 Gönderi paylaşma (metin ve medya)
--   ❤️ Gönderi beğenme ve yorum yapma
--   🔔 Gerçek zamanlı bildirimler
--   👥 Kullanıcıları takip etme
--   🔖 İçerikleri kaydetme
--   🔍 Kullanıcı ve içerik arama
--   📱 Tamamen responsive tasarım
+### Kullanıcı Özellikleri
+
+-   **Hesap Yönetimi**
+
+    -   Kayıt olma ve giriş yapma
+    -   Profil oluşturma ve düzenleme
+    -   Şifre sıfırlama
+
+-   **Sosyal Paylaşım**
+
+    -   Post oluşturma ve paylaşma
+    -   Fotoğraf yükleme ve düzenleme
+    -   İçerik beğenme ve kaydetme
+
+-   **Sosyal Etkileşim**
+
+    -   Yorum yapabilme ve yanıtlama
+    -   Kullanıcıları takip etme/takipten çıkma
+    -   Bildirim alma
+
+-   **İçerik Keşfi**
+
+    -   Kullanıcı ve içerik arama
+    -   Keşfet sayfası ile yeni içerikler bulma
+    -   Önerilen içerikler ve kullanıcılar
+
+-   **Kullanıcı Arayüzü**
+
+    -   Mobil ve masaüstü uyumlu tasarım
+    -   Kolay kullanım ve gezinme
+    -   Sonsuz kaydırma ile içerik yükleme
+
+-   **Gerçek Zamanlı Özellikler**
+    -   Anlık bildirimler
+    -   Canlı etkileşim güncellemeleri
+    -   Oturum durumu takibi
 
 ## 🛠️ Teknoloji Yığını
 
 ### Frontend
 
--   **React 19** - Modern UI geliştirme için
+-   **React 19** - Modern UI geliştirme
 -   **Vite 6** - Hızlı geliştirme deneyimi
 -   **TailwindCSS 4** - Utility-first CSS framework
+-   **Material Tailwind** - UI bileşenleri
 -   **React Router DOM 7** - Sayfa yönlendirme
 -   **Zustand** - State yönetimi
 -   **Socket.io Client** - Gerçek zamanlı iletişim
+-   **Axios** - HTTP istekleri
+-   **Cloudinary** - Medya yönetimi
 
 ### Backend
 
@@ -39,6 +69,9 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 -   **Socket.io** - Gerçek zamanlı iletişim
 -   **JWT** - Güvenli kimlik doğrulama
 -   **Swagger** - API dokümantasyonu
+-   **Winston** - Loglama
+-   **Helmet** - Güvenlik başlıkları
+-   **Joi** - Veri doğrulama
 
 ## 🏗️ Proje Yapısı
 
@@ -47,24 +80,41 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 ├── client/              # Frontend uygulaması
 │   ├── src/             # React kaynak kodları
 │   │   ├── api/         # API entegrasyonları
+│   │   ├── assets/      # Statik dosyalar
 │   │   ├── components/  # React bileşenleri
+│   │   ├── config/      # Yapılandırma dosyaları
+│   │   ├── constants/   # Sabit değerler
 │   │   ├── context/     # React context'leri
+│   │   ├── hooks/       # Custom React hooks
 │   │   ├── pages/       # Sayfa bileşenleri
-│   │   └── utils/       # Yardımcı fonksiyonlar
+│   │   ├── utils/       # Yardımcı fonksiyonlar
+│   │   ├── App.jsx      # Ana uygulama bileşeni
+│   │   ├── index.css    # Global CSS
+│   │   └── main.jsx     # Uygulama giriş noktası
 │   ├── public/          # Statik dosyalar
 │   └── index.html       # Ana HTML dosyası
 │
 ├── server/              # Backend uygulaması
 │   ├── src/             # Express kaynak kodları
+│   │   ├── __tests__/   # Test dosyaları
 │   │   ├── config/      # Yapılandırma dosyaları
 │   │   ├── controllers/ # API kontrolcüleri
+│   │   ├── dtos/        # Veri transfer objeleri
+│   │   ├── logs/        # Log dosyaları
 │   │   ├── middlewares/ # Middleware fonksiyonları
 │   │   ├── models/      # Veri modelleri
+│   │   ├── repositories/# Veri erişim katmanı
 │   │   ├── routes/      # API rotaları
 │   │   ├── services/    # İş mantığı servisleri
-│   │   └── app.js       # Ana uygulama dosyası
+│   │   ├── utils/       # Yardımcı fonksiyonlar
+│   │   ├── app.js       # Express uygulama yapılandırması
+│   │   └── server.js    # Sunucu başlatma dosyası
 │   └── swagger.js       # Swagger yapılandırması
 │
+├── .github/             # GitHub yapılandırması
+├── .gitignore           # Git tarafından yok sayılacak dosyalar
+├── associations.pgerd   # Veritabanı ilişki diyagramı
+├── package-lock.json    # Bağımlılık kilitleme dosyası
 └── README.md            # Bu dosya
 ```
 
@@ -114,6 +164,17 @@ DB_USER=postgres
 DB_PASS=yourpassword
 DB_NAME=sosyapp
 JWT_SECRET=your_jwt_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+Frontend için `.env` dosyasında aşağıdaki değişkenleri ayarlayın:
+
+```env
+VITE_API_URL=http://localhost:3000/api
+VITE_SOCKET_URL=http://localhost:3000
 ```
 
 ## 📝 API Dokümantasyonu
@@ -123,17 +184,6 @@ API dokümantasyonu Swagger UI ile sağlanmaktadır. Backend'i çalıştırdıkt
 ```
 http://localhost:3000/api-docs
 ```
-
-## 📖 Veri Modelleri
-
-Proje, ilişkisel veri modelleri üzerine kurulmuştur. Ana modeller şunlardır:
-
--   **User**: Kullanıcı hesapları
--   **Post**: Kullanıcı gönderileri
--   **Comment**: Gönderi yorumları
--   **Like**: Gönderi beğenileri
--   **Follow**: Takip ilişkileri
--   **Saved**: Kaydedilen gönderiler
 
 ## 🧪 Test
 

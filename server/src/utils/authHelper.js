@@ -50,6 +50,7 @@ export async function verifyUserFromTokenCookie(req) {
  * Guvenlik icin secure ve sameSite='none' ayarlari kullanilir.
  * @param {string} accessToken - Kullanici icin uretilmis access token.
  * @param {string} refreshToken - Kullanici icin uretilmis refresh token.
+ * @param {string} csrfToken - Kullanici icin uretilmis csrf token.
  * @returns {void} Bu fonksiyon dogrudan bir deger donmez, response nesnesini modifiye eder.
  */
 export const setAuthCookies = (res, accessToken, refreshToken, csrfToken) => {
@@ -89,6 +90,12 @@ export const clearAuthCookies = (res) => {
     res.clearCookie("csrf_token", cookieOptions);
 };
 
+// CSRF token uretme fonksiyonu 32 haneli rastgele byte dizisi uretir
 export const generateCSRFToken = () => {
     return crypto.randomBytes(32).toString("hex");
+};
+
+// Mail dogrulama icin kullanilan OTP uretme fonksiyonu 6 haneli rastgele sayi uretir
+export const generateOTP = () => {
+    return Math.floor(100000 + Math.random() * 900000);
 };
