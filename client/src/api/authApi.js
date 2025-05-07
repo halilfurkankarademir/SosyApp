@@ -66,3 +66,23 @@ export const getCSRFToken = () => {
         console.log("Error getting CSRF token:", error);
     }
 };
+
+export const sendVerificationMail = () => {
+    try {
+        return apiClient
+            .post("/auth/send-verification-email")
+            .then((res) => res.data);
+    } catch (error) {
+        console.log("Error sending verification email:", error);
+    }
+};
+
+export const verifyUserWithOTP = (otpCode) => {
+    try {
+        return apiClient
+            .post("/auth/verify-user-with-otp", { otpCode })
+            .then((res) => res.data);
+    } catch (error) {
+        console.log("Error verifying OTP:", error);
+    }
+};

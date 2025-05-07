@@ -50,12 +50,16 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 ### Frontend
 
 -   **React 19** - Modern UI geliştirme
+-   **React 19** - Modern UI geliştirme
 -   **Vite 6** - Hızlı geliştirme deneyimi
 -   **TailwindCSS 4** - Utility-first CSS framework
+-   **Material Tailwind** - UI bileşenleri
 -   **Material Tailwind** - UI bileşenleri
 -   **React Router DOM 7** - Sayfa yönlendirme
 -   **Zustand** - State yönetimi
 -   **Socket.io Client** - Gerçek zamanlı iletişim
+-   **Axios** - HTTP istekleri
+-   **Cloudinary** - Medya yönetimi
 -   **Axios** - HTTP istekleri
 -   **Cloudinary** - Medya yönetimi
 
@@ -70,6 +74,9 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 -   **Winston** - Loglama
 -   **Helmet** - Güvenlik başlıkları
 -   **Joi** - Veri doğrulama
+-   **Winston** - Loglama
+-   **Helmet** - Güvenlik başlıkları
+-   **Joi** - Veri doğrulama
 
 ## 🏗️ Proje Yapısı
 
@@ -79,12 +86,20 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 │   ├── src/             # React kaynak kodları
 │   │   ├── api/         # API entegrasyonları
 │   │   ├── assets/      # Statik dosyalar
+│   │   ├── assets/      # Statik dosyalar
 │   │   ├── components/  # React bileşenleri
+│   │   ├── config/      # Yapılandırma dosyaları
+│   │   ├── constants/   # Sabit değerler
 │   │   ├── config/      # Yapılandırma dosyaları
 │   │   ├── constants/   # Sabit değerler
 │   │   ├── context/     # React context'leri
 │   │   ├── hooks/       # Custom React hooks
+│   │   ├── hooks/       # Custom React hooks
 │   │   ├── pages/       # Sayfa bileşenleri
+│   │   ├── utils/       # Yardımcı fonksiyonlar
+│   │   ├── App.jsx      # Ana uygulama bileşeni
+│   │   ├── index.css    # Global CSS
+│   │   └── main.jsx     # Uygulama giriş noktası
 │   │   ├── utils/       # Yardımcı fonksiyonlar
 │   │   ├── App.jsx      # Ana uygulama bileşeni
 │   │   ├── index.css    # Global CSS
@@ -95,20 +110,31 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 ├── server/              # Backend uygulaması
 │   ├── src/             # Express kaynak kodları
 │   │   ├── __tests__/   # Test dosyaları
+│   │   ├── __tests__/   # Test dosyaları
 │   │   ├── config/      # Yapılandırma dosyaları
 │   │   ├── controllers/ # API kontrolcüleri
 │   │   ├── dtos/        # Veri transfer objeleri
 │   │   ├── logs/        # Log dosyaları
+│   │   ├── dtos/        # Veri transfer objeleri
+│   │   ├── logs/        # Log dosyaları
 │   │   ├── middlewares/ # Middleware fonksiyonları
 │   │   ├── models/      # Veri modelleri
+│   │   ├── repositories/# Veri erişim katmanı
 │   │   ├── repositories/# Veri erişim katmanı
 │   │   ├── routes/      # API rotaları
 │   │   ├── services/    # İş mantığı servisleri
 │   │   ├── utils/       # Yardımcı fonksiyonlar
 │   │   ├── app.js       # Express uygulama yapılandırması
 │   │   └── server.js    # Sunucu başlatma dosyası
+│   │   ├── utils/       # Yardımcı fonksiyonlar
+│   │   ├── app.js       # Express uygulama yapılandırması
+│   │   └── server.js    # Sunucu başlatma dosyası
 │   └── swagger.js       # Swagger yapılandırması
 │
+├── .github/             # GitHub yapılandırması
+├── .gitignore           # Git tarafından yok sayılacak dosyalar
+├── associations.pgerd   # Veritabanı ilişki diyagramı
+├── package-lock.json    # Bağımlılık kilitleme dosyası
 ├── .github/             # GitHub yapılandırması
 ├── .gitignore           # Git tarafından yok sayılacak dosyalar
 ├── associations.pgerd   # Veritabanı ilişki diyagramı

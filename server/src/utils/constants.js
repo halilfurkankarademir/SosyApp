@@ -34,3 +34,29 @@ export const ErrorMessages = {
     COMMENT_UPDATE_FAILED: "Yorum güncellenemedi.",
     COMMENT_DELETION_FAILED: "Yorum silinemedi.",
 };
+
+export const verifyMailTemplate = (otpCode) => {
+    return `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 10px; border: 1px solid #e0e0e0;">
+            <h2 style="color: #2d2d2d;">Sosyapp'a Hoş Geldin!</h2>
+            <p style="font-size: 16px; color: #555;">
+              Sosyapp hesabını doğrulamak için aşağıdaki doğrulama kodunu kullanabilirsin:
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <div style="display: inline-block; background-color: #f3f4f6; padding: 16px 32px; font-size: 28px; font-weight: bold; color: #111827; border-radius: 8px; letter-spacing: 4px; border: 1px dashed #2563eb;">
+                ${otpCode}
+              </div>
+            </div>
+
+            <p style="font-size: 14px; color: #777;">
+              Kodun geçerlilik süresi 2 dakikadır. Eğer bu isteği sen yapmadıysan bu e-postayı göz ardı edebilirsin.
+            </p>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;" />
+            <p style="font-size: 12px; color: #999; text-align: center;">
+              Bu e-posta <strong>Sosyapp</strong> tarafından otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.
+            </p>
+          </div>
+        `;
+};

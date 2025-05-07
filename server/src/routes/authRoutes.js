@@ -9,6 +9,11 @@ import {
     validateLogin,
     validateRegister,
 } from "../middlewares/validators/authValidator.js";
+import mailController from "../controllers/mailController.js";
+import {
+    authenticateToken,
+    verifyCSRF,
+} from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -45,6 +50,26 @@ router.post("/logout", authController.logout);
  * @returns {void} Başarılı olursa `200 OK` ile yeni erişim token'ı, hata durumunda ilgili status kodları (401, 403, 500).
  */
 router.post("/refresh", authController.refreshToken);
+
+/**
+ * E-posta adresine dogrulama linki gonderir.
+ * @route {POST} /auth/send-verification-email
+ * @description E-posta adresine dogrulama linki gonderir.
+ * @returns {void} Başarılı olursa `200 OK`, hata durumunda ilgili status kodları (401, 500).
+ */
+router.post(
+    "/send-verification-email",
+    authenticateToken,
+    verifyCSRF,
+    mailController.sendVerificationMail
+);
+
+router.post(
+    "/verify-user-with-otp",
+    authenticateToken,
+    verifyCSRF,
+    mailController.verifyUserWithOTP
+);
 
 /**
  * Erişim token'ını yenileme.
