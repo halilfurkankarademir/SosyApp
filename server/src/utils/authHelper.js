@@ -70,6 +70,7 @@ export const setAuthCookies = (res, accessToken, refreshToken, csrfToken) => {
         httpOnly: true,
         secure: true,
         sameSite: "Strict",
+        maxAge: 1000 * 60 * 60 * 24, // 24 saat
     });
 };
 
@@ -82,7 +83,7 @@ export const clearAuthCookies = (res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "Strict",
         path: "/",
     };
     res.clearCookie("access_token", cookieOptions);
