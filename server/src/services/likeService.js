@@ -1,9 +1,12 @@
+import sequelize from "../config/sequelize.js";
+import logger from "../utils/logger.js";
+
 /**
  * Beğeni (like) işlemleri için servis katmanı.
  * Repository katmanını kullanarak iş mantığını yürütür.
  * @namespace likeService
  */
-const likeService = (likeRepository) => ({
+const likeService = (likeRepository, postRepository) => ({
     /**
      * Bir kullanıcının bir gönderiyi beğenmesini sağlar.
      * Repository üzerinden yeni bir beğeni kaydı oluşturur.
@@ -14,28 +17,75 @@ const likeService = (likeRepository) => ({
      * @throws {Error} Beğeni oluşturma işlemi sırasında bir hata oluşursa.
      */
     async createLike(userId, postId) {
+        const t = await sequelize.startUnmanagedTransaction();
         try {
-            const like = await likeRepository.create(userId, postId);
+            const existingLike = await likeRepository.findOneByUserIdAndPostId(
+                userId,
+                postId
+            );
+
+            if (existingLike) {
+                await t.commit(); // Henüz bir yazma yapılmadı, commit edip çıkabiliriz
+                // Veya rollback yapıp hata da fırlatabilirsiniz.
+                // Senaryonuza göre karar verin.
+                logger.info(
+                    `Like already exists for user ${userId} on post ${postId}. Returning existing like.`
+                );
+                return existingLike;
+            }
+
+            await postRepository.incrementLikeCount(postId, t);
+
+            const like = await likeRepository.create(userId, postId, t);
+
+            await t.commit(); // Tüm işlemler başarılıysa commit
             return like;
         } catch (error) {
-            throw new Error("Error creating like: " + error.message);
+            await t.rollback(); // Hata durumunda rollback
+            logger.error("likeService createLike error:", error);
+            throw new Error("Beğeni oluşturulamadı: " + error.message);
         }
     },
 
-    /**
-     * Bir kullanıcının bir gönderiye yaptığı beğeniyi geri almasını sağlar.
-     * Repository üzerinden ilgili beğeni kaydını siler.
-     * @memberof likeService
-     * @param {string} userId - Beğeniyi geri alan kullanıcının ID'si.
-     * @param {number} postId - Beğenisi geri alınan gönderinin ID'si.
-     * @returns {Promise<void>} İşlem başarılı olursa bir şey döndürmez (veya silinen kayıt sayısını döndürebilir).
-     * @throws {Error} Beğeni silme işlemi sırasında bir hata oluşursa.
-     */
     async deleteLike(userId, postId) {
+        const t = await sequelize.startUnmanagedTransaction();
         try {
-            await likeRepository.deleteByUserIdAndPostId(userId, postId);
+            const existingLike = await likeRepository.findOneByUserIdAndPostId(
+                userId,
+                postId,
+                t
+            );
+
+            if (!existingLike) {
+                await t.rollback();
+                return {
+                    success: false,
+                    message: "Kaldırılacak beğeni bulunamadı.",
+                    deletedCount: 0,
+                };
+            }
+
+            const deletedCount = await likeRepository.deleteByUserIdAndPostId(
+                userId,
+                postId,
+                t
+            );
+
+            if (deletedCount > 0) {
+                await postRepository.decrementLikeCount(postId, t);
+            }
+
+            await t.commit();
+
+            return {
+                success: true,
+                message: "Beğeni başarıyla kaldırıldı.",
+                deletedCount,
+            };
         } catch (error) {
-            throw new Error("Error deleting like: " + error.message);
+            await t.rollback();
+            logger.error("likeService deleteLike error:", error);
+            throw new Error("Beğeni silinemedi: " + error.message);
         }
     },
 

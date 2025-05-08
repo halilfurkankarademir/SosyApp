@@ -2,6 +2,7 @@ import { Op } from "@sequelize/core";
 import logger from "../utils/logger.js";
 import { addPostDetailsForUser } from "../utils/helpers.js";
 import { ErrorMessages } from "../utils/constants.js";
+import { where } from "sequelize";
 
 /**
  * Gönderi işlemleri için servis katmanı.
@@ -98,6 +99,44 @@ const postService = (
         } catch (error) {
             logger.error("Error fetching feed posts:", error);
             throw new Error("Error getting feed posts");
+        }
+    },
+
+    /**
+     * Trending postlarını sayfalanmış olarak getirir.
+     * @memberof postService
+     * @param {string} userId - Trending gönderileri gösterilecek kullanıcının ID'si.
+     * @param {number} offset - Atlanacak gönderi sayısı.
+     * @param {number} limit - Sayfa basina gönderi sayısı.
+     * @returns {Promise<{posts: Array<Post>, count: number}>} Trending gönderileri ve toplam gönderi sayısını içeren nesne.
+     * @throws {Error} Trending gönderilerini getirme sırasında bir hata oluşursa.
+     */
+    getTrendingPosts: async (userId, offset, limit) => {
+        try {
+            logger.info("Getting trending posts...");
+
+            // Kullanicinin kendi gonderilerini gormesini engellemek icin
+            const postFilters = { userId: { [Op.ne]: userId } };
+
+            const { rows: posts, count } =
+                await postRepository.findTrendingPosts({
+                    where: postFilters,
+                    offset,
+                    limit,
+                });
+
+            if (!posts) {
+                return [];
+            }
+
+            const updatedPosts = addPostDetailsForUser(posts, userId);
+
+            logger.info("Trending posts fetched successfully");
+
+            return { posts: updatedPosts, count };
+        } catch (error) {
+            logger.error("Error getting trending posts:", error);
+            throw new Error("Error getting trending posts");
         }
     },
 

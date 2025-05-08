@@ -26,6 +26,19 @@ const router = express.Router();
 router.get("/feed", authenticateToken, postController.getFeedPosts);
 
 /**
+ * Trend gönderilerini getirir.
+ * @route {GET} /posts/trending
+ * @description Trend gönderilerini listeler. Kimlik doğrulama gerektirir.
+ * @returns {void} Başarılı olursa `200 OK` ile gönderi dizisi, hata durumunda (401, 500).
+ */
+router.get(
+    "/trendings",
+    authenticateToken,
+    verifyCSRF,
+    postController.getTrendingPosts
+);
+
+/**
  * Belirli bir gönderiyi ID ile getirir.
  * @route {GET} /posts/:postId
  * @description ID'si verilen gönderinin detaylarını getirir. `postId` doğrulaması gerektirir. (Kimlik doğrulama isteğe bağlı olabilir)

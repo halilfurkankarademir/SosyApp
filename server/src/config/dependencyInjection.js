@@ -31,7 +31,7 @@ const searchRepo = searchRepository;
 // Burada servislere ihtiyacımız olan repositoryleri ve servisleri, parametre olarak gonderiyoruz
 const userSvc = userServiceFactory(userRepo);
 const followSvc = followServiceFactory(followRepo, userRepo);
-const likeSvc = likeServiceFactory(likeRepo);
+const likeSvc = likeServiceFactory(likeRepo, postRepo);
 const commentSvc = commentServiceFactory(commentRepo);
 const searchSvc = searchServiceFactory(postRepo, searchRepo);
 const postSvc = postServiceFactory(likeRepo, postRepo, savedRepo, followSvc);

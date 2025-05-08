@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { PostCard, NewPost } from "./";
-import { FiInbox } from "react-icons/fi";
+import { FiCoffee, FiCompass, FiInbox } from "react-icons/fi";
+import { useNavigation } from "../../../context/NavigationContext";
 
 // filters prop'unu tekrar ekledik ve kullanacağız
-const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
+const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
     const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [totalPostsCount, setTotalPostsCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+
+    const { navigateToPage } = useNavigation();
 
     // loadInitialPosts, fetchOptions VE filters'a bağlı olmalı
     const loadInitialPosts = useCallback(async () => {
@@ -89,21 +92,45 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters }) => {
     // Geri kalanı aynı...
     const renderContent = () => {
         if (!isLoading && posts.length === 0 && !hasMore) {
-            return (
-                <div className="flex flex-col items-center justify-center text-center text-gray-400 py-12 px-4">
-                    <FiInbox
-                        className="h-16 w-16 mb-4 text-gray-500"
-                        aria-hidden="true"
-                    />
-                    <h3 className="text-lg font-semibold text-white">
-                        Gönderi Bulunamadı
-                    </h3>
-                    <p className="text-sm">
-                        Görünüşe göre buralar biraz sessiz veya aramanızla
-                        eşleşen sonuç yok.
-                    </p>
-                </div>
-            );
+            if (activePage === "homepage") {
+                return (
+                    <div className="flex flex-col items-center justify-center text-center text-gray-300 py-12 px-4">
+                        <FiCoffee
+                            className="h-16 w-16 mb-4 text-pink-400 animate-pulse"
+                            aria-hidden="true"
+                        />
+                        <h3 className="text-lg font-semibold text-white mb-1">
+                            Keşfedilecek Yeni Dünyalar Seni Bekliyor!
+                        </h3>
+                        <p className="text-sm text-gray-400 mb-4 max-w-sm">
+                            Görünüşe göre buralarda henüz yeni gönderiler
+                            filizlenmemiş. Ama endişelenme, macera dolu
+                            içerikler bir tık uzağında!
+                        </p>
+                        <button
+                            className="mt-3 py-2 px-5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium text-md shadow-md hover:shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+                            onClick={() => navigateToPage("/explore")}
+                        >
+                            Hemen Keşfetmeye Başla
+                        </button>
+                    </div>
+                );
+            } else {
+                return (
+                    <div className="flex flex-col items-center justify-center text-center text-gray-400 py-12 px-4">
+                        <FiInbox
+                            className="h-16 w-16 mb-4 text-gray-500"
+                            aria-hidden="true"
+                        />
+                        <h3 className="text-lg font-semibold text-white">
+                            Gönderi Bulunamadı
+                        </h3>
+                        <p className="text-sm">
+                            Aradığınız kriterlere uygun gönderi bulunamadı.
+                        </p>
+                    </div>
+                );
+            }
         }
 
         if (posts.length > 0) {

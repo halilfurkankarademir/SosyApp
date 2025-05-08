@@ -27,6 +27,11 @@ const Post = sequelize.define(
             type: DataTypes.STRING(255),
             allowNull: true,
         },
+        likeCount: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
     },
     {
         timestamps: true,

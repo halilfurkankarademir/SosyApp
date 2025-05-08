@@ -1,6 +1,12 @@
 import React from "react";
 // Gerekli kullanıcı ikonlarını import et...
-import { MdClose, MdAccountCircle, MdSettings, MdLogout } from "react-icons/md";
+import {
+    MdClose,
+    MdAccountCircle,
+    MdSettings,
+    MdLogout,
+    MdAdminPanelSettings,
+} from "react-icons/md";
 import { BsPeopleFill } from "react-icons/bs";
 import { GoHeartFill } from "react-icons/go";
 import { BiBookmark } from "react-icons/bi";
@@ -13,6 +19,8 @@ const NavbarMobileMenu = ({
     navigateToPage,
     onSettingsClick,
     onLogoutClick,
+    onAdminClick,
+    isAdmin,
 }) => {
     const user = useUserStore((state) => state.user);
 
@@ -56,6 +64,22 @@ const NavbarMobileMenu = ({
 
                 {/* Menü Linkleri */}
                 <nav className="space-y-2">
+                    {/* Admin Paneli seçeneği sadece admin kullanıcılar için gösterilir */}
+                    {isAdmin && isAdmin() && (
+                        <button
+                            onClick={() => {
+                                onClose();
+                                onAdminClick();
+                            }}
+                            className={buttonClass}
+                        >
+                            <MdAdminPanelSettings
+                                size={20}
+                                className={iconClass}
+                            />{" "}
+                            <span className={textClass}>Yönetici Paneli</span>
+                        </button>
+                    )}
                     <button
                         onClick={() =>
                             handleNavigate(`/profile/${user?.username}`)

@@ -306,7 +306,7 @@ const userService = (userRepository) => ({
      */
     getRandomUsers: async (requestedUserId) => {
         try {
-            const userLimit = 3;
+            const userLimit = 5;
             const users = await userRepository.getRandomUsers(
                 userLimit,
                 requestedUserId

@@ -11,7 +11,8 @@ import { ShowToast } from "../../components/ui/toasts/ShowToast";
 
 const LoginPage = () => {
     const { navigateToPage } = useNavigation();
-    const { isAuthenticated, setIsAuthenticated } = useAuth();
+    const { isAuthenticated, setIsAuthenticated, setUser, setUserRole } =
+        useAuth();
 
     const handleLogin = async (e) => {
         try {
@@ -22,16 +23,27 @@ const LoginPage = () => {
                 ShowToast("warning", "Lütfen e-posta ve şifre giriniz.");
                 return;
             }
-            const user = await login(email, password);
-            if (!user) {
+            const response = await login(email, password);
+            if (!response) {
                 console.log("Giriş işlemi başarısız!");
                 return;
             }
+            // Kullanıcı bilgilerini context'e kaydet
             setIsAuthenticated(true);
-            navigateToPage("/");
+            setUser(response.user);
+            setUserRole(response.user.role);
+
+            // Admin kullanıcı ise admin paneline yönlendir
+            if (response.user.role === "admin") {
+                navigateToPage("/admin");
+            } else {
+                navigateToPage("/");
+            }
         } catch (error) {
             console.log("Login error:", error);
-            const errorMessage = error.response.data.details;
+            const errorMessage = error.response
+                ? error.response.data.details
+                : "Giriş başarısız";
             ShowToast("error", errorMessage);
         }
     };

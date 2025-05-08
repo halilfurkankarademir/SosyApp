@@ -21,7 +21,7 @@ const PostCard = ({ postData, onPostRemove }) => {
     const {
         id,
         user,
-        likes: initialLikes,
+        likeCount,
         comments,
         content,
         media,
@@ -39,7 +39,7 @@ const PostCard = ({ postData, onPostRemove }) => {
 
     const [isLiked, setIsLiked] = useState(initialIsLiked);
     const [isSaved, setIsSaved] = useState(initialIsSaved);
-    const [likesCount, setLikesCount] = useState(initialLikes.length || 0);
+    const [likesCount, setLikesCount] = useState(likeCount || 0);
     const [showMoreOptions, setShowMoreOptions] = useState(false);
 
     const handleLikeToggle = useCallback(async () => {
@@ -142,8 +142,8 @@ const PostCard = ({ postData, onPostRemove }) => {
     useEffect(() => {
         setIsLiked(initialIsLiked);
         setIsSaved(initialIsSaved);
-        setLikesCount(initialLikes.length || 0);
-    }, [initialIsLiked, initialIsSaved, initialLikes]);
+        setLikesCount(likeCount || 0);
+    }, [initialIsLiked, initialIsSaved]);
 
     if (!postData || !id) {
         return (
@@ -240,7 +240,7 @@ const PostCard = ({ postData, onPostRemove }) => {
                         src={media}
                         alt="Gönderi Medyası"
                         effect="blur"
-                        className="w-full max-h-[75vh] object-contain cursor-pointer"
+                        className="w-full max-h-[75vh] object-cover cursor-pointer"
                         threshold={300}
                         wrapperClassName="w-full"
                     />

@@ -26,7 +26,7 @@ const Navbar = () => {
 
     // --- Context ve Store Kullanımı (Aynı) ---
     const { navigateToPage } = useNavigation();
-    const { isAuthenticated, setIsAuthenticated } = useAuth();
+    const { isAuthenticated, setIsAuthenticated, isAdmin } = useAuth();
     const { notifications, isAllNotificationsRead, setIsAllNotificationsRead } =
         useNotification();
 
@@ -67,10 +67,17 @@ const Navbar = () => {
             setSearchQuery("");
         }
     };
+
+    const handleAdminClick = () => {
+        setShowSettings(false);
+        navigateToPage("/admin");
+    };
+
     const handleSettingsClick = () => {
         setShowSettings(false);
         navigateToPage("/settings");
     };
+
     const handleLogoutClick = async () => {
         setShowSettings(false);
         closeMobileMenu();
@@ -161,6 +168,7 @@ const Navbar = () => {
                     <NavbarSettingsMenu
                         show={showSettings}
                         menuRef={settingsRef}
+                        onAdminClick={handleAdminClick}
                         onSettingsClick={handleSettingsClick}
                         onLogoutClick={handleLogoutClick}
                     />
@@ -173,6 +181,8 @@ const Navbar = () => {
                         navigateToPage={navigateToPage}
                         onSettingsClick={handleSettingsClick}
                         onLogoutClick={handleLogoutClick}
+                        onAdminClick={handleAdminClick}
+                        isAdmin={isAdmin}
                     />
 
                     {/* Mobil Arama */}

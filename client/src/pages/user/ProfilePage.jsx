@@ -84,7 +84,7 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className="bg-neutral-900 min-h-screen text-white px-4 md:px-8 lg:px-20 py-52 md:py-48 lg:py-72">
+            <div className="bg-neutral-900 min-h-screen text-white px-4 md:px-8 lg:px-20 py-52 md:py-48 lg:py-60">
                 {/* Profil Bilgileri */}
                 <div className="container mx-auto">
                     <div className="flex flex-col md:flex-row -mt-20 mb-6">

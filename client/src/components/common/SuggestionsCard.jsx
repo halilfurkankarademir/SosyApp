@@ -6,13 +6,14 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import { followUser } from "../../api/followApi";
 import { ShowToast } from "../ui/toasts/ShowToast";
 
-const SuggestionsCard = ({ suggestions }) => {
+const SuggestionsCard = ({ suggestions, onFollow }) => {
     const { navigateToPage } = useNavigation();
 
     const handleFollow = async (userId, username) => {
         try {
             await followUser(userId);
             ShowToast("success", `${username} takip edildi.`);
+            onFollow();
         } catch (error) {
             console.error("Error following user:", error);
         }

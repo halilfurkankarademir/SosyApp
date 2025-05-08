@@ -106,6 +106,20 @@ export default {
         }
     },
 
+    async findTrendingPosts(options = {}) {
+        try {
+            return await Post.findAndCountAll({
+                include: standartIncludes,
+                order: [["likeCount", "DESC"]],
+                ...options, // Gelen where, limit, offset vb. uygula
+                distinct: true,
+            });
+        } catch (error) {
+            logger.error("Repository find posts error:", error);
+            throw new Error(`Gönderiler getirilemedi.`);
+        }
+    },
+
     /**
      * Belirli bir gönderiyi ID'sine göre ilişkili verileriyle birlikte bulur.
      * @param {number} postId - Bulunacak gönderinin ID'si.
@@ -122,5 +136,19 @@ export default {
             logger.error("Repository find post by id error:", error);
             throw new Error(`Gönderi getirilemedi.`);
         }
+    },
+
+    async incrementLikeCount(postId, t) {
+        await Post.increment(
+            { likeCount: 1 },
+            { where: { id: postId }, transaction: t }
+        );
+    },
+
+    async decrementLikeCount(postId, t) {
+        await Post.decrement(
+            { likeCount: 1 },
+            { where: { id: postId }, transaction: t }
+        );
     },
 };

@@ -37,13 +37,14 @@ const HomePage = () => {
 
     return (
         <>
-            <div className="page-container md:py-36 md:px-6">
+            <div className="page-container md:py-24 md:px-6">
                 <div className="page-grid-layout">
                     <Sidebar />
                     <div className="col-span-1 md:col-span-3 md:ml-72 w-full">
                         <RenderPosts
                             fetchOptions={fetchFeedPosts}
                             canCreatePost={true}
+                            activePage={"homepage"}
                         />
                     </div>
                     <div className="col-span-1 md:col-span-1 md:ml-72 w-full">

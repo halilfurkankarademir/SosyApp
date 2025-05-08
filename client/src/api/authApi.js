@@ -32,11 +32,19 @@ export const login = (email, password) => {
             .then((response) => {
                 const csrfToken = response.data.csrfToken;
                 document.cookie = `csrfToken=${csrfToken}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+
+                // Kullanıcı bilgilerini localStorage'a kaydet
                 localStorage.setItem("isAuthenticated", true);
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(response.data.user)
+                );
+
                 return response.data;
             })
             .catch((error) => {
                 localStorage.setItem("isAuthenticated", false);
+                localStorage.removeItem("user");
                 throw error;
             });
     } catch (error) {
@@ -46,8 +54,25 @@ export const login = (email, password) => {
 
 export const logout = () => {
     try {
-        deleteCookie("csrfToken");
-        return apiClient.post("/auth/logout");
+        return apiClient
+            .post("/auth/logout")
+            .then((response) => {
+                localStorage.removeItem("isAuthenticated");
+                localStorage.removeItem("user");
+                deleteCookie("accessToken");
+                deleteCookie("refreshToken");
+                deleteCookie("csrfToken");
+                return response;
+            })
+            .catch((error) => {
+                // Hata olsa bile çıkış işlemini tamamlamak için local storage temizlenir
+                localStorage.removeItem("isAuthenticated");
+                localStorage.removeItem("user");
+                deleteCookie("accessToken");
+                deleteCookie("refreshToken");
+                deleteCookie("csrfToken");
+                throw error;
+            });
     } catch (error) {
         console.log("Error logging out user:", error);
     }

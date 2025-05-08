@@ -18,9 +18,9 @@ const likeRepository = {
      * @returns {Promise<Like>} Oluşturulan Like modeli örneği.
      * @throws {Error} Veritabanı hatası (örn: zaten beğenilmişse unique constraint) durumunda.
      */
-    async create(userId, postId) {
+    async create(userId, postId, transaction) {
         try {
-            const like = await Like.create({ userId, postId });
+            const like = await Like.create({ userId, postId }, { transaction });
             return like;
         } catch (error) {
             logger.error("Error in likeRepository.create:", error);
@@ -35,9 +35,12 @@ const likeRepository = {
      * @returns {Promise<number>} Silinen kayıt sayısı (genellikle 1 veya 0).
      * @throws {Error} Veritabanı hatası durumunda.
      */
-    async deleteByUserIdAndPostId(userId, postId) {
+    async deleteByUserIdAndPostId(userId, postId, transaction) {
         try {
-            const result = await Like.destroy({ where: { userId, postId } });
+            const result = await Like.destroy({
+                where: { userId, postId },
+                transaction,
+            });
             return result;
         } catch (error) {
             logger.error(
@@ -73,9 +76,12 @@ const likeRepository = {
      * @returns {Promise<Like|null>} Bulunan Like modeli örneği veya null.
      * @throws {Error} Veritabanı hatası durumunda.
      */
-    async findOneByUserIdAndPostId(userId, postId) {
+    async findOneByUserIdAndPostId(userId, postId, transaction) {
         try {
-            const like = await Like.findOne({ where: { userId, postId } });
+            const like = await Like.findOne({
+                where: { userId, postId },
+                transaction,
+            });
             return like;
         } catch (error) {
             logger.error(

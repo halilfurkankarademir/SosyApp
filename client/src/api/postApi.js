@@ -46,6 +46,17 @@ export const fetchFeedPosts = async (page) => {
     }
 };
 
+export const fetchTrendingPosts = async (page) => {
+    try {
+        return apiClient
+            .get("/posts/trendings", { params: { page } })
+            .then((response) => response.data);
+    } catch (error) {
+        console.error("Error fetching trending posts:", error);
+        throw error;
+    }
+};
+
 export const fetchPostById = async (postId) => {
     try {
         return apiClient

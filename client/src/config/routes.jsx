@@ -7,6 +7,7 @@ import ErrorPage from "../pages/public/ErrorPage";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import LoadingPage from "../pages/public/LoadingPage";
+import ProtectedAdminRoute from "../components/common/ProtectedAdminRoute";
 
 // Regular imports for previously lazy-loaded pages
 const ConnectionsPage = lazy(() => import("../pages/home/ConnectionsPage"));
@@ -23,11 +24,27 @@ const FavoritesPage = lazy(() => import("../pages/home/FavoritesPage"));
 const SavedPage = lazy(() => import("../pages/home/SavedPage"));
 const SettingsPage = lazy(() => import("../pages/user/SettingsPage"));
 const SearchPage = lazy(() => import("../pages/home/SearchPage"));
+const ExplorePage = lazy(() => import("../pages/home/ExplorePage"));
 const AuthSelectionPage = lazy(() => import("../pages/auth/AuthSelectionPage"));
 const UserInfoPage = lazy(() => import("../pages/user/UserInfoPage"));
 const GroupsPage = lazy(() => import("../pages/home/GroupsPage"));
+
+// Admin sayfaları
 const AdminDashboardPage = lazy(() =>
     import("../pages/admin/AdminDashboardPage")
+);
+const UsersManagementPage = lazy(() =>
+    import("../pages/admin/UsersManagementPage")
+);
+const ContentManagementPage = lazy(() =>
+    import("../pages/admin/ContentManagementPage")
+);
+const AdminSettingsPage = lazy(() => import("../pages/admin/SettingsPage"));
+const CommentsManagementPage = lazy(() =>
+    import("../pages/admin/CommentsManagementPage")
+);
+const ReportsManagementPage = lazy(() =>
+    import("../pages/admin/ReportsManagementPage")
 );
 
 export const AppRoutes = () => {
@@ -63,6 +80,7 @@ export const AppRoutes = () => {
                     <Route path="/connections" element={<ConnectionsPage />} />
                     <Route path="/groups" element={<GroupsPage />} />
                     <Route path="/search" element={<SearchPage />} />
+                    <Route path="/explore" element={<ExplorePage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route
                         path="/profile/:username"
@@ -88,7 +106,55 @@ export const AppRoutes = () => {
                     <Route path="/user-info" element={<UserInfoPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
 
-                    <Route path="/admin" element={<AdminDashboardPage />} />
+                    {/* Admin Routes */}
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedAdminRoute>
+                                <AdminDashboardPage />
+                            </ProtectedAdminRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <ProtectedAdminRoute>
+                                <UsersManagementPage />
+                            </ProtectedAdminRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/posts"
+                        element={
+                            <ProtectedAdminRoute>
+                                <ContentManagementPage />
+                            </ProtectedAdminRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/comments"
+                        element={
+                            <ProtectedAdminRoute>
+                                <CommentsManagementPage />
+                            </ProtectedAdminRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/reports"
+                        element={
+                            <ProtectedAdminRoute>
+                                <ReportsManagementPage />
+                            </ProtectedAdminRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/settings"
+                        element={
+                            <ProtectedAdminRoute>
+                                <AdminSettingsPage />
+                            </ProtectedAdminRoute>
+                        }
+                    />
 
                     <Route path="/error" element={<ErrorPage />} />
                 </Routes>

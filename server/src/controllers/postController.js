@@ -142,6 +142,27 @@ const postController = {
             next(error);
         }
     },
+
+    getTrendingPosts: async (req, res, next) => {
+        try {
+            logger.info("Getting trending posts...");
+            const userId = req.user.uid;
+            const { offset, limit } = getPagination(req);
+            const posts = await postService.getTrendingPosts(
+                userId,
+                offset,
+                limit
+            );
+            if (!posts) {
+                return res.status(404).json({ error: "No posts found" });
+            }
+            logger.info("Trending posts fetched successfully");
+            res.status(200).json(posts);
+        } catch (error) {
+            logger.error("Error getting trending posts:", error);
+            next(error);
+        }
+    },
 };
 
 export default postController;

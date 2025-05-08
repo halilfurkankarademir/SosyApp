@@ -48,11 +48,6 @@ const io = new Server(server, {
  */
 const userSockets = {};
 
-/**
- * Swagger API dokümantasyon verisi.
- */
-// let swaggerDocument;
-
 // 2. Middleware'ler
 
 // Uygulamanın bir vekil sunucu (proxy) arkasında çalıştığını varsayarak doğru istemci IP adresini almasını sağlar.
@@ -69,9 +64,6 @@ app.use(helmet());
 
 // Gelen isteklerdeki cookie'leri ayrıştırarak req.cookies nesnesine yerleştirir.
 app.use(cookieParser());
-
-// Swagger UI kullanarak API dokümantasyonunu sunar.
-// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // DDOS saldırılarına karşı belirli auth rotalarında hız sınırlaması uygular.
 app.use("/api/auth/login", authLimiter);
@@ -95,13 +87,22 @@ export async function initializeServer() {
     if (initPromise) return initPromise;
     initPromise = (async () => {
         try {
-            // if (!swaggerDocument) {
-            //     swaggerDocument = JSON.parse(
-            //         await readFile(
-            //             new URL("../swagger-output.json", import.meta.url)
-            //         )
-            //     );
-            // }
+            // Swagger dokümanını yükle
+            try {
+                const swaggerDocument = JSON.parse(
+                    await readFile(
+                        new URL("../swagger-output.json", import.meta.url)
+                    )
+                );
+                app.use(
+                    "/api-docs",
+                    swaggerUi.serve,
+                    swaggerUi.setup(swaggerDocument)
+                );
+                logger.info("✅ Swagger API dokümantasyonu yüklendi");
+            } catch (swaggerError) {
+                logger.error("❌ Swagger dokümanı yüklenemedi:", swaggerError);
+            }
 
             logger.info("Veritabanı ve modeller yukleniyor...");
             // Veritabanı bağlantısı ve modelleri senkronize et

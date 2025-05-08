@@ -1415,6 +1415,68 @@
           }
         }
       }
+    },
+    "/api/posts/trendings": {
+      "get": {
+        "description": "Trend gönderileri getirir (en çok beğeni alan içerikler).",
+        "tags": [
+          "Posts"
+        ],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "Sayfa numarası (1'den başlar).",
+            "default": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "description": "Sayfa başına gönderi sayısı.",
+            "default": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trend gönderiler başarıyla getirildi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "posts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/PostResponse"
+                  }
+                },
+                "count": {
+                  "type": "integer",
+                  "description": "Toplam trend gönderi sayısı"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Yetkisiz erişim",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "404": {
+            "description": "Not Found - Trend gönderi bulunamadı",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
     }
   },
   "definitions": {

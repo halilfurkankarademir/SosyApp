@@ -5,7 +5,7 @@ import { colors } from "../../../utils/constants"; // Path'i güncelle
 const NavbarLogo = ({ onClick }) => {
     return (
         <h1
-            className="text-2xl md:text-3xl select-none cursor-pointer"
+            className="text-2xl md:text-3xl select-none cursor-pointer mb-2"
             style={{
                 color: colors.pink,
                 fontFamily: "Bagel Fat One",
