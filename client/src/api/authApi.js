@@ -46,7 +46,7 @@ export const login = (email, password) => {
 
 export const logout = () => {
     try {
-        deleteCookie("csrf_token");
+        deleteCookie("csrfToken");
         return apiClient.post("/auth/logout");
     } catch (error) {
         console.log("Error logging out user:", error);

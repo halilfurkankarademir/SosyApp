@@ -51,6 +51,12 @@ export const verifyCSRF = (req, res, next) => {
     const csrfFromCookie = req.cookies.csrf_token;
     console.log("CSRF token from cookie:", csrfFromCookie);
     const csrfFromHeaders = req.headers["x-csrf-token"];
+
+    if (csrfFromHeaders && csrfFromHeaders.includes("expires=")) {
+        console.log("Expires found in headers");
+        csrfFromHeaders = csrfFromHeaders.split(" ")[0];
+    }
+
     console.log("CSRF token from headers:", csrfFromHeaders);
     const isMatch = csrfFromCookie === csrfFromHeaders;
     console.log("CSRF tokens match:", isMatch);
