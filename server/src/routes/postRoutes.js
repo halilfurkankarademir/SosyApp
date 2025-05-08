@@ -31,12 +31,7 @@ router.get("/feed", authenticateToken, postController.getFeedPosts);
  * @description Trend gönderilerini listeler. Kimlik doğrulama gerektirir.
  * @returns {void} Başarılı olursa `200 OK` ile gönderi dizisi, hata durumunda (401, 500).
  */
-router.get(
-    "/trendings",
-    authenticateToken,
-    verifyCSRF,
-    postController.getTrendingPosts
-);
+router.get("/trendings", authenticateToken, postController.getTrendingPosts);
 
 /**
  * Belirli bir gönderiyi ID ile getirir.
