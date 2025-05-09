@@ -36,14 +36,9 @@ const userController = {
 
             const users = await userService.getAllUsers();
 
-            // DTO ile hassas verileri filtrele
-            const usersDTOInstance = users.map(
-                (user) => new AdminProfileDTO(user)
-            );
-
             logger.info("Users fetched successfully");
 
-            res.status(200).json(usersDTOInstance);
+            res.status(200).json(users);
         } catch (error) {
             logger.error("Error getting users:", error);
             res.status(500).json({ error: error.message });
@@ -67,7 +62,10 @@ const userController = {
 
             const userId = req.params.userId;
 
-            const user = await userService.getUserById(userId);
+            const user = await userService.getUserById(
+                userId,
+                isAdmin ? "admin" : "user"
+            );
 
             if (!user) {
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
@@ -75,9 +73,7 @@ const userController = {
 
             logger.info("User fetched successfully");
 
-            const userDTOInstance = new AdminProfileDTO(user);
-
-            res.status(200).json(userDTOInstance);
+            res.status(200).json(user);
         } catch (error) {
             logger.error("Error getting user:", error);
             res.status(500).json({ error: error.message });
@@ -93,14 +89,13 @@ const userController = {
         try {
             logger.info("Getting current user...");
             const userId = req.user.uid; // Kimlik doğrulama middleware'inden gelir
-            const user = await userService.getUserById(userId);
+            const permission = req.user.role;
+            const user = await userService.getUserById(userId, permission);
             if (!user) {
-                // Bu durum genellikle token geçerli ama kullanıcı DB'de yoksa olur
                 return res.status(404).json({ error: "Kullanıcı bulunamadı" });
             }
-            const userDTOInstance = new userDTO(user);
             logger.info("Current user fetched successfully");
-            res.status(200).json(userDTOInstance);
+            res.status(200).json(user);
         } catch (error) {
             logger.error("Error getting current user:", error);
             res.status(500).json({ error: error.message });

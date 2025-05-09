@@ -191,7 +191,10 @@ const authController = {
 
             logger.info("Token refreshed successfully");
 
-            res.status(200).json({ message: "Token refreshed successfully" });
+            res.status(200).json({
+                message: "Token refreshed successfully",
+                csrfToken,
+            });
         } catch (error) {
             logger.error("Error refreshing token:", error);
             res.status(500).json({ error: "Token refresh failed" });

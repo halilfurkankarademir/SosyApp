@@ -24,8 +24,9 @@ apiClient.interceptors.response.use(
             }
 
             try {
-                await apiClient.post("/auth/refresh");
-
+                const response = await apiClient.post("/auth/refresh");
+                const csrfToken = response.data;
+                document.cookie = `csrfToken=${csrfToken}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
                 return apiClient(originalRequest);
             } catch (error) {
                 return Promise.reject(error);

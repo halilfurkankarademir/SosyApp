@@ -1,3 +1,5 @@
+import AdminProfileDTO from "../dtos/profileDTOs/AdminProfileDTO.js";
+import PublicProfileDTO from "../dtos/profileDTOs/PublicProfileDTO.js";
 import { ErrorMessages } from "../utils/constants.js";
 import logger from "../utils/logger.js";
 
@@ -130,7 +132,12 @@ const userService = (userRepository) => ({
                 operation: "getAllUsers",
             });
 
-            return users;
+            // DTO ile hassas verileri filtrele
+            const usersDTOInstance = users.map(
+                (user) => new AdminProfileDTO(user)
+            );
+
+            return usersDTOInstance;
         } catch (error) {
             logger.error("Failed to fetch all users", {
                 error: error.message,
@@ -147,7 +154,7 @@ const userService = (userRepository) => ({
      * @returns {Promise<User>} Bulunan kullanıcı nesnesini donderir.
      * @throws {Error} Kullanici getirilirken bir hata olusursa hatayi donderir.
      */
-    getUserById: async (userId) => {
+    getUserById: async (userId, permission) => {
         try {
             logger.info(`Fetching user by ID`, { userId });
             const user = await userRepository.findUser({
@@ -164,7 +171,13 @@ const userService = (userRepository) => ({
                 operation: "getUserById",
             });
 
-            return user;
+            let userDTOInstance;
+
+            if (permission === "admin")
+                userDTOInstance = new AdminProfileDTO(user);
+            else userDTOInstance = new PublicProfileDTO(user);
+
+            return userDTOInstance;
         } catch (error) {
             logger.error(` failed to fetch user by ID`, {
                 userId,
