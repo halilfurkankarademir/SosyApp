@@ -1,4 +1,3 @@
-// Repository ve service modüllerini dahil ediyoruz
 import {
     commentRepository,
     followRepository,
@@ -19,7 +18,6 @@ import {
     userService as userServiceFactory,
 } from "../services/index.js";
 
-// Her bir repository dosyasini bir değişken olarak tanımlıyoruz
 const userRepo = userRepository;
 const followRepo = followRepository;
 const likeRepo = likeRepository;
@@ -28,17 +26,24 @@ const savedRepo = savedRepository;
 const commentRepo = commentRepository;
 const searchRepo = searchRepository;
 
-// Burada servislere ihtiyacımız olan repositoryleri ve servisleri, parametre olarak gonderiyoruz
+// First create the services that don't have dependencies on others
 const userSvc = userServiceFactory(userRepo);
-const followSvc = followServiceFactory(followRepo, userRepo);
 const likeSvc = likeServiceFactory(likeRepo, postRepo);
-const commentSvc = commentServiceFactory(commentRepo);
 const searchSvc = searchServiceFactory(postRepo, searchRepo);
+
+// Then create followService which depends on userRepo
+const followSvc = followServiceFactory(followRepo, userRepo);
+
+// Create postService next (needs likeRepo, postRepo, savedRepo, followSvc)
 const postSvc = postServiceFactory(likeRepo, postRepo, savedRepo, followSvc);
+
+// Now create commentService with the postService
+const commentSvc = commentServiceFactory(commentRepo, postSvc);
+
+// Then create the remaining services
 const authSvc = authServiceFactory(userRepo, userSvc);
 const savedSvc = savedServiceFactory(savedRepo, postSvc);
 
-// Dependency Injection Container'da servisleri ve repositoryleri tutuyoruz
 const diContainer = {
     authService: authSvc,
     commentService: commentSvc,
@@ -50,5 +55,4 @@ const diContainer = {
     userService: userSvc,
 };
 
-// Dependency Injection Container'i export ediyoruz
 export default diContainer;

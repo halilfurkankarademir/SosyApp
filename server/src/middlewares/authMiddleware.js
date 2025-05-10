@@ -1,20 +1,14 @@
 /**
- * @fileoverview HTTP istekleri için kimlik doğrulama middleware'i.
- * @module middlewares/authMiddleware
+ * HTTP istekleri için kimlik doğrulama middleware'i.
  */
 
-import dotenv from "dotenv";
 import { verifyUserFromTokenCookie } from "../utils/authHelper.js";
 import logger from "../utils/logger.js";
-dotenv.config();
 
 /**
  * HTTP isteklerini cookie'deki access token ile doğrular.
  * Başarılı olursa kullanıcı bilgisini (`user`) istek nesnesine (`req`) ekler ve sonraki middleware'e geçer.
  * Başarısız olursa 401 Unauthorized yanıtı döner.
- * @param {object} req - Express istek nesnesi (içinde `cookies` beklenir).
- * @param {object} res - Express yanıt nesnesi.
- * @param {function} next - Sonraki middleware fonksiyonu.
  */
 export const authenticateToken = async (req, res, next) => {
     try {
@@ -37,6 +31,10 @@ export const authenticateToken = async (req, res, next) => {
     }
 };
 
+/**
+ * CSRF tokenleri alip esit olmasi durumunda onay veren aksi durumda ret veren middleware.
+ * CSRF token gelmişse 403 Forbidden yanıtı döner.
+ */
 export const verifyCSRF = (req, res, next) => {
     const isProd = process.env.NODE_ENV === "production";
     // Eger geliştirme modunda ise csrf token doğrulamayı atla RISKLI   !

@@ -1,5 +1,4 @@
 import request from "supertest";
-import { initializeServer } from "../app.js";
 import testDatas from "./testUtils.js";
 
 let agent;
@@ -7,9 +6,6 @@ let app;
 
 beforeAll(async () => {
     app = global.__SERVER_APP__;
-    if (app === undefined) {
-        console.error("App yok kanka.");
-    }
 });
 
 // Basarili ve basarisiz login testleri

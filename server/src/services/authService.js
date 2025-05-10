@@ -1,21 +1,21 @@
-import logger from "../utils/logger.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { ErrorMessages } from "../utils/constants.js";
-import { getAnonymizedIp } from "../utils/helpers.js";
+import jwtUtils from "../utils/jwtUtils.js";
+import userDTO from "../dtos/userDTO.js";
+import createHttpError from "http-errors";
+import logger from "../utils/logger.js";
 
 /**
  * Kimlik doğrulama (authentication) işlemleri için servis katmanı.
  * Şifre hashleme/karşılaştırma, token doğrulama gibi işlemleri yapar
  * ve kullanıcı varlığı kontrolü/oluşturma için `userService`'i kullanır.
- * @namespace AuthService
  */
 const authService = (userRepository, userService) => ({
     /**
      * Yeni bir kullanıcıyı kaydeder.
      * Kullanıcı adı ve e-postanın benzersizliğini kontrol eder, şifreyi hashler
      * ve `userService` aracılığıyla kullanıcıyı oluşturur.
-     * @memberof AuthService
      * @param {string} email - Kullanıcının e-posta adresi.
      * @param {string} password - Kullanıcının düz metin şifresi.
      * @param {string} username - Kullanıcının benzersiz kullanıcı adı.
@@ -27,8 +27,6 @@ const authService = (userRepository, userService) => ({
      */
     async register(email, password, username, firstName, lastName, ipAddress) {
         try {
-            logger.info("Register service started", { email, username });
-
             const passwordStr = String(password);
 
             // Kullanıcı adı ve e-posta benzersizliğini kontrol eder
@@ -44,39 +42,35 @@ const authService = (userRepository, userService) => ({
             // Sifreyi hasleyerek bir degisken olusturur
             const hashedPassword = await bcrypt.hash(passwordStr, 10);
 
-            // Kullanicinin IP adresini anonimlestirir
-            const anonymizedIpAddress = getAnonymizedIp(ipAddress); // Düzeltildi: ananoymizedIpAddress -> anonymizedIpAddress
-
             // userService aracılığıyla kullanıcıyı olusturur
-            const newUser = await userService.createUser({
+            const createdUser = await userService.createUser({
                 email,
                 username,
                 firstName,
                 lastName,
                 password: hashedPassword,
-                ipAddress: anonymizedIpAddress, // Alan adının createUser beklentisiyle eşleştiğinden emin olun
+                ipAddress,
             });
 
-            logger.info("User registered successfully via AuthService", {
-                userId: newUser.uid,
-                email: newUser.email,
-            });
+            if (!createdUser) {
+                throw createHttpError(500, ErrorMessages.REGISTRATION_FAILED);
+            }
 
-            return newUser;
+            const { accessToken, refreshToken } = jwtUtils.generateTokens(
+                createdUser.uid
+            );
+
+            const user = new userDTO(createdUser);
+
+            return { user, accessToken, refreshToken };
         } catch (error) {
-            logger.error("Error during user registration in AuthService:", {
-                message: error.message,
-                email,
-                username,
-            });
-            throw new Error(error.message || ErrorMessages.REGISTRATION_FAILED);
+            throw createHttpError(500, ErrorMessages.REGISTRATION_FAILED);
         }
     },
 
     /**
      * Kullanıcının giriş bilgilerini doğrular.
      * E-posta ile kullanıcıyı bulur ve sağlanan şifreyi veritabanındaki hash ile karşılaştırır.
-     * @memberof AuthService
      * @param {string} email - Kullanıcının e-posta adresi.
      * @param {string} password - Kullanıcının düz metin şifresi.
      * @returns {Promise<User>} Doğrulama başarılı olursa kullanıcı nesnesini döndürür.
@@ -84,8 +78,6 @@ const authService = (userRepository, userService) => ({
      */
     async login(email, password) {
         try {
-            logger.info("Login service started", { email });
-
             const passwordStr = String(password);
 
             // Kullanıcıyı e-posta ile bulur
@@ -97,41 +89,44 @@ const authService = (userRepository, userService) => ({
                 user.password
             );
 
-            logger.info("User authenticated successfully", {
-                userId: user.uid,
-                email: user.email,
-            });
+            if (!isPasswordValid || !user) {
+                throw createHttpError(401, ErrorMessages.INVALID_CREDENTIALS);
+            }
 
-            return { user, isPasswordValid };
+            const { accessToken, refreshToken } = jwtUtils.generateTokens(
+                user.uid
+            );
+
+            const userDTOInstance = new userDTO(user);
+
+            return {
+                user: userDTOInstance,
+                accessToken,
+                refreshToken,
+            };
         } catch (error) {
-            logger.error("Error during user login in AuthService:", {
-                message: error.message,
-                email,
-            });
-            throw new Error(error.message || ErrorMessages.LOGIN_FAILED);
+            throw createHttpError(500, ErrorMessages.LOGIN_FAILED);
         }
     },
 
     /**
      * Sağlanan refresh token'ı doğrular ve ilişkili kullanıcıyı döndürür.
      * Token'ın geçerliliğini ve süresini kontrol eder.
-     * @memberof AuthService
      * @param {string} token - Doğrulanacak refresh token.
      * @returns {Promise<User>} Token geçerliyse ve kullanıcı bulunursa kullanıcı nesnesini döndürür.
      * @throws {Error} Token geçersizse, süresi dolmuşsa veya kullanıcı bulunamazsa hata fırlatır.
      */
     async refreshToken(token) {
         try {
-            logger.debug("Verifying refresh token");
+            if (!token) {
+                throw createHttpError(401, ErrorMessages.TOKEN_NOT_FOUND);
+            }
 
             // Token'ı doğrular ve decode eder
             const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 
             if (!decoded || !decoded.userId) {
-                logger.warn(
-                    "Invalid token payload structure after verification.",
-                    { token }
-                );
+                throw createHttpError(401, ErrorMessages.TOKEN_NOT_FOUND);
             }
 
             // Kullanıcıyı doğrulanmış ID ile bulur
@@ -140,22 +135,16 @@ const authService = (userRepository, userService) => ({
             });
 
             if (!user) {
-                logger.warn("User not found for a valid refresh token.", {
-                    userId: decoded.userId,
-                });
-                throw new Error(ErrorMessages.USER_NOT_FOUND);
+                throw createHttpError(401, ErrorMessages.USERS_NOT_FOUND);
             }
 
-            logger.info("Refresh token verified successfully", {
-                userId: user.uid,
-            });
+            const { accessToken, refreshToken } = jwtUtils.generateTokens(
+                user.uid
+            );
 
-            return user;
+            return { user, accessToken, refreshToken };
         } catch (error) {
-            logger.error("Error verifying refresh token:", {
-                message: error.message,
-            });
-            throw new Error(error.message || ErrorMessages.ERROR_OCCURRED);
+            throw createHttpError(500, ErrorMessages.REFRESH_TOKEN_FAILED);
         }
     },
 });

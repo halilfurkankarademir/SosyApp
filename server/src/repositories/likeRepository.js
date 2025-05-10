@@ -1,6 +1,5 @@
 /**
- * @fileoverview Beğeni (Like) veritabanı işlemlerini yönetir.
- * @module repositories/likeRepository
+ * Beğeni (Like) veritabanı işlemlerini yönetir.
  */
 
 import Like from "../models/likeModel.js";

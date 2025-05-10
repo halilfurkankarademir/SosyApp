@@ -20,6 +20,7 @@ const ProfilePage = () => {
         try {
             // 1. Profil kullanıcısını al
             const fetchedUser = await getUserByUsername(username);
+            console.log(fetchedUser);
             if (!fetchedUser) {
                 console.error("User not found for username:", username);
                 return;
@@ -52,13 +53,13 @@ const ProfilePage = () => {
                 if (response.status === 200) {
                     console.log("User followed successfully");
                 }
-                ShowToast("success", "Kullanıcı takip ediliyor.");
+                ShowToast("success", `${userProfile.username} takip ediliyor.`);
             } else {
                 const response = await unfollowUser(userProfile.uid);
                 if (response.status === 200) {
                     console.log("User unfollowed successfully");
                 }
-                ShowToast("info", "Kullanıcı takipten çıkıldı.");
+                ShowToast("info", `${userProfile.username} takipten çıkıldı.`);
             }
         } catch (error) {
             console.error("Error following user:", error);
@@ -93,11 +94,6 @@ const ProfilePage = () => {
                             user={userProfile}
                             handleFollow={handleFollow}
                             handleShareProfile={handleShareProfile}
-                            postCount={userProfile.postsCount}
-                            isOwnProfile={userProfile.isOwnProfile}
-                            isFollowing={userProfile.isFollowing}
-                            followerCount={userProfile.followerCount}
-                            followingCount={userProfile.followingCount}
                         />
                         {/* Sağ Taraf - Gönderiler ve İçerik */}
                         <div className="md:w-2/3 md:pl-6  ">

@@ -1,6 +1,5 @@
 /**
- * @fileoverview Arama işlemleri için veritabanı sorgularını yönetir.
- * @module repositories/searchRepository
+ * Arama işlemleri için veritabanı sorgularını yönetir.
  */
 
 import Post from "../models/postModel.js";

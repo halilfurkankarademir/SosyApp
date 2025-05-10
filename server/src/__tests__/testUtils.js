@@ -1,8 +1,5 @@
 import Like from "../models/likeModel.js";
 import Saved from "../models/savedModel.js";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const getRandomEmail = () => {
     return {

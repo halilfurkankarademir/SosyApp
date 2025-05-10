@@ -6,7 +6,8 @@ import { NavigationProvider } from "./context/NavigationContext";
 import { Toaster } from "react-hot-toast";
 import { NotificationProvider } from "./context/NotificationContext";
 import { Navbar } from "./components/common";
-import AdminSidebar from "./components/admin/AdminSidebar";
+import { getCSRFToken } from "./api/authApi";
+import { useEffect } from "react";
 
 // Navbar seçici wrapper bileşeni
 const AppContent = () => {
@@ -14,6 +15,21 @@ const AppContent = () => {
 
     // URL admin ile başlıyorsa navbar gösterme (AdminLayout zaten AdminSidebar içeriyor)
     const isAdminPage = location.pathname.startsWith("/admin");
+
+    const isDevMode = process.env.NODE_ENV === "development";
+
+    const fetchCSRFToken = async () => {
+        try {
+            const response = await getCSRFToken();
+            document.cookie = `csrfToken=${response.data.csrfToken}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+        } catch (error) {
+            isDevMode && console.error("Error fetching CSRF token:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCSRFToken();
+    }, []);
 
     return (
         <>

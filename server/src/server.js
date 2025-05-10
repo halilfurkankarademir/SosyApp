@@ -1,6 +1,5 @@
 /**
- * @fileoverview Uygulama sunucusunu başlatan ve graceful shutdown mekanizmasını yöneten ana giriş noktası.
- * @module src/server
+ * Uygulama sunucusunu başlatan ve graceful shutdown mekanizmasını yöneten ana giriş noktası.
  */
 import { initializeServer } from "./app.js";
 import sequelize from "./config/sequelize.js";
@@ -36,7 +35,6 @@ async function startServer() {
          */
         const gracefulShutdown = async (signal) => {
             logger.info(`Sunucu kapatılıyor... (${signal})`);
-            // Yeni istekleri kabul etmeyi durdur ve mevcutları bitirmesini bekle
             runningServer.close(async () => {
                 logger.info("Sunucu kapatıldı.");
                 try {

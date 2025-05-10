@@ -1,6 +1,5 @@
 /**
- * @fileoverview Arama işlemleri (kullanıcı ve gönderi) için route'ları tanımlar.
- * @module routes/searchRoutes
+ * Arama işlemleri için route'ları tanımlar.
  */
 
 import searchController from "../controllers/searchController.js";
@@ -12,10 +11,6 @@ const router = express.Router();
 
 /**
  * Kullanıcıları arar.
- * @route {GET} /search/users
- * @description Belirtilen sorgu terimine göre kullanıcıları arar. Kimlik doğrulama ve arama sorgusu (`validateQuery`) doğrulaması gerektirir.
- * @param {string} req.query.q - Arama yapılacak terim (veya `validateSearch`'in beklediği parametre).
- * @returns {void} Başarılı olursa `200 OK` ile kullanıcı dizisi, hata durumunda ilgili status kodları (400, 401, 500).
  */
 router.get(
     "/users",
@@ -26,10 +21,6 @@ router.get(
 
 /**
  * Gönderileri arar.
- * @route {GET} /search/posts
- * @description Belirtilen sorgu terimine göre gönderileri arar. Kimlik doğrulama ve arama sorgusu (`validateQuery`) doğrulaması gerektirir.
- * @param {string} req.query.q - Arama yapılacak terim (veya `validateSearch`'in beklediği parametre).
- * @returns {void} Başarılı olursa `200 OK` ile gönderi dizisi, hata durumunda ilgili status kodları (400, 401, 500).
  */
 router.get(
     "/posts",

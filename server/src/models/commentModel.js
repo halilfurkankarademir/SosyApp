@@ -1,6 +1,5 @@
 /**
- * @fileoverview Yorum Model tanımı
- * @module models/commentModel
+ * Yorum Model tanımı
  */
 
 import sequelize from "../config/sequelize.js";

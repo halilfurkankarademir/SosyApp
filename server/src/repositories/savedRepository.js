@@ -1,6 +1,5 @@
 /**
- * @fileoverview Kaydedilen gönderi veritabanı işlemlerini yönetir.
- * @module repositories/savedRepository
+ * Kaydedilen gönderi veritabanı işlemlerini yönetir.
  */
 
 import Saved from "../models/savedModel.js";

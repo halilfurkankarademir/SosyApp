@@ -1,6 +1,5 @@
 /**
- * @fileoverview Socket.IO bağlantıları için kimlik doğrulama middleware'i.
- * @module middlewares/socketAuthMiddleware
+ * Socket.IO bağlantıları için kimlik doğrulama middleware'i.
  */
 
 import { verifyUserFromTokenCookie } from "../utils/authHelper.js";
@@ -10,8 +9,6 @@ import logger from "../utils/logger.js";
 /**
  * Gelen Socket.IO bağlantılarını cookie'deki access token ile doğrular.
  * Başarılı olursa kullanıcı bilgisini (`user`, `userId`) socket nesnesine ekler.
- * @param {object} socket - Socket.IO socket nesnesi.
- * @param {function} next - Sonraki middleware'e geçmek veya hata iletmek için kullanılan fonksiyon.
  */
 export async function socketAuthMiddleware(socket, next) {
     try {

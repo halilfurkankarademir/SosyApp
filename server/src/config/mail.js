@@ -1,3 +1,4 @@
+// Node mailer yapılandırması
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({

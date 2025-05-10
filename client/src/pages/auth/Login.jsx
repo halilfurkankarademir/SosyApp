@@ -40,10 +40,7 @@ const LoginPage = () => {
                 navigateToPage("/");
             }
         } catch (error) {
-            console.log("Login error:", error);
-            const errorMessage = error.response
-                ? error.response.data.details
-                : "Giriş başarısız";
+            const errorMessage = error.response.data.message;
             ShowToast("error", errorMessage);
         }
     };

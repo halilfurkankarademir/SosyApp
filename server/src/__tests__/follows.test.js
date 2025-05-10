@@ -1,5 +1,4 @@
 import request from "supertest";
-import { initializeServer } from "../app.js";
 import testDatas from "./testUtils.js";
 
 let agent;

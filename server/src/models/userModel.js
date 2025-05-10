@@ -1,6 +1,5 @@
 /**
- * @fileoverview Kullanıcı Model tanımı
- * @module models/userModel
+ * Kullanıcı Model tanımı
  */
 import { DataTypes } from "@sequelize/core";
 import sequelize from "../config/sequelize.js";

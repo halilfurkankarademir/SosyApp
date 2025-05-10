@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { PostCard, NewPost } from "./";
-import { FiCoffee, FiCompass, FiInbox } from "react-icons/fi";
+import { FiCoffee, FiCompass, FiGlobe, FiInbox } from "react-icons/fi";
 import { useNavigation } from "../../../context/NavigationContext";
 
 // filters prop'unu tekrar ekledik ve kullanacağız
@@ -95,7 +95,7 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
             if (activePage === "homepage") {
                 return (
                     <div className="flex flex-col items-center justify-center text-center text-gray-300 py-12 px-4">
-                        <FiCoffee
+                        <FiGlobe
                             className="h-16 w-16 mb-4 text-pink-400 animate-pulse"
                             aria-hidden="true"
                         />

@@ -1,18 +1,20 @@
 import AdminProfileDTO from "../dtos/profileDTOs/AdminProfileDTO.js";
-import PublicProfileDTO from "../dtos/profileDTOs/PublicProfileDTO.js";
+import OwnProfileDTO from "../dtos/profileDTOs/OwnProfileDTO.js";
+import userDTO from "../dtos/userDTO.js";
 import { ErrorMessages } from "../utils/constants.js";
+import {
+    getPermissionLevel,
+    getUserDTOInstanceByPermissionLevel,
+} from "../utils/helpers.js";
 import logger from "../utils/logger.js";
 
 /**
  * Kullanıcı (user) işlemleri için servis katmanı.
- * Repository katmanını kullanarak iş mantığını yürütür.
- * @namespace userService
  */
 
 const userService = (userRepository) => ({
     /**
      * Yeni kullanıcı oluşturur.
-     * @memberof userService
      * @param {Object} userData - Kayit icin gerekli verileri icerir:
      *   - email: Kullanicinin e-posta adresi.
      *   - password: Kullanicinin sifresi.
@@ -21,24 +23,24 @@ const userService = (userRepository) => ({
      *   - username: Kullanıcının kullanıcı adı.
      *
      * @returns {Promise<User>} Olusturulan kullanıcı bilgilerini donderir.
-     *
-     * @throws {Error} Kullanici olusturulurken bir hata olusursa hatayi donderir.
      */
     createUser: async (userData) => {
         try {
             logger.info("Creating user started");
 
-            const newUser = await userRepository.createUser({
+            const createdUser = await userRepository.createUser({
                 ...userData,
             });
 
             logger.info("User created successfully", {
-                userId: newUser.uid,
-                email: newUser.email,
+                userId: createdUser.uid,
+                email: createdUser.email,
                 operation: "createUser",
             });
 
-            return newUser;
+            const userDTOInstance = new userDTO(createdUser);
+
+            return userDTOInstance;
         } catch (error) {
             logger.error("User creation failed", {
                 error: error.message,
@@ -50,11 +52,9 @@ const userService = (userRepository) => ({
 
     /**
      * Kullanıcı bilgilerini gunceller.
-     * @memberof userService
      * @param {number} userId - Guncellenecek kullanıcının ID'si.
      * @param {Object} updates - Guncellenecek verileri icerir.
      * @returns {Promise<User>} Guncellenen kullanıcı bilgilerini donderir.
-     * @throws {Error} Kullanici guncellenirken bir hata olusursa hatayi donderir.
      */
     updateUserById: async (userId, updates) => {
         try {
@@ -73,7 +73,9 @@ const userService = (userRepository) => ({
                 userId,
             });
 
-            return updatedUser;
+            const userDTOInstance = new userDTO(updatedUser);
+
+            return userDTOInstance;
         } catch (error) {
             logger.error(`User update failed`, {
                 userId,
@@ -85,10 +87,8 @@ const userService = (userRepository) => ({
 
     /**
      * Kullanıcıyı ve ona ait tum verileri siler.
-     * @memberof userService
      * @param {string} userId - Silinecek kullanıcının ID'si.
      * @returns {Promise<void>} Başarılı silme işleminden sonra bir şey döndürmez.
-     * @throws {Error} Kullanici silinirken bir hata olusursa hatayi donderir.
      */
     deleteUser: async (userId) => {
         try {
@@ -118,9 +118,7 @@ const userService = (userRepository) => ({
 
     /**
      * Kayitli tum kullanıcıları donderir.
-     * @memberof userService
      * @returns {Promise<Array<User>>} Kayitli tum kullanıcıları içeren bir dizi donderir.
-     * @throws {Error} Kullanicilar getirilirken bir hata olusursa hatayi donderir.
      */
     getAllUsers: async () => {
         try {
@@ -149,10 +147,8 @@ const userService = (userRepository) => ({
 
     /**
      * Id'si verilen kullanıcıyı donderir.
-     * @memberof userService
      * @param {string} userId - Getirilecek kullanıcının ID'si.
      * @returns {Promise<User>} Bulunan kullanıcı nesnesini donderir.
-     * @throws {Error} Kullanici getirilirken bir hata olusursa hatayi donderir.
      */
     getUserById: async (userId, permission) => {
         try {
@@ -175,7 +171,7 @@ const userService = (userRepository) => ({
 
             if (permission === "admin")
                 userDTOInstance = new AdminProfileDTO(user);
-            else userDTOInstance = new PublicProfileDTO(user);
+            else userDTOInstance = new OwnProfileDTO(user);
 
             return userDTOInstance;
         } catch (error) {
@@ -190,10 +186,8 @@ const userService = (userRepository) => ({
 
     /**
      * Kullanıcı adı verilen kullanıcıyı donderir.
-     * @memberof userService
      * @param {string} username - Getirilecek kullanıcının kullanıcı adı.
      * @returns {Promise<User>} Bulunan kullanıcı nesnesini donderir.
-     * @throws {Error} Kullanici getirilirken bir hata olusursa hatayi donderir.
      */
     getUserByUsername: async (username) => {
         try {
@@ -225,10 +219,8 @@ const userService = (userRepository) => ({
 
     /**
      * Email ile kullanıcıyı donderir.
-     * @memberof userService
      * @param {string} email - Getirilecek kullanıcının email'i.
      * @returns {Promise<User>} Bulunan kullanıcı nesnesini donderir.
-     * @throws {Error} Kullanici getirilirken bir hata olusursa hatayi donderir.
      */
     getUserByEmail: async (email) => {
         try {
@@ -261,15 +253,11 @@ const userService = (userRepository) => ({
 
     /**
      * Kullanici adi verilen kullanicinin profil bilgilerini donderir.
-     * @memberof userService
      * @param {string} username - Getirilecek kullanıcının kullanıcı adı.
      * @param {string} requestedUserId - Istegi yapan kullanıcının ID'si.
-     * requestedUserId kullanicinin kendi profili mi oldugunu
-     * veya takip ediyor mu gibi verileri kontrol ederken kullanilir.
      * @returns {Promise<User>} Kullanici adi verilen kullanicinin profil bilgilerini donderir.
-     * @throws {Error} Kullanici getirilirken bir hata olusursa hatayi donderir.
      */
-    getUserProfileDetails: async (username, requestedUserId) => {
+    getUserProfileDetails: async (username, requestedUserId, requestedUser) => {
         try {
             logger.debug("Fetching user profile details by username", {
                 username,
@@ -302,7 +290,9 @@ const userService = (userRepository) => ({
                 isFollowing,
             };
 
-            return updatedUser;
+            const userDTOInstance = new userDTO(updatedUser);
+
+            return userDTOInstance;
         } catch (error) {
             logger.error("Error fetching user by username", {
                 error: error.message,
@@ -314,7 +304,7 @@ const userService = (userRepository) => ({
     },
 
     /**
-     * 3 adet rastgele kullanıcı getirir
+     * 5 adet rastgele kullanıcı getirir
      * @returns  {Promise<User[]>} Kullanıcı modellerini içeren bir dizi döndürür.
      */
     getRandomUsers: async (requestedUserId) => {
@@ -324,7 +314,10 @@ const userService = (userRepository) => ({
                 userLimit,
                 requestedUserId
             );
-            return users || [];
+
+            const usersDTOInstance = users.map((user) => new userDTO(user));
+
+            return usersDTOInstance || [];
         } catch (error) {
             logger.error("Error getting random users:", error);
             return undefined;

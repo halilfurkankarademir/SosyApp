@@ -1,6 +1,8 @@
 import { deleteCookie } from "../utils/helpers";
 import apiClient from "./apiClient";
 
+const isDevMode = import.meta.env.VITE_NODE_ENV === "development";
+
 export const register = (email, password, username, firstName, lastName) => {
     try {
         return apiClient
@@ -12,16 +14,11 @@ export const register = (email, password, username, firstName, lastName) => {
                 lastName,
             })
             .then((response) => {
-                const csrfToken = response.data.csrfToken;
-                document.cookie = `csrfToken=${csrfToken}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
                 localStorage.setItem("isAuthenticated", true);
                 return response.data;
-            })
-            .catch((error) => {
-                throw error;
             });
     } catch (error) {
-        console.log("Error registering user:", error);
+        isDevMode && console.log("Error registering user:", error);
     }
 };
 
@@ -30,51 +27,34 @@ export const login = (email, password) => {
         return apiClient
             .post("/auth/login", { email, password })
             .then((response) => {
-                const csrfToken = response.data.csrfToken;
-                document.cookie = `csrfToken=${csrfToken}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
-
                 // Kullanıcı bilgilerini localStorage'a kaydet
                 localStorage.setItem("isAuthenticated", true);
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(response.data.user)
-                );
 
                 return response.data;
-            })
-            .catch((error) => {
-                localStorage.setItem("isAuthenticated", false);
-                localStorage.removeItem("user");
-                throw error;
             });
     } catch (error) {
-        console.log("Error logging in user:", error);
+        localStorage.setItem("isAuthenticated", false);
+        isDevMode && console.log("Error logging in user:", error);
     }
 };
 
 export const logout = () => {
     try {
-        return apiClient
-            .post("/auth/logout")
-            .then((response) => {
-                localStorage.removeItem("isAuthenticated");
-                localStorage.removeItem("user");
-                deleteCookie("accessToken");
-                deleteCookie("refreshToken");
-                deleteCookie("csrfToken");
-                return response;
-            })
-            .catch((error) => {
-                // Hata olsa bile çıkış işlemini tamamlamak için local storage temizlenir
-                localStorage.removeItem("isAuthenticated");
-                localStorage.removeItem("user");
-                deleteCookie("accessToken");
-                deleteCookie("refreshToken");
-                deleteCookie("csrfToken");
-                throw error;
-            });
+        return apiClient.post("/auth/logout").then((response) => {
+            localStorage.removeItem("isAuthenticated");
+            localStorage.removeItem("user");
+            deleteCookie("accessToken");
+            deleteCookie("refreshToken");
+            deleteCookie("csrfToken");
+            return response;
+        });
     } catch (error) {
-        console.log("Error logging out user:", error);
+        localStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("user");
+        deleteCookie("accessToken");
+        deleteCookie("refreshToken");
+        deleteCookie("csrfToken");
+        isDevMode && console.log("Error logging out user:", error);
     }
 };
 
@@ -86,9 +66,9 @@ export const forgotPassword = (email) => {
 export const getCSRFToken = () => {
     try {
         const response = apiClient.get("/auth/csrf-token");
-        return response.data;
+        return response;
     } catch (error) {
-        console.log("Error getting CSRF token:", error);
+        isDevMode && console.log("Error getting CSRF token:", error);
     }
 };
 
@@ -98,7 +78,7 @@ export const sendVerificationMail = () => {
             .post("/auth/send-verification-email")
             .then((res) => res.data);
     } catch (error) {
-        console.log("Error sending verification email:", error);
+        isDevMode && console.log("Error sending verification email:", error);
     }
 };
 
@@ -108,6 +88,6 @@ export const verifyUserWithOTP = (otpCode) => {
             .post("/auth/verify-user-with-otp", { otpCode })
             .then((res) => res.data);
     } catch (error) {
-        console.log("Error verifying OTP:", error);
+        isDevMode && console.log("Error verifying user with OTP:", error);
     }
 };

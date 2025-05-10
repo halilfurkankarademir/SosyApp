@@ -1,20 +1,15 @@
 /**
- * @fileoverview Giris icin kullanilan tokenleri dogrulayan, temizleyen ve HTTP-only cookie olarak ekleyen yardımcı fonksiyonlar.
- * @module utils/authHelper
+ * Giris icin kullanilan tokenleri dogrulayan, temizleyen ve HTTP-only cookie olarak ekleyen yardımcı fonksiyonlar.
  */
 
 import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
-import dotenv from "dotenv";
 import logger from "./logger.js";
 import crypto from "crypto";
-dotenv.config();
 
 /**
  * Istek (request) icindeki 'access_token' cookie'sini kullanarak kullaniciyi dogrular.
  * Cookie yoksa, token yoksa, token gecersizse veya token icindeki kullanıcı bulunamazsa null doner.
- * @param {object} req - Express request nesnesi. Cookie'leri icermesi beklenir.
- * @returns {Promise<object|null>} Dogrulama basarili olursa bulunan kullanici nesnesini, aksi takdirde null doner.
  */
 export async function verifyUserFromTokenCookie(req) {
     try {
@@ -50,10 +45,8 @@ export async function verifyUserFromTokenCookie(req) {
  * Guvenlik icin secure ve sameSite='none' ayarlari kullanilir.
  * @param {string} accessToken - Kullanici icin uretilmis access token.
  * @param {string} refreshToken - Kullanici icin uretilmis refresh token.
- * @param {string} csrfToken - Kullanici icin uretilmis csrf token.
- * @returns {void} Bu fonksiyon dogrudan bir deger donmez, response nesnesini modifiye eder.
  */
-export const setAuthCookies = (res, accessToken, refreshToken, csrfToken) => {
+export const setAuthCookies = (res, accessToken, refreshToken) => {
     res.cookie("access_token", accessToken, {
         httpOnly: true,
         secure: true,
@@ -66,6 +59,14 @@ export const setAuthCookies = (res, accessToken, refreshToken, csrfToken) => {
         sameSite: "Strict",
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 gunluk suresi var
     });
+};
+
+/**
+ * Verilen CSRF token'ı HTTP-only cookie olarak response'a ekler.
+ * @param {object} res - Express response nesnesi. Cookie'ler bu nesneden eklenicektir.
+ * @param {string} csrfToken - Kullanici icin uretilmis csrf token.
+ */
+export const setCSRFTokenCookie = (res, csrfToken) => {
     res.cookie("csrf_token", csrfToken, {
         httpOnly: true,
         secure: true,
@@ -75,9 +76,8 @@ export const setAuthCookies = (res, accessToken, refreshToken, csrfToken) => {
 };
 
 /**
- * Response uzerindeki 'access_token' ve 'refresh_token' cookie'lerini temizler.
+ * Response uzerindeki 'access_token' ve 'refresh_token' ve 'csrf_token' cookie'lerini temizler.
  * @param {object} res - Express response nesnesi. Cookie'ler bu nesneden silinecektir.
- * @returns {void} Bu fonksiyon dogrudan bir deger donmez, response nesnesini modifiye eder.
  */
 export const clearAuthCookies = (res) => {
     const cookieOptions = {

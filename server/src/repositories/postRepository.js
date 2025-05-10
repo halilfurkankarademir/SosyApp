@@ -1,6 +1,5 @@
 /**
- * @fileoverview Gönderi (Post) veritabanı işlemlerini yönetir.
- * @module repositories/postRepository
+ * Gönderi (Post) veritabanı işlemlerini yönetir.
  */
 
 import Comment from "../models/commentModel.js";

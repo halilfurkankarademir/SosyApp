@@ -1,7 +1,6 @@
 /**
  * Admin yetkisine sahip kullanici tarafindan tam erisimli kullanici verilerini temsil eden DTO sınıfı.
  * API yanıtlarında döndürülecek kullanıcı verilerini yapılandırır.
- * @class AdminProfileDTO
  */
 
 class AdminProfileDTO {
@@ -17,6 +16,7 @@ class AdminProfileDTO {
         this.bio = user.bio;
         this.location = user.location;
         this.verified = user.verified;
+        this.ipAdress = user.ipAdress;
         this.isFollowing = user.isFollowing;
         this.isOwnProfile = user.isOwnProfile;
         this.followerCount = user.followerCount;

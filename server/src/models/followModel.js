@@ -1,6 +1,5 @@
 /**
- * @fileoverview Takip Model tanımı
- * @module models/followModel
+ *  Takip Model tanımı
  */
 
 import { DataTypes } from "@sequelize/core";

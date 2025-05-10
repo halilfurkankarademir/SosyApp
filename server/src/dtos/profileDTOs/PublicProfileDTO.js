@@ -1,7 +1,6 @@
 /**
  * Herkes tarafından erişilebilecek olan kullanıcı verilerini temsil eden DTO sınıfı.
  * API yanıtlarında döndürülecek kullanıcı verilerini yapılandırır.
- * @class PublicProfileDTO
  */
 
 class PublicProfileDTO {

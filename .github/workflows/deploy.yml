@@ -45,7 +45,7 @@ jobs:
                       fi
 
                       echo "📦 Installing/updating dependencies using nvm exec..."
-                      nvm exec default npm ci 
+                      nvm exec default npm install
                       echo "✅ Dependencies installed"
 
                       echo "🔄 Reloading PM2 application using nvm exec..."

@@ -1,7 +1,6 @@
 /**
- * @fileoverview Express sunucusunu yapılandırır, başlatır ve gerekli middleware'leri,
+ * Express sunucusunu yapılandırır, başlatır ve gerekli middleware'leri,
  * veritabanı bağlantısını, soket sunucusunu ve rota yönetimini ayarlar.
- * @module src/app
  */
 
 import express from "express";

@@ -1,13 +1,12 @@
 /**
- * @fileoverview Kimlik doğrulama (kayıt ve giriş) işlemleri için Joi şemaları ve doğrulama middleware'lerini tanımlar.
- * @module middlewares/validators/authValidator
+ *  Kimlik doğrulama (kayıt ve giriş) işlemleri için Joi şemaları ve doğrulama middleware'lerini tanımlar.
  */
 
 import Joi from "joi";
 import { requestValidator } from "./joiValidator.js";
 
 /**
- * @description Yeni kullanıcı kaydı (`/auth/register`) için istek gövdesini (`req.body`) doğrulayan Joi şeması.
+ * Yeni kullanıcı kaydı (`/auth/register`) için istek gövdesini (`req.body`) doğrulayan Joi şeması.
  * email, password, username, firstName, lastName alanlarını ve kurallarını içerir.
  */
 const registerSchema = Joi.object({
@@ -19,24 +18,20 @@ const registerSchema = Joi.object({
 });
 
 /**
- * @description Kullanıcı girişi (`/auth/login`) için istek gövdesini (`req.body`) doğrulayan Joi şeması.
+ *  Kullanıcı girişi (`/auth/login`) için istek gövdesini (`req.body`) doğrulayan Joi şeması.
  * email ve password alanlarını içerir.
  */
 const loginSchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required(), // Girişte min uzunluk kontrolü genellikle gereksizdir.
+    password: Joi.string().required(),
 });
 
 /**
- * @description Kullanıcı kayıt isteğinin gövdesini (`req.body`) doğrulamak için middleware.
- * @function validateRegister
- * @type {Function} Express middleware fonksiyonu.
+ *  Kullanıcı kayıt isteğinin gövdesini (`req.body`) doğrulamak için middleware.
  */
 export const validateRegister = requestValidator(registerSchema, "body");
 
 /**
- * @description Kullanıcı giriş isteğinin gövdesini (`req.body`) doğrulamak için middleware.
- * @function validateLogin
- * @type {Function} Express middleware fonksiyonu.
+ * Kullanıcı giriş isteğinin gövdesini (`req.body`) doğrulamak için middleware.
  */
 export const validateLogin = requestValidator(loginSchema, "body");

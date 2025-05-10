@@ -1,6 +1,5 @@
 /**
- * @fileoverview Yorum (Comment) veritabanı işlemlerini yönetir.
- * @module repositories/commentRepository
+ *  Yorum (Comment) veritabanı işlemlerini yönetir.
  */
 
 import Comment from "../models/commentModel.js";

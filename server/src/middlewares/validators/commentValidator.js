@@ -1,13 +1,12 @@
 /**
- * @fileoverview Yorum (Comment) işlemleriyle ilgili istekleri doğrulamak için Joi şemaları ve middleware'leri tanımlar.
- * @module middlewares/validators/commentValidator
+ *  Yorum (Comment) işlemleriyle ilgili istekleri doğrulamak için Joi şemaları ve middleware'leri tanımlar.
  */
 
 import Joi from "joi";
 import { requestValidator } from "./joiValidator.js";
 
 /**
- * @description Yorum oluşturma için istek gövdesini (`req.body`) doğrulayan Joi şeması.
+ * Yorum oluşturma için istek gövdesini (`req.body`) doğrulayan Joi şeması.
  * `content` zorunlu bir metindir. `userId` UUID formatında (isteğe bağlı - genellikle req.user'dan alınır).
  */
 const commentSchema = Joi.object({
@@ -16,7 +15,7 @@ const commentSchema = Joi.object({
 });
 
 /**
- * @description Yorum ID'si (`commentId`) için Joi doğrulama şeması.
+ * Yorum ID'si (`commentId`) için Joi doğrulama şeması.
  * Zorunlu bir sayı olmalıdır. (Eğer ID'leriniz string ise Joi.string() kullanın).
  */
 const commenIdSchema = Joi.object({
@@ -24,15 +23,11 @@ const commenIdSchema = Joi.object({
 });
 
 /**
- * @description İstek gövdesindeki (`req.body`) yorum verilerini (`content`) doğrulamak için middleware.
- * @function validateComment
- * @type {Function} Express middleware fonksiyonu.
+ *  İstek gövdesindeki (`req.body`) yorum verilerini (`content`) doğrulamak için middleware.
  */
 export const validateComment = requestValidator(commentSchema, "body");
 
 /**
- * @description İstek parametrelerindeki (`req.params`) 'commentId' alanını doğrulamak için middleware.
- * @function validateCommentId
- * @type {Function} Express middleware fonksiyonu.
+ *  İstek parametrelerindeki (`req.params`) 'commentId' alanını doğrulamak için middleware.
  */
-export const validateCommentId = requestValidator(commenIdSchema, "params"); // Şema adı 'commenIdSchema' olarak bırakıldı.
+export const validateCommentId = requestValidator(commenIdSchema, "params");

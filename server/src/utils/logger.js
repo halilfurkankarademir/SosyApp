@@ -1,13 +1,10 @@
 /**
- * @fileoverview Uygulama genelinde kullanılan logger nesnesini ve ayarlarını tanımlayan modül.
- * @module utils/logger
+ *  Uygulama genelinde kullanılan logger nesnesini ve ayarlarını tanımlayan modül.
  */
 
 import winston from "winston";
-import dotenv from "dotenv";
-dotenv.config();
 
-const { combine, label, printf, colorize, json } = winston.format;
+const { combine, label, printf, colorize } = winston.format;
 
 /**
  * Tarih formatı

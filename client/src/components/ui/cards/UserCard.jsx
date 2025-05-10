@@ -77,7 +77,7 @@ const UserCard = ({ user, isFollowerCard, isFollowingCard, onRemoveClick }) => {
                 </div>
             </div>
 
-            {isFollowerCard && (
+            {/* {isFollowerCard && (
                 <button
                     onClick={handleRemoveFollower}
                     className="p-2 rounded-full bg-neutral-600 text-white hover:bg-red-600 transition flex-shrink-0" // flex-shrink-0 eklemek iyi olabilir
@@ -94,7 +94,7 @@ const UserCard = ({ user, isFollowerCard, isFollowingCard, onRemoveClick }) => {
                 >
                     <FaUserTimes size={16} />
                 </button>
-            )}
+            )} */}
         </div>
     );
 };

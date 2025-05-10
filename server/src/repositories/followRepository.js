@@ -3,7 +3,6 @@ import User from "../models/userModel.js"; // Gerekli olacak ilişkiler için
 
 /**
  * Follow modeli için veritabanı işlemleri deposu.
- * @namespace followRepository
  */
 const followRepository = {
     /**

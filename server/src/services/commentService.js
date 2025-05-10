@@ -1,41 +1,40 @@
+import createHttpError from "http-errors";
 import { ErrorMessages } from "../utils/constants.js";
 import { addCommentDetailsForUser } from "../utils/helpers.js";
-import logger from "../utils/logger.js";
+import { sendCommentNotification } from "./notificationService.js";
 
 /**
  * Yorum işlemleri için servis katmanı.
- * Repository katmanını kullanarak iş mantığını yürütür.
- * @namespace commentService
+ * Yorumlarla ilgili iş mantığını yönetir ve repository katmanını kullanır.
  */
-const commentService = (commentRepository) => ({
+const commentService = (commentRepository, postService) => ({
     /**
-     * Yorum olusturma işlemini yapar.
-     * @memberof commentService
-     * @param {string} userId yorumu yapan kullanıcının ID'si
-     * @param {number} postId  yorum yapılan gönderinin ID'si
-     * @param {string} content yorumun icerigi
-     * @returns {Comment} olusturulan yorum nesnesini döndürür
+     * Yeni bir yorum oluşturur.
+     * @param {string} userId Yorumu yapan kullanıcının ID'si.
+     * @param {string} postId Yorum yapılan gönderinin ID'si.
+     * @param {string} content Yorum içeriği.
+     * @returns {Promise<object>} Oluşturulan yorum nesnesi.
      */
-    createComment: async (userId, postId, content) => {
+    createComment: async (userId, postId, content, requestUser) => {
         try {
             const comment = await commentRepository.createComment(
                 userId,
                 postId,
                 content
             );
-
+            const postDetails = await postService.getPostById(postId);
+            const postOwnerId = postDetails.user.uid;
+            sendCommentNotification(requestUser, postOwnerId, postId);
             return comment;
         } catch (error) {
-            logger.error("Error creating comment:", error);
             throw new Error(ErrorMessages.COMMENT_CREATION_FAILED);
         }
     },
 
     /**
-     * Yorum idsi alarak yorum silme işlemini yapar.
-     * @memberof commentService
-     * @param {number} commentId silinmek istenen yorumun ID'si
-     * @returns {void} boş döndürür
+     * Belirtilen ID'ye sahip yorumu siler.
+     * @param {string} commentId Silinecek yorumun ID'si.
+     * @returns {Promise<void>}
      */
     deleteComment: async (commentId) => {
         try {
@@ -46,49 +45,21 @@ const commentService = (commentRepository) => ({
     },
 
     /**
-     * Belirli bir gonderiye ait yorumları alır.
-     * @memberof commentService
-     * @param {number} postId yorumları almak istenen gönderinin ID'si
-     * @param {string} userId yorumları almak isteyen kullanıcının ID'si
-     * @returns {Comment[]} gonderiye ait atilan yorumların listesini döndürür
+     * Bir gönderiye ait yorumları, istek yapan kullanıcıya özel detaylarla (örn. beğeni durumu) birlikte getirir.
+     * @param {string} postId Yorumları alınacak gönderinin ID'si.
+     * @param {string} userId İsteği yapan kullanıcının ID'si.
+     * @returns {Promise<Array<object>>} Gönderiye ait yorumların listesi.
      */
     getCommentsByPostId: async (postId, userId) => {
         try {
-            logger.info("Getting comments", postId);
-
             const comments = await commentRepository.getCommentsByPostId(
                 postId
             );
-            logger.info("Comments found");
-
+            // Yorumlara kullanıcıya özel ek bilgiler eklenir (örneğin, kullanıcının yorumu beğenip beğenmediği)
             const updatedComments = addCommentDetailsForUser(comments, userId);
-
             return updatedComments;
         } catch (error) {
-            throw new Error(ErrorMessages.COMMENT_NOT_FOUND);
-        }
-    },
-
-    /**
-     * Belirli bir gonderiye ait yorum sayısını alır.
-     * @memberof commentService
-     * @param {number} postId yorum sayısını almak istenen gönderinin ID'si
-     * @returns {number} gonderiye ait yorum sayısını döndürür
-     */
-    getCommentCountByPostId: async (postId) => {
-        try {
-            logger.info("Getting comment count", postId);
-            const commentCount = await commentRepository.getCommentCount(
-                postId
-            );
-            if (!commentCount) {
-                logger.error("Comment count not found");
-                throw new Error("Comment count not found");
-            }
-            logger.info("Comment count found", commentCount);
-            return commentCount;
-        } catch (error) {
-            throw new Error("Error getting comment count: " + error.message);
+            throw createHttpError(500, ErrorMessages.COMMENT_FETCH_FAILED);
         }
     },
 });

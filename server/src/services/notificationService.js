@@ -5,7 +5,6 @@ let userSocketsRef = {};
 
 /**
  * Bildirim servisini Socket.io örneği ve kullanıcı soket referansları ile başlatır.
- * Bu fonksiyonun, bildirim gönderilmeden önce çağrılması gerekmektedir.
  * @param {object} io - Başlatılmış Socket.io sunucu örneği.
  * @param {object} userSockets - Kullanıcı ID'lerini soket ID'lerine eşleyen nesne referansı.
  * @returns {void}
@@ -17,7 +16,6 @@ export function initializeNotificationService(io, userSockets) {
 
 /**
  * Belirtilen kullanıcı ID'sine sahip aktif kullanıcıya Socket.io üzerinden bildirim gönderir.
- * Servis başlatılmamışsa veya hedef kullanıcı bulunamazsa konsola hata yazar.
  * @param {string} targetUserId - Bildirimin gönderileceği hedef kullanıcının ID'si.
  * @param {object} data - Gönderilecek bildirim verisi (örn: { type, message, ... }).
  * @returns {void}
@@ -42,7 +40,6 @@ function sendNotification(targetUserId, data) {
 
 /**
  * Bir gönderi beğenildiğinde gönderi sahibine bildirim gönderir.
- * Kullanıcı kendi gönderisini beğenirse bildirim gönderilmez.
  * @param {User} likerUser - Gönderiyi beğenen kullanıcı nesnesi.
  * @param {string} postOwnerId - Beğenilen gönderinin sahibinin ID'si.
  * @param {number} postId - Beğenilen gönderinin ID'si.
@@ -72,7 +69,6 @@ export function sendLikeNotification(likerUser, postOwnerId, postId) {
 
 /**
  * Bir kullanıcı başka bir kullanıcıyı takip ettiğinde takip edilen kullanıcıya bildirim gönderir.
- * Kullanıcı kendini takip etmeye çalışırsa bildirim gönderilmez.
  * @param {User} followerUser - Takip eden kullanıcı nesnesi.
  * @param {string} followedUserId - Takip edilen kullanıcının ID'si.
  * @returns {void}
@@ -102,14 +98,13 @@ export const sendFollowNotification = (followerUser, followedUserId) => {
             followerUser.username || "Bir kullanıcı"
         } seni takip etmeye başladı.`,
         followerUsername: followerUser.username || "Bilinmeyen Kullanıcı",
-        followerProfilePicture: followerUser.profilePicture, // Varsayılan resim eklenebilir
+        followerProfilePicture: followerUser.profilePicture,
         timestamp: new Date(),
     });
 };
 
 /**
  * Bir gönderiye yorum yapıldığında gönderi sahibine bildirim gönderir.
- * Kullanıcı kendi gönderisine yorum yaparsa bildirim gönderilmez.
  * @param {User} commenterUser - Yorum yapan kullanıcı nesnesi.
  * @param {string} postOwnerId - Yorum yapılan gönderinin sahibinin ID'si.
  * @param {number} postId - Yorum yapılan gönderinin ID'si.
@@ -130,7 +125,7 @@ export const sendCommentNotification = (commenterUser, postOwnerId, postId) => {
         logger.warn("User commented on their own post. No notification sent.");
         return;
     }
-    console.log(
+    logger.info(
         "Attempting to send comment notification to user:",
         postOwnerId
     );
@@ -141,7 +136,7 @@ export const sendCommentNotification = (commenterUser, postOwnerId, postId) => {
         } gönderine yorum yaptı.`,
         postId: postId,
         commenterUsername: commenterUser.username || "Bilinmeyen Kullanıcı",
-        commenterProfilePicture: commenterUser.profilePicture, // Varsayılan resim eklenebilir
+        commenterProfilePicture: commenterUser.profilePicture,
         timestamp: new Date(),
     });
 };

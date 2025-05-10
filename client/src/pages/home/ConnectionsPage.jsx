@@ -101,6 +101,7 @@ const ConnectionsPage = () => {
                 isFollowerCard={activeTab === "followers"}
                 isFollowingCard={activeTab === "following"}
                 key={item[userKey]?.uid || item.id}
+                onRemoveClick={fetchData}
             />
         ));
     };

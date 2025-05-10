@@ -96,10 +96,7 @@ export default {
     async getAll(options = {}) {
         try {
             return User.findAll({
-                limit: options.limit || 10, // Varsayılan limit 10
-                offset: options.offset || 0, // Varsayılan offset 0
-                // Gerekirse buraya da include veya attributes eklenebilir
-                ...options, // Limit ve offset dışındaki diğer findAll seçeneklerini de ekle
+                ...options,
             });
         } catch (error) {
             logger.error("Error getting all users in repository:", error);

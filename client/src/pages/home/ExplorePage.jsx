@@ -3,8 +3,6 @@ import { Sidebar } from "../../components/common";
 import { BiWorld } from "react-icons/bi";
 import { FaFire, FaUserFriends } from "react-icons/fa";
 import RenderPosts from "../../components/features/posts/RenderPosts";
-import LargeSearchInput from "../../components/ui/inputs/LargeSearchInput";
-import { useDebounce } from "use-debounce";
 import { getCurrentUser, getRandomUsers } from "../../api/userApi";
 import useUserStore from "../../hooks/useUserStore";
 import UserCard from "../../components/ui/cards/UserCard";
@@ -13,8 +11,6 @@ import { fetchTrendingPosts } from "../../api/postApi";
 // Keşfet sayfası bileşeni
 const ExplorePage = () => {
     const [activeTab, setActiveTab] = useState("trending");
-    const [search, setSearch] = useState("");
-    const [debouncedSearch] = useDebounce(search, 300);
     const [trendingUsers, setTrendingUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const setUser = useUserStore((state) => state.setUser);
@@ -29,42 +25,6 @@ const ExplorePage = () => {
         }
     };
 
-    // Örnek trend kullanıcılar
-    const mockTrendingUsers = [
-        {
-            uid: "1",
-            firstName: "Ahmet",
-            lastName: "Yılmaz",
-            username: "ahmetyilmaz",
-            profilePicture: "https://randomuser.me/api/portraits/men/1.jpg",
-            followers: 1253,
-        },
-        {
-            uid: "2",
-            firstName: "Ayşe",
-            lastName: "Demir",
-            username: "aysedemir",
-            profilePicture: "https://randomuser.me/api/portraits/women/2.jpg",
-            followers: 987,
-        },
-        {
-            uid: "3",
-            firstName: "Mehmet",
-            lastName: "Kaya",
-            username: "mehmetkaya",
-            profilePicture: "https://randomuser.me/api/portraits/men/3.jpg",
-            followers: 842,
-        },
-        {
-            uid: "4",
-            firstName: "Zeynep",
-            lastName: "Yıldız",
-            username: "zeynepyildiz",
-            profilePicture: "https://randomuser.me/api/portraits/women/4.jpg",
-            followers: 756,
-        },
-    ];
-
     // Verileri yükle
     const fetchData = useCallback(async () => {
         setIsLoading(true);
@@ -72,13 +32,12 @@ const ExplorePage = () => {
             await fetchUser();
             const popularUsers = await getRandomUsers();
             setTrendingUsers(popularUsers);
-            console.log(popularUsers);
         } catch (error) {
             console.error("Error fetching explore data:", error);
         } finally {
             setIsLoading(false);
         }
-    }, [debouncedSearch]);
+    }, []);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -121,14 +80,6 @@ const ExplorePage = () => {
                                         </h1>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div className="px-4 md:px-6 mb-6">
-                                <LargeSearchInput
-                                    search={search}
-                                    setSearch={setSearch}
-                                    placeholderText="İçerik veya kişi ara..."
-                                />
                             </div>
 
                             <div className="px-4 md:px-6">

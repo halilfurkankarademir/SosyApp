@@ -33,6 +33,8 @@ export const ErrorMessages = {
     COMMENT_NOT_FOUND: "Yorum bulunamadı.",
     COMMENT_UPDATE_FAILED: "Yorum güncellenemedi.",
     COMMENT_DELETION_FAILED: "Yorum silinemedi.",
+    COMMENT_FETCH_FAILED: "Yorumlar getirilemedi.",
+    REFRESH_TOKEN_FAILED: "Refresh token olusturulamadı.",
 };
 
 export const verifyMailTemplate = (otpCode) => {

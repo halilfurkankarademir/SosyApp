@@ -1,13 +1,11 @@
 /**
- * @fileoverview Joi şemalarıyla istek doğrulaması yapan genel bir middleware üretici fonksiyon.
- * @module middlewares/validators/joiValidator
+ * Joi şemalarıyla istek doğrulaması yapan genel bir middleware üretici fonksiyon.
  */
 
 /**
  * Belirtilen Joi şeması ile isteğin ilgili kısmını (body, params, query) doğrulayan bir Express middleware oluşturur.
- * @param {Joi.ObjectSchema} schema - Doğrulama için kullanılacak Joi şeması.
- * @param {'body' | 'params' | 'query'} property - Doğrulanacak istek özelliği ('body', 'params', 'query').
- * @returns {Function} Express middleware fonksiyonu. Hata durumunda `next(error)` çağrılır, başarılıysa `next()` çağrılır.
+ * @param {object} schema - Joişema nesnesi.
+ * @param {string} property - İstek gövdesini (`req.body`) veya istek parametrelerini (`req.params`) doğrulamak istiyorsanız, bu değişkeni "body" veya "params" olarak ayarlayın.
  */
 export const requestValidator = (schema, property) => {
     return (req, res, next) => {

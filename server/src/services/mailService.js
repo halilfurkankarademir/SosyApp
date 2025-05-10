@@ -5,10 +5,11 @@ import logger from "../utils/logger.js";
 import NodeCache from "node-cache";
 import bcyrpt from "bcrypt";
 import diContainer from "../config/dependencyInjection.js";
+import createHttpError from "http-errors";
 
 const { userService } = diContainer;
 
-// 2 dakika hafizali bir cache olusturur otp saklamak icin
+// otp saklamak icin 2 dakika hafizali bir cache olusturur
 const myCache = new NodeCache({ stdTTL: 120, checkperiod: 120 });
 
 const mailService = {
@@ -20,13 +21,16 @@ const mailService = {
      */
     sendVerificationMail: async (email, userId) => {
         try {
+            if (!email || !userId) {
+                throw createHttpError(400, "Email and userId are required.");
+            }
+
             const cachedOtp = myCache.get(userId);
 
+            // Zaten otp kodu varsa gonderme yapma
             if (cachedOtp) {
                 return;
             }
-
-            logger.info("Sending verification email...");
 
             const otpCode = generateOTP();
 
@@ -42,10 +46,8 @@ const mailService = {
             const hashedOTP = bcyrpt.hashSync(otpCode.toString(), 10);
 
             myCache.set(userId, hashedOTP);
-
-            logger.info("Verification email sent successfully");
         } catch (error) {
-            logger.error("Error in mailService.sendVerificationMail:", error);
+            throw createHttpError(500, "Failed to send verification email.");
         }
     },
 
@@ -54,32 +56,24 @@ const mailService = {
             const cachedOtpHash = myCache.get(userId);
 
             if (!cachedOtpHash) {
-                logger.warn(`OTP for user ${userId} not found or expired.`);
-                return { success: false, message: "OTP not found or expired." };
+                throw createHttpError(400, "Invalid OTP.");
             }
 
             const isMatch = await bcyrpt.compare(otpCode, cachedOtpHash);
 
             if (!isMatch) {
-                logger.warn(`Invalid OTP provided for user ${userId}.`);
-                return { success: false, message: "Invalid OTP." };
+                throw createHttpError(400, "Invalid OTP.");
             }
 
             await userService.updateUserById(userId, {
                 verified: true,
             });
 
-            logger.info(`User ${userId} verified successfully.`);
-
             myCache.del(userId);
 
             return { success: true, message: "OTP verified successfully." };
         } catch (error) {
-            logger.error("Error in verifyUserWithOTP:", error);
-            return {
-                success: false,
-                message: "An error occurred during OTP verification.",
-            };
+            throw createHttpError(500, "Failed to verify user.");
         }
     },
 };

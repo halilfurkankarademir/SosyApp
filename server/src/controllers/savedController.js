@@ -1,6 +1,5 @@
 /**
- * @fileoverview Kaydedilen gönderi işlemleriyle ilgili HTTP isteklerini yöneten controller.
- * @module controllers/savedController
+ * Kaydedilen gönderi işlemleriyle ilgili HTTP isteklerini yöneten controller.
  */
 
 import diContainer from "../config/dependencyInjection.js";
@@ -10,74 +9,79 @@ import logger from "../utils/logger.js";
 const { savedService, postService } = diContainer;
 
 /**
- * @description Kaydedilen gönderi işlemleri (kaydetme, kaldırma, listeleme, kontrol etme) için controller fonksiyonlarını içerir.
+ *  Kaydedilen gönderi işlemleri (kaydetme, kaldırma, listeleme, kontrol etme) için controller fonksiyonlarını içerir.
  */
 const savedController = {
     /**
-     * @description Bir gönderiyi aktif kullanıcının kaydedilenlerine ekler.
-     * @route POST /saved/:postId
-     * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
-     * @param {object} res - Express yanıt nesnesi.
+     *  Bir gönderiyi aktif kullanıcının kaydedilenlerine ekler.
      */
     savePost: async (req, res, next) => {
         try {
             logger.info("Saving post...");
+
             const postId = req.params.postId;
             const userId = req.user.uid;
+
             const saved = await savedService.savePost(userId, postId);
+
             logger.info("Post saved successfully");
+
             res.status(201).json(saved);
         } catch (error) {
             logger.error("Error in savedController.savePost:", error);
-            res.status(500).json({ error: error.message });
             next(error);
         }
     },
 
     /**
-     * @description Bir gönderiyi aktif kullanıcının kaydedilenlerinden çıkarır.
-     * @route DELETE /saved/:postId
-     * @param {object} req - Express istek nesnesi. `req.params.postId` ve `req.user.uid` içerir.
-     * @param {object} res - Express yanıt nesnesi.
+     * Bir gönderiyi aktif kullanıcının kaydedilenlerinden çıkarır.
      */
     unsavePost: async (req, res, next) => {
         try {
             logger.info("Unsaving post...");
+
             const postId = req.params.postId;
             const userId = req.user.uid;
+
             await savedService.unsavePost(userId, postId);
+
             logger.info("Post un-saved successfully");
+
             res.status(200).json({ message: "Post un-saved successfully" });
         } catch (error) {
             logger.error("Error in savedController.unsavePost:", error);
-            res.status(500).json({ error: error.message });
             next(error);
         }
     },
 
     /**
-     * @description Aktif kullanıcının kaydettiği gönderileri listeler (sayfalama ile).
-     * @route GET /saved/?page={pageNumber}&limit={pageSize}
-     * @param {object} req - Express istek nesnesi. `req.user.uid` içerir, `req.query`'den page ve limit alınabilir.
-     * @param {object} res - Express yanıt nesnesi.
+     * Aktif kullanıcının kaydettiği gönderileri listeler (sayfalama ile).
      */
     getSavedPosts: async (req, res, next) => {
         try {
             logger.info("Getting saved posts...");
+
             const userId = req.user.uid;
-            const { offset, limit } = getPagination(req);
-            const { filterQuery } = getFilters(req);
+
+            const { offset, limit } = getPagination(
+                req.query.page,
+                req.query.limit
+            );
+
+            const { filterQuery } = getFilters(req.query.filter);
+
             const savedPosts = await postService.getSavedPostsByUserId(
                 userId,
                 offset,
                 limit,
                 filterQuery
             );
+
             logger.info("Saved posts fetched successfully");
+
             res.status(200).json(savedPosts);
         } catch (error) {
             logger.error("Error in savedController.getSavedPosts:", error);
-            res.status(500).json({ error: error.message });
             next(error);
         }
     },

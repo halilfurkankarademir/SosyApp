@@ -1,21 +1,14 @@
 /**
- * @fileoverview Express uygulaması için merkezi hata yönetimi middleware'i.
- * @module middlewares/errorHandler
+ * Express uygulaması için merkezi hata yönetimi middleware'i.
  */
 
-import dotenv from "dotenv";
 import logger from "../utils/logger.js";
-dotenv.config();
 
 const isProduction = process.env.NODE_ENV === "production";
 
 /**
  * Express route'larında oluşan hataları yakalar ve istemciye uygun bir yanıt döner.
  * Üretim ortamında detaylı hata mesajlarını gizler.
- * @param {Error} err - Oluşan hata nesnesi.
- * @param {object} req - Express istek nesnesi.
- * @param {object} res - Express yanıt nesnesi.
- * @param {function} next - Sonraki middleware fonksiyonu (bu middleware'de genellikle kullanılmaz).
  */
 export default function errorHandler(err, req, res, next) {
     // Hatanın stack trace'ini veya mesajını sunucu loglarına yazdır
@@ -29,6 +22,5 @@ export default function errorHandler(err, req, res, next) {
             ? "Sunucuda bir hata oluştu."
             : err.message || "Bilinmeyen bir hata oluştu.";
 
-    // İstemciye JSON formatında hata mesajı gönder
-    res.status(statusCode).json({ error: message });
+    res.status(statusCode).json({ message });
 }

@@ -33,6 +33,7 @@ const PostPage = () => {
         setError(null);
         try {
             const postData = await fetchPostById(postId);
+            console.log(postData);
             const currentUser = await getCurrentUser();
             const comments = await getCommentsByPostId(postId);
             if (!postData) {
