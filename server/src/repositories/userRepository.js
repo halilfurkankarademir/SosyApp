@@ -98,6 +98,8 @@ export default {
             return User.findAndCountAll({
                 ...options,
                 include: standartIncludes,
+                distinct: true,
+                order: [["role", "ASC"]],
             });
         } catch (error) {
             logger.error("Error getting all users in repository:", error);

@@ -33,37 +33,36 @@ const NavbarMobileMenu = ({
 
     // Butonlar için ortak class'lar
     const buttonClass =
-        "flex items-center w-full text-left space-x-3 p-3 hover:bg-neutral-700 rounded-lg cursor-pointer text-neutral-100 transition-colors";
+        "flex items-center w-full text-left space-x-3 p-3 hover:bg-neutral-700/50 rounded-lg cursor-pointer text-neutral-100 transition-colors";
     const iconClass = "text-neutral-400";
     const textClass = "text-sm";
 
     return (
         <div
-            className="md:hidden fixed inset-0 bg-black bg-opacity-60 z-40"
-            onClick={onClose} // Dışarı tıklayınca kapat
+            className="md:hidden fixed inset-0 bg-black/30 backdrop-blur-md z-40"
+            onClick={onClose}
         >
             <div
-                ref={menuRef} // Ref ana bileşenden geliyor
-                className="fixed top-0 right-0 bottom-0 w-64 bg-neutral-800 shadow-xl p-4 z-50 transform transition-transform duration-300 ease-in-out"
-                style={{
-                    transform: show ? "translateX(0)" : "translateX(100%)",
-                }}
-                onClick={(e) => e.stopPropagation()} // Menü içine tıklayınca kapanmasın
+                ref={menuRef}
+                className={`fixed top-0 right-0 bottom-0 w-64 bg-neutral-900 border-l border-neutral-700/50 p-4 z-50 transform transition-all duration-300 ${
+                    show ? "translate-x-0" : "translate-x-full"
+                }`}
+                onClick={(e) => e.stopPropagation()}
             >
                 {/* Başlık ve Kapatma */}
-                <div className="flex justify-between items-center mb-6 pb-4 border-b border-neutral-700">
+                <div className="flex justify-between items-center mb-6 pb-4 border-b border-neutral-700/50">
                     <h2 className="text-white text-lg font-semibold">Menü</h2>
                     <button
                         onClick={onClose}
-                        className="text-neutral-400 hover:text-white p-1 rounded-full hover:bg-neutral-700"
+                        className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-neutral-700/50 transition-colors"
                         aria-label="Menüyü kapat"
                     >
-                        <MdClose size={22} />
+                        <MdClose size={20} />
                     </button>
                 </div>
 
                 {/* Menü Linkleri */}
-                <nav className="space-y-2">
+                <nav className="space-y-1">
                     {/* Admin Paneli seçeneği sadece admin kullanıcılar için gösterilir */}
                     {isAdmin() && (
                         <button
@@ -76,7 +75,7 @@ const NavbarMobileMenu = ({
                             <MdAdminPanelSettings
                                 size={20}
                                 className={iconClass}
-                            />{" "}
+                            />
                             <span className={textClass}>Yönetici Paneli</span>
                         </button>
                     )}
@@ -86,28 +85,28 @@ const NavbarMobileMenu = ({
                         }
                         className={buttonClass}
                     >
-                        <MdAccountCircle size={20} className={iconClass} />{" "}
+                        <MdAccountCircle size={20} className={iconClass} />
                         <span className={textClass}>Profilim</span>
                     </button>
                     <button
                         onClick={() => handleNavigate("/connections")}
                         className={buttonClass}
                     >
-                        <BsPeopleFill size={20} className={iconClass} />{" "}
+                        <BsPeopleFill size={20} className={iconClass} />
                         <span className={textClass}>Sosyal Ağım</span>
                     </button>
                     <button
                         onClick={() => handleNavigate("/favorites")}
                         className={buttonClass}
                     >
-                        <GoHeartFill size={20} className={iconClass} />{" "}
+                        <GoHeartFill size={20} className={iconClass} />
                         <span className={textClass}>Favorilerim</span>
                     </button>
                     <button
                         onClick={() => handleNavigate("/saved")}
                         className={buttonClass}
                     >
-                        <BiBookmark size={20} className={iconClass} />{" "}
+                        <BiBookmark size={20} className={iconClass} />
                         <span className={textClass}>Kaydettiklerim</span>
                     </button>
                     <button
@@ -117,7 +116,7 @@ const NavbarMobileMenu = ({
                         }}
                         className={buttonClass}
                     >
-                        <MdSettings size={20} className={iconClass} />{" "}
+                        <MdSettings size={20} className={iconClass} />
                         <span className={textClass}>Ayarlar</span>
                     </button>
                     <button
@@ -125,9 +124,9 @@ const NavbarMobileMenu = ({
                             onClose();
                             onLogoutClick();
                         }}
-                        className={buttonClass}
+                        className={`${buttonClass} text-red-400 hover:text-red-500`}
                     >
-                        <MdLogout size={20} className={iconClass} />{" "}
+                        <MdLogout size={20} className="text-red-400" />
                         <span className={textClass}>Çıkış Yap</span>
                     </button>
                 </nav>

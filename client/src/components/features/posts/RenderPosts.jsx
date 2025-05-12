@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { PostCard, NewPost } from "./";
-import { FiCoffee, FiCompass, FiGlobe, FiInbox } from "react-icons/fi";
+import { FiGlobe, FiInbox } from "react-icons/fi";
 import { useNavigation } from "../../../context/NavigationContext";
 
 // filters prop'unu tekrar ekledik ve kullanacağız
@@ -37,8 +37,7 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
         } finally {
             setIsLoading(false);
         }
-        // Bağımlılıklar: fetchOptions veya filters değiştiğinde bu fonksiyon yeniden oluşturulur.
-    }, [fetchOptions, filters]); // <<<--- filters'ı buraya ekledik!
+    }, [fetchOptions, filters]);
 
     // fetchMoreData da fetchOptions VE filters'a bağlı olmalı
     const fetchMoreData = useCallback(async () => {
@@ -66,8 +65,6 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
         } finally {
             setIsLoading(false);
         }
-        // Bağımlılıklar: fetchOptions veya filters değiştiğinde bu fonksiyon da yeniden oluşturulur.
-        // page, hasMore, isLoading gibi durumlar değiştiğinde de yeniden oluşturulur.
     }, [
         page,
         hasMore,
@@ -76,20 +73,16 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
         filters,
         posts.length,
         totalPostsCount,
-    ]); // <<<--- filters'ı buraya ekledik!
+    ]);
 
-    // Refresh fonksiyonu loadInitialPosts'a bağlı kalmalı
     const refreshPosts = useCallback(() => {
         loadInitialPosts();
     }, [loadInitialPosts]);
 
-    // İlk yükleme ve filtre/fetchOptions değişimi için useEffect
-    // Artık sadece loadInitialPosts'a bağımlı olması yeterli, çünkü o zaten filters ve fetchOptions'a bağlı.
     useEffect(() => {
         loadInitialPosts();
-    }, [loadInitialPosts]); // <<<--- filters'ı buradan kaldırdık, çünkü loadInitialPosts zaten ona bağlı.
+    }, [loadInitialPosts]);
 
-    // Geri kalanı aynı...
     const renderContent = () => {
         if (!isLoading && posts.length === 0 && !hasMore) {
             if (activePage === "homepage") {

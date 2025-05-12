@@ -1,6 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
-import { FiSearch, FiEye, FiEdit } from "react-icons/fi";
+import {
+    FiSearch,
+    FiEye,
+    FiEdit,
+    FiUsers,
+    FiShield,
+    FiFileText,
+    FiUserCheck,
+} from "react-icons/fi";
 import {
     getAllUsersForAdmin,
     updateUserRoleForAdmin,
@@ -34,7 +42,7 @@ const UsersManagementPage = () => {
         setTotalUsersCount(0);
         try {
             const response = await getAllUsersForAdmin(1, debouncedSearch);
-            console.log("Response:", response);
+            console.log(response);
             const fetchedUsers = response?.users || [];
             const fetchedCount = response?.count ?? 0;
             setUsers(fetchedUsers);
@@ -278,6 +286,67 @@ const UsersManagementPage = () => {
                             onChange={handleSearchChange}
                         />
                         <FiSearch className="absolute right-3 top-2.5 text-neutral-500" />
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                        <FiUsers className="text-xl text-pink-500" />
+                        <div>
+                            <h3 className="text-sm text-neutral-400">
+                                Toplam Kullanıcı
+                            </h3>
+                            <p className="text-lg font-medium text-white">
+                                {totalUsersCount}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                        <FiShield className="text-xl text-purple-500" />
+                        <div>
+                            <h3 className="text-sm text-neutral-400">Admin</h3>
+                            <p className="text-lg font-medium text-white">
+                                {
+                                    users.filter(
+                                        (user) => user.role === "admin"
+                                    ).length
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                        <FiFileText className="text-xl text-blue-500" />
+                        <div>
+                            <h3 className="text-sm text-neutral-400">
+                                Toplam Gönderi
+                            </h3>
+                            <p className="text-lg font-medium text-white">
+                                {users.reduce(
+                                    (acc, user) =>
+                                        acc + (user.posts?.length || 0),
+                                    0
+                                )}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                        <FiUserCheck className="text-xl text-green-500" />
+                        <div>
+                            <h3 className="text-sm text-neutral-400">
+                                Onaylı Kullanıcı
+                            </h3>
+                            <p className="text-lg font-medium text-white">
+                                {users.filter((user) => user.verified).length}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

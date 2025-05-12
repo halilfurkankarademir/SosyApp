@@ -37,8 +37,9 @@ export const removePost = async (postId) => {
 
 export const fetchFeedPosts = async (page) => {
     try {
+        const limit = 5;
         return apiClient
-            .get("/posts/feed", { params: { page } })
+            .get("/posts/feed", { params: { page, limit } })
             .then((response) => response.data);
     } catch (error) {
         console.error("Error fetching posts:", error);

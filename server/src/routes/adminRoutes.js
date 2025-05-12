@@ -3,7 +3,6 @@ import express from "express";
 import {
     authenticateToken,
     checkAdminMiddleware,
-    verifyCSRF,
 } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -69,7 +68,6 @@ router.get("/check-maintenance", adminController.checkMaintenance);
 router.put(
     "/users/:userId/role",
     authenticateToken,
-    verifyCSRF,
     checkAdminMiddleware,
     adminController.updateUserRole
 );
@@ -80,7 +78,6 @@ router.put(
 router.put(
     "/settings",
     authenticateToken,
-    verifyCSRF,
     checkAdminMiddleware,
     adminController.updateAppSettings
 );
@@ -91,7 +88,6 @@ router.put(
 router.delete(
     "/posts/:postId",
     authenticateToken,
-    verifyCSRF,
     checkAdminMiddleware,
     adminController.deletePost
 );
@@ -102,7 +98,6 @@ router.delete(
 router.delete(
     "/comments/:commentId",
     authenticateToken,
-    verifyCSRF,
     checkAdminMiddleware,
     adminController.deleteComment
 );

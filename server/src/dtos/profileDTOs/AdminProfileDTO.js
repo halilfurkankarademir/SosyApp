@@ -15,6 +15,7 @@ class AdminProfileDTO {
             "Followers",
             "Following",
             "posts",
+            "verified",
         ];
 
         publicFields.forEach((field) => {

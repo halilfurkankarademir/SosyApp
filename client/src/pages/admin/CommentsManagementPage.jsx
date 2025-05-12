@@ -180,6 +180,12 @@ const CommentsManagementPage = () => {
                             </div>
 
                             <div className="mb-4">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <FiMessageSquare className="text-pink-500" />
+                                    <span className="text-sm font-medium text-pink-500">
+                                        Yorum
+                                    </span>
+                                </div>
                                 <p className="text-neutral-300 text-sm">
                                     {comment.content}
                                 </p>
@@ -190,6 +196,12 @@ const CommentsManagementPage = () => {
 
                             <div className="bg-neutral-900 rounded-lg overflow-hidden">
                                 <div className="p-3 border-b border-neutral-800">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <FiEye className="text-blue-500" />
+                                        <span className="text-sm font-medium text-blue-500">
+                                            İlgili Gönderi
+                                        </span>
+                                    </div>
                                     <div className="flex items-center gap-2 mb-2">
                                         <img
                                             src={
