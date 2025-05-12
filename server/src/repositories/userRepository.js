@@ -95,8 +95,9 @@ export default {
      */
     async getAll(options = {}) {
         try {
-            return User.findAll({
+            return User.findAndCountAll({
                 ...options,
+                include: standartIncludes,
             });
         } catch (error) {
             logger.error("Error getting all users in repository:", error);
@@ -131,6 +132,40 @@ export default {
             });
         } catch (error) {
             logger.error("Error getting random users in repository:", error);
+            return undefined;
+        }
+    },
+
+    /**
+     * Tüm kullanıcıların sayısını getirir.
+     * @returns {Promise<number>} Kullanıcı sayısını döndürür.
+     */
+    async getUserCount() {
+        try {
+            return User.count();
+        } catch (error) {
+            logger.error("Error getting user count in repository:", error);
+            return undefined;
+        }
+    },
+
+    /**
+     * Son 24 saat içinde giriş yapan kullanıcıların sayısını getirir.
+     * @returns {Promise<number>} Son 24 saat içinde giriş yapan kullanıcı sayısını döndürür.
+     */
+    async getRecentUsersCount() {
+        try {
+            const now = new Date();
+            const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000); // Son 24 saat
+            return await User.count({
+                where: {
+                    lastLoginAt: {
+                        [Op.gte]: last24Hours, // Son 24 saat içinde oluşturulan kullanıcılar
+                    },
+                },
+            });
+        } catch (error) {
+            logger.error("Error getting recent users in repository:", error);
             return undefined;
         }
     },

@@ -16,46 +16,15 @@ const { userService } = diContainer;
  */
 const userController = {
     /**
-     * Tüm kullanıcıları listeler. SADECE ADMIN
-     */
-    getAllUsers: async (req, res, next) => {
-        try {
-            const isAdmin = checkAdmin(req.user.role);
-            if (!isAdmin) {
-                throw createHttpError(403, "Access denied");
-            }
-
-            logger.info("Getting all users...");
-
-            const users = await userService.getAllUsers();
-
-            logger.info("Users fetched successfully");
-
-            res.status(200).json(users);
-        } catch (error) {
-            logger.error("Error getting users:", error);
-            next(error);
-        }
-    },
-
-    /**
      * Belirli bir kullanıcıyı ID ile getirir. SADECE ADMIN
      */
     getUserById: async (req, res, next) => {
         try {
-            const isAdmin = checkAdmin(req.user.role);
-            if (!isAdmin) {
-                throw createHttpError(403, "Access denied");
-            }
-
             logger.info("Getting user...");
 
             const userId = req.params.userId;
 
-            const user = await userService.getUserById(
-                userId,
-                isAdmin ? "admin" : "user"
-            );
+            const user = await userService.getUserById(userId, "admin");
 
             logger.info("User fetched successfully");
 

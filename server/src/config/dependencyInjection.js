@@ -1,4 +1,5 @@
 import {
+    appSettingsRepository,
     commentRepository,
     followRepository,
     likeRepository,
@@ -8,6 +9,7 @@ import {
     userRepository,
 } from "../repositories/index.js";
 import {
+    adminService as adminServiceFactory,
     authService as authServiceFactory,
     commentService as commentServiceFactory,
     followService as followServiceFactory,
@@ -18,6 +20,7 @@ import {
     userService as userServiceFactory,
 } from "../services/index.js";
 
+const appSettingsRepo = appSettingsRepository;
 const userRepo = userRepository;
 const followRepo = followRepository;
 const likeRepo = likeRepository;
@@ -43,8 +46,15 @@ const commentSvc = commentServiceFactory(commentRepo, postSvc);
 // Then create the remaining services
 const authSvc = authServiceFactory(userRepo, userSvc);
 const savedSvc = savedServiceFactory(savedRepo, postSvc);
+const adminSvc = adminServiceFactory(
+    userRepo,
+    postRepo,
+    commentRepo,
+    appSettingsRepo
+);
 
 const diContainer = {
+    adminService: adminSvc,
     authService: authSvc,
     commentService: commentSvc,
     followService: followSvc,

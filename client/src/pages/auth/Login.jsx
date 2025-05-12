@@ -28,10 +28,13 @@ const LoginPage = () => {
                 console.log("Giriş işlemi başarısız!");
                 return;
             }
-            // Kullanıcı bilgilerini context'e kaydet
+            // Kullanıcı bilgilerini context'e ve localStorage'a kaydet
             setIsAuthenticated(true);
+            localStorage.setItem("isAuthenticated", "true");
+
             setUser(response.user);
             setUserRole(response.user.role);
+            localStorage.setItem("userRole", response.user.role);
 
             // Admin kullanıcı ise admin paneline yönlendir
             if (response.user.role === "admin") {

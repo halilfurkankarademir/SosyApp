@@ -1,3 +1,4 @@
+import appSettingsRepository from "./appSettingsRepository.js";
 import commentRepository from "./commentRepository.js";
 import followRepository from "./followRepository.js";
 import likeRepository from "./likeRepository.js";
@@ -7,6 +8,7 @@ import searchRepository from "./searchRepository.js";
 import userRepository from "./userRepository.js";
 
 export {
+    appSettingsRepository,
     commentRepository,
     followRepository,
     likeRepository,

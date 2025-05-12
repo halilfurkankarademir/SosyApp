@@ -137,7 +137,7 @@ const PostPage = () => {
 
     return (
         <>
-            <div className="page-container md:py-36 md:px-6">
+            <div className="page-container md:py-24 md:px-6">
                 {/* Grid Layout */}
                 <div className="page-grid-layout-large">
                     {/* Sidebar - Mobilde gizli */}

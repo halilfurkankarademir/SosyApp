@@ -6,8 +6,10 @@ import followService from "./followService.js";
 import likeService from "./likeService.js";
 import savedService from "./savedService.js";
 import searchService from "./searchService.js";
+import adminService from "./adminService.js";
 
 export {
+    adminService,
     commentService,
     postService,
     userService,

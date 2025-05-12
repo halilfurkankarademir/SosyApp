@@ -63,3 +63,13 @@ export const verifyCSRF = (req, res, next) => {
     console.log("CSRF token verified");
     next();
 };
+
+/**
+ * Istegi yapan kullanıcının admin olup olmadıgını kontrol eden middleware.
+ */
+export const checkAdminMiddleware = (req, res, next) => {
+    if (req.user.role !== "admin") {
+        return res.status(403).json({ error: "Access denied." });
+    }
+    next();
+};

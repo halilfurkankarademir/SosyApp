@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 // İkonları projenize göre güncelleyin, Fi ikonları varsayılan olarak kalabilir
 import {
@@ -7,7 +7,6 @@ import {
     FiFileText,
     FiSettings,
     FiLogOut,
-    FiAlertOctagon,
     FiMessageSquare,
     FiMenu,
     FiX,
@@ -15,6 +14,8 @@ import {
 } from "react-icons/fi";
 import useClickOutside from "../../hooks/useClickOutside";
 import { colors } from "../../utils/constants";
+import { getCurrentUser } from "../../api/userApi";
+import { useNavigation } from "../../context/NavigationContext";
 
 // Admin Logo bileşeni
 const AdminLogo = ({ onClick }) => {
@@ -37,6 +38,9 @@ const AdminSidebar = () => {
     // State tanımlamaları
     const [showSettings, setShowSettings] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [adminDetails, setAdminDetails] = useState(null);
+
+    const { navigateToPage } = useNavigation();
 
     // Ref tanımlamaları
     const settingsRef = useRef(null);
@@ -59,6 +63,15 @@ const AdminSidebar = () => {
     const toggleSettings = () => setShowSettings(!showSettings);
     const toggleMobileMenu = () => setShowMobileMenu(!showMobileMenu);
 
+    const getAdminDetails = async () => {
+        try {
+            const response = await getCurrentUser();
+            setAdminDetails(response);
+        } catch (error) {
+            console.error("Error getting admin details:", error);
+        }
+    };
+
     // Menü öğeleri
     const menuItems = [
         { path: "/admin", icon: <FiGrid />, text: "Dashboard" },
@@ -69,9 +82,12 @@ const AdminSidebar = () => {
             icon: <FiMessageSquare />,
             text: "Yorumlar",
         },
-        { path: "/admin/reports", icon: <FiAlertOctagon />, text: "Raporlar" },
         { path: "/admin/settings", icon: <FiSettings />, text: "Ayarlar" },
     ];
+
+    useEffect(() => {
+        getAdminDetails();
+    }, []);
 
     return (
         <>
@@ -104,25 +120,23 @@ const AdminSidebar = () => {
                     {/* Sağ Kısım - Admin Profil ve Mobil Menü */}
                     <div className="flex items-center space-x-4">
                         {/* Admin Profil */}
-                        <div className="hidden md:flex items-center space-x-3">
-                            <img
-                                src="https://randomuser.me/api/portraits/men/43.jpg"
-                                alt="Admin"
-                                className="h-8 w-8 rounded-full object-cover border border-neutral-700"
-                            />
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-white truncate">
-                                    Admin Kullanıcı
-                                </p>
-                            </div>
-
-                            {/* Çıkış Butonu */}
-                            <button
-                                className="text-neutral-400 hover:text-red-500 transition duration-200"
-                                title="Çıkış Yap"
-                            >
-                                <FiLogOut />
-                            </button>
+                        <div
+                            className="hidden md:flex items-center space-x-3 cursor-pointer"
+                            onClick={() =>
+                                navigateToPage(
+                                    `profile/${adminDetails?.username}`
+                                )
+                            }
+                        >
+                            {adminDetails ? (
+                                <img
+                                    src={adminDetails?.profilePicture}
+                                    alt="Admin"
+                                    className="h-8 w-8 rounded-full object-cover border border-neutral-700"
+                                />
+                            ) : (
+                                <div className="h-8 w-8 rounded-full bg-neutral-700" />
+                            )}
                         </div>
 
                         {/* Mobil Menü Butonu */}

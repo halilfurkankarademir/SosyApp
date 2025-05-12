@@ -29,3 +29,14 @@ export const getCookie = (name) => {
 export const deleteCookie = (name) => {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
 };
+
+export const dateFormatter = (date) => {
+    const options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+    };
+    return new Date(date).toLocaleDateString("tr-TR", options);
+};

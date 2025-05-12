@@ -38,7 +38,7 @@ const userService = (userRepository) => ({
                 operation: "createUser",
             });
 
-            const userDTOInstance = new userDTO(createdUser);
+            const userDTOInstance = new OwnProfileDTO(createdUser);
 
             return userDTOInstance;
         } catch (error) {
@@ -73,7 +73,7 @@ const userService = (userRepository) => ({
                 userId,
             });
 
-            const userDTOInstance = new userDTO(updatedUser);
+            const userDTOInstance = new OwnProfileDTO(updatedUser);
 
             return userDTOInstance;
         } catch (error) {
@@ -113,35 +113,6 @@ const userService = (userRepository) => ({
                 error: error.message,
             });
             throw new Error(ErrorMessages.USER_DELETION_FAILED);
-        }
-    },
-
-    /**
-     * Kayitli tum kullanıcıları donderir.
-     * @returns {Promise<Array<User>>} Kayitli tum kullanıcıları içeren bir dizi donderir.
-     */
-    getAllUsers: async () => {
-        try {
-            logger.debug("Fetching all users started");
-
-            const users = await userRepository.getAll();
-
-            logger.info("All users fetched successfully", {
-                operation: "getAllUsers",
-            });
-
-            // DTO ile hassas verileri filtrele
-            const usersDTOInstance = users.map(
-                (user) => new AdminProfileDTO(user)
-            );
-
-            return usersDTOInstance;
-        } catch (error) {
-            logger.error("Failed to fetch all users", {
-                error: error.message,
-                operation: "getAllUsers",
-            });
-            throw new Error(ErrorMessages.USERS_NOT_FOUND);
         }
     },
 

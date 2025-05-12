@@ -140,7 +140,6 @@ const permissionLevels = {
     NONE: 0,
     NORMAL_USER: 1,
     SELF_USER: 2,
-    ADMIN: 3,
 };
 Object.freeze(permissionLevels);
 
@@ -154,18 +153,12 @@ export const getPermissionLevel = (currentUser, userIdToCheck) => {
     if (!currentUser) {
         return permissionLevels.NONE;
     }
-
-    const userRole = currentUser.role.toLowerCase();
-
     const isSelfUser = currentUser.uid === userIdToCheck;
 
-    if (userRole === "admin") {
-        return permissionLevels.ADMIN;
-    } else if (isSelfUser) {
+    if (isSelfUser) {
         return permissionLevels.SELF_USER;
-    } else {
-        return permissionLevels.NORMAL_USER;
     }
+    return permissionLevels.NORMAL_USER;
 };
 
 // Kullanıcının yetkilerine gore kullanıcı bilgilerini donderir
@@ -175,8 +168,6 @@ export const getUserDTOInstanceByPermissionLevel = (permissionLevel, user) => {
             return new PublicProfileDTO(user);
         case 2:
             return new OwnProfileDTO(user);
-        case 3:
-            return new AdminProfileDTO(user);
         default:
             return new PublicProfileDTO(user);
     }

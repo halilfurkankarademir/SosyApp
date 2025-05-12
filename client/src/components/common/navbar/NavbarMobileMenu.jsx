@@ -65,7 +65,7 @@ const NavbarMobileMenu = ({
                 {/* Menü Linkleri */}
                 <nav className="space-y-2">
                     {/* Admin Paneli seçeneği sadece admin kullanıcılar için gösterilir */}
-                    {isAdmin && isAdmin() && (
+                    {isAdmin() && (
                         <button
                             onClick={() => {
                                 onClose();

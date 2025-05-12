@@ -3,8 +3,38 @@
  */
 
 import Comment from "../models/commentModel.js";
+import Post from "../models/postModel.js";
 import User from "../models/userModel.js";
 import logger from "../utils/logger.js";
+
+const allIncludes = [
+    {
+        model: User,
+        attributes: [
+            "uid",
+            "username",
+            "profilePicture",
+            "firstName",
+            "lastName",
+        ],
+    },
+    {
+        model: Post,
+        attributes: ["id", "content", "media"],
+        include: [
+            {
+                model: User,
+                attributes: [
+                    "uid",
+                    "username",
+                    "profilePicture",
+                    "firstName",
+                    "lastName",
+                ],
+            },
+        ],
+    },
+];
 
 export default {
     /**
@@ -42,6 +72,22 @@ export default {
         }
     },
 
+    async getAll(options = {}) {
+        try {
+            const comments = await Comment.findAndCountAll({
+                include: allIncludes,
+                ...options,
+                order: [["createdAt", "DESC"]],
+            });
+            return comments;
+        } catch (error) {
+            logger.error("Error getting comments by post ID:", error);
+            throw new Error(
+                "Error getting comments by post ID: " + error.message
+            );
+        }
+    },
+
     /**
      * Belirli bir gönderiye ait tüm yorumları (kullanıcı bilgileriyle) getirir.
      * @param {number} postId - Yorumları alınacak gönderinin ID'si.
@@ -76,18 +122,14 @@ export default {
     },
 
     /**
-     * Belirli bir gönderiye ait yorum sayısını sayar.
-     * @param {number} postId - Yorum sayısı alınacak gönderinin ID'si.
-     * @returns {Promise<number>} Gönderiye ait yorum sayısı.
-     * @throws {Error} Veritabanı hatası durumunda.
+     * Tüm yorumların sayısını getirir.
+     * @returns {Promise<number>} Yorum sayısını döndürür.
      */
-    async getCommentCount(postId) {
+    async getCommentCount() {
         try {
-            const commentCount = await Comment.count({ where: { postId } });
-            return commentCount;
+            return Comment.count();
         } catch (error) {
-            logger.error("Error getting comment count:", error);
-            throw new Error("Error getting comment count: " + error.message);
+            logger.error("Repository get comments count error:", error);
         }
     },
 };

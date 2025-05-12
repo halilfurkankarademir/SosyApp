@@ -13,7 +13,6 @@ export const NotificationProvider = ({ children }) => {
 
     useEffect(() => {
         if (notificationsEnabled && isAuthenticated) {
-            console.log("Bildirimler aktif");
             const handleNotifications = (data) => {
                 setNotifications((prev) => [data, ...prev]);
                 setIsAllNotificationsRead(false);
@@ -21,7 +20,6 @@ export const NotificationProvider = ({ children }) => {
 
             socket.on("new_notification", handleNotifications);
             return () => {
-                console.log("Bildirimler iptal edildi");
                 socket.off("new_notification", handleNotifications);
                 socket.disconnect();
             };

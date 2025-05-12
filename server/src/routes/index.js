@@ -4,6 +4,7 @@
  */
 
 import { Router } from "express";
+import adminRoutes from "./adminRoutes.js";
 import userRoutes from "./userRoutes.js";
 import postRoutes from "./postRoutes.js";
 import authRoutes from "./authRoutes.js";
@@ -20,6 +21,7 @@ const router = Router();
  * @module routes/index
  * @exports router
  */
+router.use("/admin", adminRoutes);
 router.use("/users", userRoutes);
 router.use("/posts", postRoutes);
 router.use("/auth", authRoutes);

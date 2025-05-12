@@ -1,119 +1,123 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
+import { FiSearch, FiEye, FiEdit } from "react-icons/fi";
 import {
-    FiSearch,
-    FiEdit,
-    FiTrash2,
-    FiUserCheck,
-    FiUserX,
-    FiEye,
-    FiFlag,
-} from "react-icons/fi";
+    getAllUsersForAdmin,
+    updateUserRoleForAdmin,
+} from "../../api/adminApi";
+import { useNavigation } from "../../context/NavigationContext";
+import { dateFormatter } from "../../utils/helpers";
+import { ShowToast } from "../../components/ui/toasts/ShowToast";
+import Modal from "react-modal";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useDebounce } from "use-debounce";
 
 const UsersManagementPage = () => {
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedRole, setSelectedRole] = useState("");
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [totalUsersCount, setTotalUsersCount] = useState(0);
+    const [debouncedSearch] = useDebounce(searchTerm, 300);
+
+    const { navigateToPage } = useNavigation();
+
+    const loadInitialUsers = useCallback(async () => {
+        setIsLoading(true);
+        setUsers([]);
+        setPage(1);
+        setHasMore(true);
+        setTotalUsersCount(0);
+        try {
+            const response = await getAllUsersForAdmin(1, debouncedSearch);
+            console.log("Response:", response);
+            const fetchedUsers = response?.users || [];
+            const fetchedCount = response?.count ?? 0;
+            setUsers(fetchedUsers);
+            setTotalUsersCount(fetchedCount);
+            setPage(2);
+            setHasMore(fetchedUsers.length < fetchedCount);
+        } catch (error) {
+            console.error("Error loading initial users:", error);
+            setHasMore(false);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [debouncedSearch]);
 
     useEffect(() => {
-        // Burada API'den kullanıcıları getirme işlemi yapılacak
-        // Şimdilik örnek veri kullanıyoruz
-        setTimeout(() => {
-            setUsers([
-                {
-                    id: 1,
-                    username: "ahmetyilmaz",
-                    email: "ahmet.yilmaz@example.com",
-                    name: "Ahmet Yılmaz",
-                    role: "user",
-                    status: "active",
-                    joinDate: "2023-05-15",
-                    lastLogin: "2023-09-10",
-                    followers: 245,
-                    following: 123,
-                    posts: 47,
-                    reportCount: 0,
-                },
-                {
-                    id: 2,
-                    username: "aysekaya",
-                    email: "ayse.kaya@example.com",
-                    name: "Ayşe Kaya",
-                    role: "user",
-                    status: "active",
-                    joinDate: "2023-04-20",
-                    lastLogin: "2023-09-18",
-                    followers: 1042,
-                    following: 356,
-                    posts: 128,
-                    reportCount: 0,
-                },
-                {
-                    id: 3,
-                    username: "mehmetdemir",
-                    email: "mehmet.demir@example.com",
-                    name: "Mehmet Demir",
-                    role: "admin",
-                    status: "active",
-                    joinDate: "2023-03-10",
-                    lastLogin: "2023-09-19",
-                    followers: 0,
-                    following: 0,
-                    posts: 3,
-                    reportCount: 0,
-                },
-                {
-                    id: 4,
-                    username: "zeynepcelik",
-                    email: "zeynep.celik@example.com",
-                    name: "Zeynep Çelik",
-                    role: "user",
-                    status: "inactive",
-                    joinDate: "2023-06-05",
-                    lastLogin: "2023-08-25",
-                    followers: 532,
-                    following: 287,
-                    posts: 89,
-                    reportCount: 0,
-                },
-                {
-                    id: 5,
-                    username: "mustafasahin",
-                    email: "mustafa.sahin@example.com",
-                    name: "Mustafa Şahin",
-                    role: "user",
-                    status: "active",
-                    joinDate: "2023-07-12",
-                    lastLogin: "2023-09-15",
-                    followers: 183,
-                    following: 207,
-                    posts: 35,
-                    reportCount: 2,
-                },
-            ]);
-            setLoading(false);
-        }, 500);
+        const timer = setTimeout(() => {
+            loadInitialUsers();
+        }, 100); // Kısa bir gecikme ekleyerek state güncellemelerinin tamamlanmasını sağlıyoruz
 
+        return () => clearTimeout(timer);
+    }, [loadInitialUsers]);
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+        setIsLoading(true); // Arama başladığında loading'i aktif et
+    };
+
+    const fetchMoreUsers = useCallback(async () => {
+        if (!hasMore || loading) {
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const response = await getAllUsersForAdmin(page, debouncedSearch);
+            const newUsers = response?.users || [];
+            const fetchedCount = response?.count ?? totalUsersCount;
+
+            setUsers((prevUsers) => [...prevUsers, ...newUsers]);
+            setTotalUsersCount(fetchedCount);
+
+            const currentTotalLoaded = users.length + newUsers.length;
+            setHasMore(currentTotalLoaded < fetchedCount);
+            setPage((prevPage) => prevPage + 1);
+        } catch (error) {
+            console.error("Error fetching more users:", error);
+            setHasMore(false);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [
+        page,
+        hasMore,
+        loading,
+        debouncedSearch,
+        users.length,
+        totalUsersCount,
+    ]);
+
+    const refreshUsers = useCallback(() => {
+        loadInitialUsers();
+    }, [loadInitialUsers]);
+
+    useEffect(() => {
+        loadInitialUsers();
         document.title = "Kullanıcı Yönetimi - Admin Panel";
-    }, []);
+    }, [loadInitialUsers]);
 
-    // Arama fonksiyonu
-    const filteredUsers = users.filter((user) => {
-        return (
-            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.username.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    });
+    const handleEditClick = (user) => {
+        setSelectedUser(user);
+        setSelectedRole(user.role);
+        setIsModalOpen(true);
+    };
 
-    // Durum renkleri ve metinleri
-    const statusStyles = {
-        active: {
-            color: "text-green-500",
-            bg: "bg-green-500/10",
-            text: "Aktif",
-        },
-        inactive: { color: "text-red-500", bg: "bg-red-500/10", text: "Pasif" },
+    const handleRoleUpdate = async () => {
+        try {
+            await updateUserRoleForAdmin(selectedUser.uid, selectedRole);
+            refreshUsers();
+            ShowToast("success", "Kullanıcı rolü başarıyla güncellendi");
+            setIsModalOpen(false);
+        } catch (error) {
+            ShowToast("error", "Rol güncellenirken bir hata oluştu");
+        }
     };
 
     // Rol renkleri ve metinleri
@@ -130,9 +134,135 @@ const UsersManagementPage = () => {
         },
     };
 
+    const renderUsers = () => {
+        if (loading && users.length === 0) {
+            return (
+                <div className="p-8 text-center">
+                    <div className="animate-spin w-8 h-8 border-4 border-neutral-600 border-t-pink-500 rounded-full mx-auto mb-4"></div>
+                    <p className="text-neutral-400">
+                        Kullanıcılar yükleniyor...
+                    </p>
+                </div>
+            );
+        }
+
+        if (!loading && users.length === 0) {
+            return (
+                <div className="p-8 text-center text-neutral-400">
+                    Aranan kriterlere uygun kullanıcı bulunamadı.
+                </div>
+            );
+        }
+
+        return (
+            <div className="overflow-x-auto">
+                <table className="w-full min-w-full">
+                    <thead>
+                        <tr className="border-b border-neutral-700 text-left text-neutral-400 text-sm bg-neutral-700/20">
+                            <th className="py-3 px-4 font-medium">Kullanıcı</th>
+                            <th className="py-3 px-4 font-medium">Rol</th>
+                            <th className="py-3 px-4 font-medium">
+                                İstatistikler
+                            </th>
+                            <th className="py-3 px-4 font-medium">Ip Adresi</th>
+                            <th className="py-3 px-4 font-medium">Son Giriş</th>
+                            <th className="py-3 px-4 font-medium">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user) => (
+                            <tr
+                                key={user.uid}
+                                className="border-b border-neutral-700 hover:bg-neutral-700/20"
+                            >
+                                <td className="py-3 px-4">
+                                    <div className="flex items-center">
+                                        <img
+                                            className="w-10 h-10 rounded-full mr-2 object-cover"
+                                            src={user.profilePicture}
+                                            alt="Profil Resmi"
+                                        />
+                                        <div>
+                                            <div className="text-white">
+                                                {user.firstName} {user.lastName}
+                                            </div>
+                                            <div className="text-neutral-400 text-sm">
+                                                @{user.username}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="py-3 px-4">
+                                    <span
+                                        className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${
+                                            roleStyles[user.role].bg
+                                        } ${roleStyles[user.role].color}`}
+                                    >
+                                        {roleStyles[user.role].text}
+                                    </span>
+                                </td>
+                                <td className="py-3 px-4 text-neutral-300">
+                                    <div className="flex flex-col text-sm">
+                                        <span className="mb-1">
+                                            <span className="font-medium text-pink-500">
+                                                {user.Followers.length}
+                                            </span>{" "}
+                                            takipçi
+                                        </span>
+                                        <span className="mb-1">
+                                            <span className="font-medium text-blue-500">
+                                                {user.Following.length}
+                                            </span>{" "}
+                                            takip edilen
+                                        </span>
+                                        <span>
+                                            <span className="font-medium text-green-500">
+                                                {user.posts.length}
+                                            </span>{" "}
+                                            gönderi
+                                        </span>
+                                    </div>
+                                </td>
+                                <td className="py-3 px-4 text-neutral-300">
+                                    {user.ipAdress || "Bilinmiyor"}
+                                </td>
+                                <td className="py-3 px-4 text-neutral-300">
+                                    {dateFormatter(user.lastLoginAt)}
+                                </td>
+                                <td className="py-3 px-4">
+                                    <div className="flex gap-2">
+                                        <button
+                                            className="text-white hover:text-blue-500 p-1"
+                                            title="Profili Görüntüle"
+                                            onClick={() =>
+                                                navigateToPage(
+                                                    `profile/${user.username}`
+                                                )
+                                            }
+                                        >
+                                            <FiEye />
+                                        </button>
+                                        <button
+                                            className="text-white hover:text-red-500 p-1"
+                                            title="Kullanıcıyı Düzenle"
+                                            onClick={() =>
+                                                handleEditClick(user)
+                                            }
+                                        >
+                                            <FiEdit />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
+
     return (
         <AdminLayout>
-            {/* Başlık ve Arama Bölümü */}
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
                 <h1 className="text-2xl font-bold text-white">
                     Kullanıcı Yönetimi
@@ -145,169 +275,85 @@ const UsersManagementPage = () => {
                             placeholder="Kullanıcı ara..."
                             className="w-full px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white pr-10 focus:outline-none focus:border-pink-500"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={handleSearchChange}
                         />
                         <FiSearch className="absolute right-3 top-2.5 text-neutral-500" />
                     </div>
                 </div>
             </div>
 
-            {/* Kullanıcı Tablosu */}
             <div className="bg-neutral-800 rounded-xl border border-neutral-700/50 overflow-hidden">
-                {loading ? (
-                    <div className="p-8 text-center">
-                        <div className="animate-spin w-8 h-8 border-4 border-neutral-600 border-t-pink-500 rounded-full mx-auto mb-4"></div>
-                        <p className="text-neutral-400">
-                            Kullanıcılar yükleniyor...
-                        </p>
-                    </div>
-                ) : filteredUsers.length === 0 ? (
-                    <div className="p-8 text-center text-neutral-400">
-                        Aranan kriterlere uygun kullanıcı bulunamadı.
-                    </div>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-full">
-                            <thead>
-                                <tr className="border-b border-neutral-700 text-left text-neutral-400 text-sm bg-neutral-700/20">
-                                    <th className="py-3 px-4 font-medium">
-                                        Kullanıcı
-                                    </th>
-                                    <th className="py-3 px-4 font-medium">
-                                        Rol
-                                    </th>
-                                    <th className="py-3 px-4 font-medium">
-                                        Durum
-                                    </th>
-                                    <th className="py-3 px-4 font-medium">
-                                        İstatistikler
-                                    </th>
-                                    <th className="py-3 px-4 font-medium">
-                                        Son Giriş
-                                    </th>
-                                    <th className="py-3 px-4 font-medium">
-                                        İşlemler
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredUsers.map((user) => (
-                                    <tr
-                                        key={user.id}
-                                        className="border-b border-neutral-700 hover:bg-neutral-700/20"
-                                    >
-                                        <td className="py-3 px-4">
-                                            <div className="flex items-center">
-                                                <div className="w-8 h-8 rounded-full bg-neutral-700 flex items-center justify-center text-neutral-300 font-medium mr-3">
-                                                    {user.name.charAt(0)}
-                                                </div>
-                                                <div>
-                                                    <div className="text-white">
-                                                        {user.name}
-                                                    </div>
-                                                    <div className="text-neutral-400 text-sm">
-                                                        @{user.username}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <span
-                                                className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${
-                                                    roleStyles[user.role].bg
-                                                } ${
-                                                    roleStyles[user.role].color
-                                                }`}
-                                            >
-                                                {roleStyles[user.role].text}
-                                            </span>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <span
-                                                className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${
-                                                    statusStyles[user.status].bg
-                                                } ${
-                                                    statusStyles[user.status]
-                                                        .color
-                                                }`}
-                                            >
-                                                {statusStyles[user.status].text}
-                                            </span>
-                                            {user.reportCount > 0 && (
-                                                <span className="inline-block ml-2 px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500">
-                                                    {user.reportCount} Rapor
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="py-3 px-4 text-neutral-300">
-                                            <div className="flex flex-col text-xs">
-                                                <span className="mb-1">
-                                                    <span className="font-medium text-pink-500">
-                                                        {user.followers}
-                                                    </span>{" "}
-                                                    takipçi
-                                                </span>
-                                                <span className="mb-1">
-                                                    <span className="font-medium text-blue-500">
-                                                        {user.following}
-                                                    </span>{" "}
-                                                    takip edilen
-                                                </span>
-                                                <span>
-                                                    <span className="font-medium text-green-500">
-                                                        {user.posts}
-                                                    </span>{" "}
-                                                    gönderi
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4 text-neutral-300">
-                                            {user.lastLogin}
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <div className="flex gap-2">
-                                                <button
-                                                    className="text-white hover:text-blue-500 p-1"
-                                                    title="Profili Görüntüle"
-                                                >
-                                                    <FiEye />
-                                                </button>
-                                                <button
-                                                    className="text-white hover:text-blue-500 p-1"
-                                                    title="Düzenle"
-                                                >
-                                                    <FiEdit />
-                                                </button>
-                                                {user.status === "active" ? (
-                                                    <button
-                                                        className="text-white hover:text-red-500 p-1"
-                                                        title="Devre Dışı Bırak"
-                                                    >
-                                                        <FiUserX />
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        className="text-white hover:text-green-500 p-1"
-                                                        title="Aktifleştir"
-                                                    >
-                                                        <FiUserCheck />
-                                                    </button>
-                                                )}
-                                                <button
-                                                    className="text-white hover:text-red-500 p-1"
-                                                    title="Sil"
-                                                >
-                                                    <FiTrash2 />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                <InfiniteScroll
+                    dataLength={users.length}
+                    next={fetchMoreUsers}
+                    hasMore={hasMore}
+                    loader={
+                        loading && users.length > 0 ? (
+                            <div className="p-4 text-center">
+                                <div className="animate-spin w-6 h-6 border-4 border-neutral-600 border-t-pink-500 rounded-full mx-auto"></div>
+                            </div>
+                        ) : null
+                    }
+                    endMessage={
+                        !hasMore && users.length > 0 ? (
+                            <p className="text-center text-neutral-400 py-4">
+                                Başka kullanıcı bulunmamaktadır.
+                            </p>
+                        ) : null
+                    }
+                >
+                    {renderUsers()}
+                </InfiniteScroll>
             </div>
+
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={() => setIsModalOpen(false)}
+                className="fixed inset-0 flex items-center justify-center z-50"
+                overlayClassName="fixed inset-0 backdrop-blur-sm bg-black/30"
+            >
+                <div className="bg-neutral-800/90 backdrop-blur-md p-6 rounded-xl w-96 border border-neutral-700/50">
+                    <h2 className="text-xl font-bold text-white mb-4">
+                        Kullanıcı Rolünü Düzenle
+                    </h2>
+                    <div className="mb-4">
+                        <label className="block text-neutral-300 mb-2">
+                            Kullanıcı
+                        </label>
+                        <div className="text-white">
+                            {selectedUser?.firstName} {selectedUser?.lastName}{" "}
+                            (@{selectedUser?.username})
+                        </div>
+                    </div>
+                    <div className="mb-6">
+                        <label className="block text-neutral-300 mb-2">
+                            Rol
+                        </label>
+                        <select
+                            value={selectedRole}
+                            onChange={(e) => setSelectedRole(e.target.value)}
+                            className="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white focus:outline-none focus:border-pink-500"
+                        >
+                            <option value="user">Kullanıcı</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div className="flex justify-end gap-3">
+                        <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="px-4 py-2 text-neutral-300 hover:text-white"
+                        >
+                            İptal
+                        </button>
+                        <button
+                            onClick={handleRoleUpdate}
+                            className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+                        >
+                            Kaydet
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </AdminLayout>
     );
 };

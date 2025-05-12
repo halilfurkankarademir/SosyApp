@@ -4,33 +4,27 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userRole, setUserRole] = useState(null);
 
+    // State'i localStorage ile senkronize et
     useEffect(() => {
-        checkAuth();
-    }, [isAuthenticated]);
-
-    const checkAuth = async () => {
-        // Local storagede eger giris yapilmis ise isAuthenticated true olur yoksa false olur
-        // Bu, kullanıcının giriş yapmış olup olmadığını kontrol etmek için kullanılır
         const isAuth = localStorage.getItem("isAuthenticated") === "true";
         setIsAuthenticated(isAuth);
 
-        // Kullanıcı rol bilgisini localStorage'dan al
         if (isAuth) {
-            const storedUser = localStorage.getItem("user");
-            if (storedUser) {
-                const parsedUser = JSON.parse(storedUser);
-                setUser(parsedUser);
-                setUserRole(parsedUser.role);
-            }
+            const role = localStorage.getItem("userRole");
+            setUserRole(role);
         }
-    };
+    }, []);
 
-    // Admin mi kontrolü yapan yardımcı fonksiyon
-    const isAdmin = () => {
-        return userRole === "admin";
+    // isAdmin fonksiyonu
+    const isAdmin = () => userRole === "admin";
+
+    // setUserRole fonksiyonunu güncelle
+    const updateUserRole = (role) => {
+        setUserRole(role);
+        localStorage.setItem("userRole", role);
     };
 
     return (
@@ -41,7 +35,7 @@ export const AuthProvider = ({ children }) => {
                 isAuthenticated,
                 setIsAuthenticated,
                 userRole,
-                setUserRole,
+                setUserRole: updateUserRole,
                 isAdmin,
             }}
         >

@@ -6,6 +6,7 @@ import express from "express";
 import userController from "../controllers/userController.js";
 import {
     authenticateToken,
+    checkAdminMiddleware,
     verifyCSRF,
 } from "../middlewares/authMiddleware.js";
 import {
@@ -28,6 +29,7 @@ router.get(
     "/id/:userId",
     validateUserId,
     authenticateToken,
+    checkAdminMiddleware,
     userController.getUserById
 );
 
@@ -50,11 +52,6 @@ router.get(
     authenticateToken,
     userController.getUserByEmail
 );
-
-/**
- * Tüm kullanıcıları listeler (Admin yetkisi gerekebilir).
- */
-router.get("/", authenticateToken, userController.getAllUsers);
 
 /**
  * Rastgele kullanıcıları getirir (Öneri vb. için).

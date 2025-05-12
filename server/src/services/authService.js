@@ -97,6 +97,8 @@ const authService = (userRepository, userService) => ({
                 user.uid
             );
 
+            await userRepository.update(user.uid, { lastLoginAt: new Date() });
+
             const userDTOInstance = new userDTO(user);
 
             return {
@@ -141,6 +143,8 @@ const authService = (userRepository, userService) => ({
             const { accessToken, refreshToken } = jwtUtils.generateTokens(
                 user.uid
             );
+
+            await userRepository.update(user.uid, { lastLoginAt: new Date() });
 
             return { user, accessToken, refreshToken };
         } catch (error) {

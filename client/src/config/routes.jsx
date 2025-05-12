@@ -43,9 +43,6 @@ const AdminSettingsPage = lazy(() => import("../pages/admin/SettingsPage"));
 const CommentsManagementPage = lazy(() =>
     import("../pages/admin/CommentsManagementPage")
 );
-const ReportsManagementPage = lazy(() =>
-    import("../pages/admin/ReportsManagementPage")
-);
 
 export const AppRoutes = () => {
     const { isAuthenticated } = useAuth();
@@ -136,14 +133,6 @@ export const AppRoutes = () => {
                         element={
                             <ProtectedAdminRoute>
                                 <CommentsManagementPage />
-                            </ProtectedAdminRoute>
-                        }
-                    />
-                    <Route
-                        path="/admin/reports"
-                        element={
-                            <ProtectedAdminRoute>
-                                <ReportsManagementPage />
                             </ProtectedAdminRoute>
                         }
                     />

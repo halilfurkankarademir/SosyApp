@@ -72,10 +72,6 @@ export default {
     async deleteById(postId) {
         try {
             const post = await Post.findByPk(postId);
-            if (!post) {
-                // Bu hatayı servis katmanında yakalamak daha uygun olabilir (404 Not Found)
-                throw new Error("Gönderi bulunamadı");
-            }
             await post.destroy();
             return { success: true };
         } catch (error) {
@@ -149,5 +145,13 @@ export default {
             { likeCount: 1 },
             { where: { id: postId }, transaction: t }
         );
+    },
+
+    async getPostCount() {
+        try {
+            return await Post.count();
+        } catch (error) {
+            logger.error("Repository get posts count error:", error);
+        }
     },
 };

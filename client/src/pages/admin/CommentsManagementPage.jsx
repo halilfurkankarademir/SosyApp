@@ -1,130 +1,231 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
+import { FiSearch, FiTrash2, FiEye, FiMessageSquare } from "react-icons/fi";
 import {
-    FiSearch,
-    FiTrash2,
-    FiAlertOctagon,
-    FiCheckCircle,
-    FiXCircle,
-    FiFilter,
-    FiEye,
-    FiMessageSquare,
-} from "react-icons/fi";
+    deleteCommentForAdmin,
+    getAllCommentsForAdmin,
+} from "../../api/adminApi";
+import { dateFormatter } from "../../utils/helpers";
+import { ShowToast } from "../../components/ui/toasts/ShowToast";
+import { useNavigation } from "../../context/NavigationContext";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useDebounce } from "use-debounce";
 
 const CommentsManagementPage = () => {
     const [comments, setComments] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filter, setFilter] = useState("all");
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [totalCommentsCount, setTotalCommentsCount] = useState(0);
+    const [debouncedSearch] = useDebounce(searchTerm, 300);
+
+    const { navigateToPage } = useNavigation();
+
+    const loadInitialComments = useCallback(async () => {
+        setIsLoading(true);
+        setComments([]);
+        setPage(1);
+        setHasMore(true);
+        setTotalCommentsCount(0);
+        try {
+            const response = await getAllCommentsForAdmin(1, debouncedSearch);
+            const fetchedComments = response?.comments || [];
+            const fetchedCount = response?.count ?? 0;
+            setComments(fetchedComments);
+            setTotalCommentsCount(fetchedCount);
+            setPage(2);
+            setHasMore(fetchedComments.length < fetchedCount);
+        } catch (error) {
+            console.error("Error loading initial comments:", error);
+            setHasMore(false);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [debouncedSearch]);
+
+    const fetchMoreComments = useCallback(async () => {
+        if (!hasMore || loading) {
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const response = await getAllCommentsForAdmin(
+                page,
+                debouncedSearch
+            );
+            const newComments = response?.comments || [];
+            const fetchedCount = response?.count ?? totalCommentsCount;
+
+            setComments((prevComments) => [...prevComments, ...newComments]);
+            setTotalCommentsCount(fetchedCount);
+
+            const currentTotalLoaded = comments.length + newComments.length;
+            setHasMore(currentTotalLoaded < fetchedCount);
+            setPage((prevPage) => prevPage + 1);
+        } catch (error) {
+            console.error("Error fetching more comments:", error);
+            setHasMore(false);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [
+        page,
+        hasMore,
+        loading,
+        debouncedSearch,
+        comments.length,
+        totalCommentsCount,
+    ]);
+
+    const refreshComments = useCallback(() => {
+        loadInitialComments();
+    }, [loadInitialComments]);
+
+    const deleteComment = async (commentId) => {
+        if (window.confirm("Bu yorumu silmek istediğinize emin misiniz?")) {
+            try {
+                await deleteCommentForAdmin(commentId);
+                refreshComments();
+                ShowToast("success", "Yorum başarıyla silindi");
+            } catch (error) {
+                console.error("Error deleting comment:", error);
+            }
+        }
+    };
 
     useEffect(() => {
-        // Burada API'den yorumları getirme işlemi yapılacak
-        // Şimdilik örnek veri kullanıyoruz
-        setTimeout(() => {
-            setComments([
-                {
-                    id: 1,
-                    content: "Harika bir gönderi olmuş! Tebrikler 👏",
-                    author: "ahmetyilmaz",
-                    authorName: "Ahmet Yılmaz",
-                    postTitle: "Bugün harika bir gün! #güneşli #mutlu",
-                    postAuthor: "zeynepcelik",
-                    status: "approved",
-                    date: "2023-09-10",
-                    likes: 15,
-                    reports: 0,
-                },
-                {
-                    id: 2,
-                    content: "Kesinlikle katılıyorum, bu ürün harika!",
-                    author: "aysekaya",
-                    authorName: "Ayşe Kaya",
-                    postTitle: "Yeni telefon aldım, çok memnunum! #teknoloji",
-                    postAuthor: "mehmetdemir",
-                    status: "approved",
-                    date: "2023-09-15",
-                    likes: 8,
-                    reports: 0,
-                },
-                {
-                    id: 3,
-                    content: "Bence bu konuda yanılıyorsun...",
-                    author: "mustafasahin",
-                    authorName: "Mustafa Şahin",
-                    postTitle:
-                        "Bu konuda hepinizin fikrini merak ediyorum... #anket",
-                    postAuthor: "zeynepcelik",
-                    status: "pending",
-                    date: "2023-09-12",
-                    likes: 0,
-                    reports: 0,
-                },
-                {
-                    id: 4,
-                    content: "Bu çok saçma bir fikir, kesinlikle katılmıyorum!",
-                    author: "mehmetdemir",
-                    authorName: "Mehmet Demir",
-                    postTitle:
-                        "Bu konuda hepinizin fikrini merak ediyorum... #anket",
-                    postAuthor: "zeynepcelik",
-                    status: "pending",
-                    date: "2023-09-18",
-                    likes: 2,
-                    reports: 3,
-                },
-                {
-                    id: 5,
-                    content:
-                        "Daha önce de aynı sorunu yaşamıştım, çözüm için DM atabilirsin :)",
-                    author: "zeynepcelik",
-                    authorName: "Zeynep Çelik",
-                    postTitle:
-                        "Telefonu şarj edemiyorum, yardım lazım! #yardım",
-                    postAuthor: "ahmetyilmaz",
-                    status: "approved",
-                    date: "2023-09-05",
-                    likes: 7,
-                    reports: 0,
-                },
-            ]);
-            setLoading(false);
-        }, 500);
-
+        loadInitialComments();
         document.title = "Yorum Yönetimi - Admin Panel";
-    }, []);
+    }, [loadInitialComments]);
 
-    // Arama ve filtreleme fonksiyonu
-    const filteredComments = comments.filter((comment) => {
-        const matchesSearch =
-            comment.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            comment.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            comment.postTitle.toLowerCase().includes(searchTerm.toLowerCase());
+    const renderComments = () => {
+        if (loading && comments.length === 0) {
+            return (
+                <div className="p-8 text-center">
+                    <div className="animate-spin w-8 h-8 border-4 border-neutral-600 border-t-pink-500 rounded-full mx-auto mb-4"></div>
+                    <p className="text-neutral-400">Yorumlar yükleniyor...</p>
+                </div>
+            );
+        }
 
-        if (filter === "all") return matchesSearch;
-        if (filter === "reported") return matchesSearch && comment.reports > 0;
+        if (!loading && comments.length === 0) {
+            return (
+                <div className="p-8 text-center text-neutral-400">
+                    Aranan kriterlere uygun yorum bulunamadı.
+                </div>
+            );
+        }
 
-        return matchesSearch;
-    });
+        return (
+            <div className="grid grid-cols-1 gap-4">
+                {comments.map((comment, index) => (
+                    <div
+                        key={comment.id || index}
+                        className="bg-neutral-800 border border-neutral-700 rounded-lg overflow-hidden hover:border-neutral-600 transition-colors"
+                    >
+                        <div className="p-4">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                    <img
+                                        src={comment.user.profilePicture}
+                                        alt=""
+                                        className="w-10 h-10 rounded-full object-cover border-2 border-neutral-700"
+                                    />
+                                    <div>
+                                        <p className="text-white font-medium flex items-center gap-2">
+                                            @{comment.user.username}
+                                            {comment.user.isVerified && (
+                                                <span className="text-blue-500">
+                                                    <svg
+                                                        className="w-4 h-4"
+                                                        viewBox="0 0 24 24"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                                                    </svg>
+                                                </span>
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-neutral-400">
+                                            {comment.user.firstName}{" "}
+                                            {comment.user.lastName}
+                                        </p>
+                                    </div>
+                                </div>
 
-    // Durum renkleri ve metinleri
-    const statusStyles = {
-        approved: {
-            color: "text-green-500",
-            bg: "bg-green-500/10",
-            text: "Onaylanmış",
-        },
-        pending: {
-            color: "text-yellow-500",
-            bg: "bg-yellow-500/10",
-            text: "İnceleniyor",
-        },
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className="p-2 hover:bg-neutral-700 rounded-lg transition-colors text-neutral-400 hover:text-blue-500"
+                                        title="Gönderiyi Görüntüle"
+                                        onClick={() =>
+                                            navigateToPage(
+                                                `/post/${comment.postId}`
+                                            )
+                                        }
+                                    >
+                                        <FiEye />
+                                    </button>
+                                    <button
+                                        className="p-2 hover:bg-neutral-700 rounded-lg transition-colors text-neutral-400 hover:text-red-500"
+                                        title="Yorumu Sil"
+                                        onClick={() =>
+                                            deleteComment(comment.id)
+                                        }
+                                    >
+                                        <FiTrash2 />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="mb-4">
+                                <p className="text-neutral-300 text-sm">
+                                    {comment.content}
+                                </p>
+                                <span className="text-xs text-neutral-500 mt-2 block">
+                                    {dateFormatter(comment.createdAt)}
+                                </span>
+                            </div>
+
+                            <div className="bg-neutral-900 rounded-lg overflow-hidden">
+                                <div className="p-3 border-b border-neutral-800">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <img
+                                            src={
+                                                comment.post.user.profilePicture
+                                            }
+                                            alt=""
+                                            className="w-6 h-6 rounded-full object-cover"
+                                        />
+                                        <span className="text-sm text-white">
+                                            @{comment.post.user.username}
+                                        </span>
+                                    </div>
+                                    <p className="text-sm text-neutral-300 line-clamp-2">
+                                        {comment.post.content}
+                                    </p>
+                                </div>
+                                {comment.post.media && (
+                                    <img
+                                        src={comment.post.media}
+                                        alt=""
+                                        className="w-full h-48 object-cover"
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
     };
 
     return (
         <AdminLayout>
-            {/* Başlık ve Arama Bölümü */}
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
-                <h1 className="text-2xl font-bold text-white">
+                <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                    <FiMessageSquare className="text-pink-500" />
                     Yorum Yönetimi
                 </h1>
 
@@ -133,7 +234,7 @@ const CommentsManagementPage = () => {
                         <input
                             type="text"
                             placeholder="Yorum ara..."
-                            className="w-full px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white pr-10 focus:outline-none focus:border-pink-500"
+                            className="w-full px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white pr-10 focus:outline-none focus:border-pink-500 transition-colors"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -142,133 +243,20 @@ const CommentsManagementPage = () => {
                 </div>
             </div>
 
-            {/* Filtreler */}
-            <div className="flex flex-wrap gap-2 mb-6">
-                <button
-                    className={`flex items-center px-3 py-1.5 rounded-lg text-sm ${
-                        filter === "all"
-                            ? "bg-pink-500 text-white"
-                            : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
-                    }`}
-                    onClick={() => setFilter("all")}
-                >
-                    <FiFilter className="mr-2" />
-                    Tümü
-                </button>
-                <button
-                    className={`flex items-center px-3 py-1.5 rounded-lg text-sm ${
-                        filter === "reported"
-                            ? "bg-pink-500 text-white"
-                            : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
-                    }`}
-                    onClick={() => setFilter("reported")}
-                >
-                    <FiAlertOctagon className="mr-2" />
-                    Raporlananlar
-                </button>
-            </div>
-
-            {/* Yorumlar Tablosu */}
-            <div className="bg-neutral-800 rounded-xl border border-neutral-700/50 overflow-hidden">
-                {loading ? (
-                    <div className="p-8 text-center">
-                        <div className="animate-spin w-8 h-8 border-4 border-neutral-600 border-t-pink-500 rounded-full mx-auto mb-4"></div>
-                        <p className="text-neutral-400">
-                            Yorumlar yükleniyor...
+            <InfiniteScroll
+                dataLength={comments.length}
+                next={fetchMoreComments}
+                hasMore={hasMore}
+                endMessage={
+                    !hasMore && comments.length > 0 ? (
+                        <p className="text-center text-neutral-400 py-4">
+                            Başka yorum bulunmamaktadır.
                         </p>
-                    </div>
-                ) : filteredComments.length === 0 ? (
-                    <div className="p-8 text-center text-neutral-400">
-                        Aranan kriterlere uygun yorum bulunamadı.
-                    </div>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-full">
-                            <thead>
-                                <tr className="border-b border-neutral-700 text-left text-neutral-400 text-sm bg-neutral-700/20">
-                                    <th className="py-3 px-4 font-medium">
-                                        Yorum
-                                    </th>
-                                    <th className="py-3 px-4 font-medium">
-                                        Gönderi
-                                    </th>
-                                    <th className="py-3 px-4 font-medium">
-                                        Tarih
-                                    </th>
-                                    <th className="py-3 px-4 font-medium">
-                                        İşlemler
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredComments.map((comment) => (
-                                    <tr
-                                        key={comment.id}
-                                        className="border-b border-neutral-700 hover:bg-neutral-700/20"
-                                    >
-                                        <td className="py-3 px-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-white font-medium truncate max-w-xs mb-1">
-                                                    {comment.content.length > 60
-                                                        ? comment.content.substring(
-                                                              0,
-                                                              60
-                                                          ) + "..."
-                                                        : comment.content}
-                                                </span>
-                                                <span className="text-xs text-neutral-400">
-                                                    @{comment.author} (
-                                                    {comment.authorName})
-                                                </span>
-                                                {comment.reports > 0 && (
-                                                    <span className="text-xs text-red-500 mt-1">
-                                                        {comment.reports} rapor
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4 text-neutral-300">
-                                            <div className="flex flex-col">
-                                                <span className="truncate max-w-xs">
-                                                    {comment.postTitle.length >
-                                                    40
-                                                        ? comment.postTitle.substring(
-                                                              0,
-                                                              40
-                                                          ) + "..."
-                                                        : comment.postTitle}
-                                                </span>
-                                                <span className="text-xs text-neutral-400">
-                                                    @{comment.postAuthor}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4 text-neutral-300">
-                                            {comment.date}
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <div className="flex gap-2">
-                                                <button
-                                                    className="text-white hover:text-blue-500 p-1"
-                                                    title="Gönderiyi Görüntüle"
-                                                >
-                                                    <FiEye />
-                                                </button>
-                                                <button
-                                                    className="text-white hover:text-red-500 p-1"
-                                                    title="Sil"
-                                                >
-                                                    <FiTrash2 />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
+                    ) : null
+                }
+            >
+                {renderComments()}
+            </InfiniteScroll>
         </AdminLayout>
     );
 };

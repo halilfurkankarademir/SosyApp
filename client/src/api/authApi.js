@@ -15,6 +15,7 @@ export const register = (email, password, username, firstName, lastName) => {
             })
             .then((response) => {
                 localStorage.setItem("isAuthenticated", true);
+                localStorage.setItem("user", JSON.stringify(response.data));
                 return response.data;
             });
     } catch (error) {
@@ -27,9 +28,6 @@ export const login = (email, password) => {
         return apiClient
             .post("/auth/login", { email, password })
             .then((response) => {
-                // Kullanıcı bilgilerini localStorage'a kaydet
-                localStorage.setItem("isAuthenticated", true);
-
                 return response.data;
             });
     } catch (error) {
