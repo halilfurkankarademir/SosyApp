@@ -11,6 +11,8 @@ import {
 import { searchPosts, searchUsers } from "../../api/searchApi";
 import PostCard from "../../components/features/posts/PostCard";
 import UserCard from "../../components/ui/cards/UserCard";
+import useUserStore from "../../hooks/useUserStore";
+import { getCurrentUser } from "../../api/userApi";
 
 const SearchPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -21,6 +23,8 @@ const SearchPage = () => {
     const [userResults, setUserResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const setUser = useUserStore((state) => state.setUser);
 
     const searchFunction = async (query) => {
         if (!query) {
@@ -70,11 +74,21 @@ const SearchPage = () => {
         }
     };
 
+    const fetchCurrentUser = async () => {
+        try {
+            const user = await getCurrentUser();
+            setUser(user);
+        } catch (error) {
+            console.error("Error fetching current user:", error);
+        }
+    };
+
     useEffect(() => {
         window.scrollTo(0, 0);
         const query = searchParams.get("q");
         setSearchQuery(query || "");
         searchFunction(query);
+        fetchCurrentUser();
         document.title = query ? `${query} için sonuçlar` : "Arama";
     }, [searchParams]); // searchFunction'ı dependency array'e eklemeye gerek yok (useCallback ile optimize edilmediği sürece)
 

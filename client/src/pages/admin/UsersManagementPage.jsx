@@ -42,7 +42,6 @@ const UsersManagementPage = () => {
         setTotalUsersCount(0);
         try {
             const response = await getAllUsersForAdmin(1, debouncedSearch);
-            console.log(response);
             const fetchedUsers = response?.users || [];
             const fetchedCount = response?.count ?? 0;
             setUsers(fetchedUsers);

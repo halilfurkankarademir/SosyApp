@@ -226,7 +226,7 @@ const PostCard = ({ postData, onPostRemove }) => {
                     onClick={handleNavigateToPost}
                 >
                     <p className="text-sm md:text-base whitespace-pre-wrap break-words">
-                        {content}
+                        {renderHashtags(content)}
                     </p>
                 </div>
             )}
@@ -327,3 +327,22 @@ const PostCard = ({ postData, onPostRemove }) => {
 };
 
 export default PostCard;
+
+const renderHashtags = (text) => {
+    const hashtagRegex = /#(\w+)/g;
+    const parts = text.split(hashtagRegex);
+    return parts.map((part, index) => {
+        if (index % 2 === 1) {
+            return (
+                <a
+                    key={index}
+                    href={`/search?q=${part}`}
+                    className="text-blue-500 hover:underline"
+                >
+                    #{part}
+                </a>
+            );
+        }
+        return part;
+    });
+};
