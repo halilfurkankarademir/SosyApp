@@ -48,6 +48,7 @@ export const registerFields = [
         autoComplete: "new-password",
         required: true,
         placeholder: "Şifre",
+        minLength: 6,
     },
     {
         id: "confirmPassword",
@@ -56,6 +57,7 @@ export const registerFields = [
         autoComplete: "new-password",
         required: true,
         placeholder: "Şifre Tekrar",
+        minLength: 6,
     },
 ];
 

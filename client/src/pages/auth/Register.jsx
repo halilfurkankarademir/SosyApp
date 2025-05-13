@@ -25,6 +25,11 @@ const RegisterPage = () => {
                 ShowToast("warning", "Lütfen tüm alanları doldurun.");
                 return;
             }
+            if (password.length < 6) {
+                ShowToast("warning", "Şifre en az 6 karakter olmalıdır.");
+                return;
+            }
+
             const user = await register(
                 email.toString().trim(),
                 password.toString().trim(),

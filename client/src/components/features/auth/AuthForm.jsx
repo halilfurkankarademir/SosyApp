@@ -46,6 +46,7 @@ const AuthForm = ({
                             id={field.id}
                             name={field.name}
                             type={field.type}
+                            minLength={field?.minLength}
                             autoComplete={field.autoComplete}
                             className="mt-1 block w-full px-4 py-2 bg-neutral-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                             placeholder={field.placeholder}
