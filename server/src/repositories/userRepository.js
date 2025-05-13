@@ -55,7 +55,7 @@ export default {
             return await User.create(userData);
         } catch (error) {
             logger.error("Error creating user in repository:", error);
-            return undefined;
+            throw error;
         }
     },
 

@@ -4,7 +4,7 @@ import { ErrorMessages } from "../utils/constants.js";
 import jwtUtils from "../utils/jwtUtils.js";
 import userDTO from "../dtos/userDTO.js";
 import createHttpError from "http-errors";
-import logger from "../utils/logger.js";
+import { ValidationError } from "sequelize";
 
 /**
  * Kimlik doğrulama (authentication) işlemleri için servis katmanı.
@@ -52,10 +52,6 @@ const authService = (userRepository, userService) => ({
                 ipAddress,
             });
 
-            if (!createdUser) {
-                throw createHttpError(500, ErrorMessages.REGISTRATION_FAILED);
-            }
-
             const { accessToken, refreshToken } = jwtUtils.generateTokens(
                 createdUser.uid
             );
@@ -64,6 +60,19 @@ const authService = (userRepository, userService) => ({
 
             return { user, accessToken, refreshToken };
         } catch (error) {
+            console.log("Error class:", error.constructor.name); // ValidationError
+            console.log("Error name:", error.name); // SequelizeValidationError
+
+            if (
+                error instanceof ValidationError ||
+                error.name === "SequelizeValidationError"
+            ) {
+                throw createHttpError(
+                    400,
+                    "Kullanıcı adı sadece harf ve rakamlardan oluşmalıdır."
+                );
+            }
+
             throw createHttpError(500, ErrorMessages.REGISTRATION_FAILED);
         }
     },

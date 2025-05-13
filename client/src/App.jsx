@@ -8,6 +8,7 @@ import {
 import { AppRoutes } from "./config/routes";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NavigationProvider } from "./context/NavigationContext";
+import { ResponsiveProvider } from "./context/ResponsiveContext";
 import { Toaster } from "react-hot-toast";
 import { NotificationProvider } from "./context/NotificationContext";
 import { Navbar } from "./components/common";
@@ -69,7 +70,9 @@ function App() {
             <AuthProvider>
                 <NotificationProvider>
                     <NavigationProvider>
-                        <AppContent />
+                        <ResponsiveProvider>
+                            <AppContent />
+                        </ResponsiveProvider>
                     </NavigationProvider>
                 </NotificationProvider>
             </AuthProvider>

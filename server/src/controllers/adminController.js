@@ -188,6 +188,27 @@ const adminController = {
     },
 
     /**
+     * Kullaniciyi siler.
+     */
+    deleteUser: async (req, res, next) => {
+        try {
+            const { userId } = req.params;
+
+            const userRole = req.query.role;
+
+            logger.info(`Admin deleting user with userId: ${userId}`);
+
+            await adminService.deleteUser(userId, userRole);
+
+            logger.info(`User deleted successfully with userId: ${userId}`);
+
+            res.status(200).json({ message: "User deleted successfully." });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    /**
      * Gonderi siler.
      */
     deletePost: async (req, res, next) => {

@@ -36,35 +36,51 @@ const PostCard = ({ postData, onPostRemove }) => {
     const { navigateToPage } = useNavigation();
 
     const moreMenuRef = useRef(null);
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     const [isLiked, setIsLiked] = useState(initialIsLiked);
     const [isSaved, setIsSaved] = useState(initialIsSaved);
     const [likesCount, setLikesCount] = useState(likeCount || 0);
     const [showMoreOptions, setShowMoreOptions] = useState(false);
+    const [isLikeProcessing, setIsLikeProcessing] = useState(false);
+
+    // Pencere boyutunu izle
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const handleLikeToggle = useCallback(async () => {
-        if (!id) return;
+        if (!id || isLikeProcessing) return;
+
+        setIsLikeProcessing(true);
         const previousLikeStatus = isLiked;
         let previousLikeCount = likesCount;
 
         setIsLiked(!previousLikeStatus);
+        setLikesCount(
+            previousLikeStatus ? previousLikeCount - 1 : previousLikeCount + 1
+        );
 
         try {
             if (!previousLikeStatus) {
                 await addLikePost(id);
-                previousLikeCount++;
-                setLikesCount(previousLikeCount);
             } else {
                 await removeLikeFromPost(id);
-                previousLikeCount--;
-                setLikesCount(previousLikeCount);
             }
         } catch (error) {
             setIsLiked(previousLikeStatus);
             setLikesCount(previousLikeCount);
             ShowToast("error", "İşlem sırasında bir hata oluştu.");
+        } finally {
+            setIsLikeProcessing(false);
         }
-    }, [id, isLiked, likesCount]);
+    }, [id, isLiked, likesCount, isLikeProcessing]);
 
     const handleSaveToggle = useCallback(async () => {
         if (!id) return;
@@ -145,30 +161,64 @@ const PostCard = ({ postData, onPostRemove }) => {
         setLikesCount(likeCount || 0);
     }, [initialIsLiked, initialIsSaved]);
 
+    const handleImageLoad = () => {
+        setIsImageLoaded(true);
+    };
+
     if (!postData || !id) {
         return (
-            <div className="bg-neutral-800 p-4 md:p-6 rounded-lg shadow-lg text-neutral-500 mb-4 md:mb-6">
-                Gönderi bilgileri yüklenemedi.
+            <div className="content-card mb-4 p-4">
+                <div className="animate-pulse flex flex-col gap-4">
+                    <div className="flex gap-3 items-center">
+                        <div className="w-11 h-11 bg-neutral-700 rounded-full"></div>
+                        <div className="flex flex-col gap-2 flex-1">
+                            <div className="h-4 bg-neutral-700 rounded w-1/3"></div>
+                            <div className="h-3 bg-neutral-700 rounded w-1/4"></div>
+                        </div>
+                    </div>
+                    <div className="h-20 bg-neutral-700 rounded"></div>
+
+                    {/* İsteğe bağlı resim alanı */}
+                    {Math.random() > 0.3 && (
+                        <div className="h-[200px] bg-neutral-700 rounded-md -mx-4"></div>
+                    )}
+
+                    {/* Etkileşim sayaçları */}
+                    <div className="flex gap-5 px-2">
+                        <div className="h-4 bg-neutral-700 rounded w-14"></div>
+                        <div className="h-4 bg-neutral-700 rounded w-14"></div>
+                    </div>
+
+                    {/* Butonlar */}
+                    <div className="flex justify-around border-t border-neutral-700/50 pt-3">
+                        <div className="h-6 bg-neutral-700 rounded w-14"></div>
+                        <div className="h-6 bg-neutral-700 rounded w-14"></div>
+                        <div className="h-6 bg-neutral-700 rounded w-14"></div>
+                        <div className="h-6 bg-neutral-700 rounded w-14"></div>
+                    </div>
+                </div>
             </div>
         );
     }
 
+    // Kartın kendisi için şimdi content-card sınıfını kullanalım
     return (
-        <div className="bg-neutral-800 p-4 md:p-6 rounded-lg shadow-lg text-white mb-4 md:mb-6">
-            <div className="flex items-center justify-between mb-3 md:mb-4">
+        <div className="content-card transition-shadow duration-300 hover:shadow-xl mb-4 p-4">
+            {/* Kart Başlığı - Kullanıcı Bilgisi ve Ayarlar */}
+            <div className="flex items-center justify-between mb-3">
                 <div
-                    className="flex items-center space-x-2 md:space-x-3 cursor-pointer group"
+                    className="flex items-center space-x-3 cursor-pointer group"
                     onClick={handleNavigateToProfile}
                     title={`${user?.username || "Profil"}'e git`}
                 >
                     <img
                         src={user?.profilePicture || "/default-avatar.png"}
                         alt={`${user?.username || "Kullanıcı"} profil resmi`}
-                        className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover bg-neutral-700"
+                        className="w-11 h-11 rounded-full object-cover bg-neutral-700 touch-target"
                         onError={(e) => (e.target.src = "/default-avatar.png")}
                     />
                     <div className="flex flex-col">
-                        <span className="text-sm md:text-md font-semibold group-hover:underline">
+                        <span className="text-[15px] font-semibold group-hover:underline text-white">
                             {user?.firstName ||
                                 user?.username ||
                                 "Bilinmeyen Kullanıcı"}{" "}
@@ -180,9 +230,10 @@ const PostCard = ({ postData, onPostRemove }) => {
                     </div>
                 </div>
 
+                {/* Daha Fazla Seçenekler Menüsü */}
                 <div className="relative" ref={moreMenuRef}>
                     <button
-                        className="text-gray-400 hover:text-pink-500 transition duration-300 cursor-pointer p-1 rounded-full hover:bg-neutral-700"
+                        className="text-gray-400 hover:text-pink-500 transition-colors p-2 rounded-full hover:bg-neutral-700/30 touch-target"
                         onClick={toggleMoreOptionsMenu}
                         aria-label="Daha fazla seçenek"
                         aria-haspopup="true"
@@ -193,25 +244,25 @@ const PostCard = ({ postData, onPostRemove }) => {
 
                     {showMoreOptions && (
                         <div
-                            className="absolute right-0 top-full mt-2 bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl p-2 w-72 animate-fade-in z-50"
+                            className="absolute right-0 top-full mt-1 bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl p-2 w-64 animate-fade-in z-50"
                             role="menu"
                         >
                             {isOwner ? (
                                 <button
                                     role="menuitem"
-                                    className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-neutral-700 rounded flex items-center gap-2"
+                                    className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-neutral-700/50 rounded-md flex items-center gap-3 touch-target"
                                     onClick={handleRemovePost}
                                 >
-                                    <MdDelete size={18} />
+                                    <MdDelete size={20} />
                                     Gönderiyi Sil
                                 </button>
                             ) : (
                                 <button
                                     role="menuitem"
-                                    className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-700 rounded flex items-center gap-2"
+                                    className="w-full text-left px-4 py-3 text-sm hover:bg-neutral-700/50 rounded-md flex items-center gap-3 touch-target"
                                     onClick={handleReportPost}
                                 >
-                                    <MdOutlineReport size={18} />
+                                    <MdOutlineReport size={20} />
                                     Gönderiyi Şikayet Et
                                 </button>
                             )}
@@ -220,106 +271,146 @@ const PostCard = ({ postData, onPostRemove }) => {
                 </div>
             </div>
 
+            {/* Gönderi İçeriği */}
             {content && (
-                <div
-                    className="mb-3 md:mb-4 cursor-pointer"
-                    onClick={handleNavigateToPost}
-                >
-                    <p className="text-sm md:text-base whitespace-pre-wrap break-words">
+                <div className="mb-3">
+                    <p className="text-[15px] whitespace-pre-wrap break-words text-white leading-relaxed">
                         {renderHashtags(content)}
                     </p>
                 </div>
             )}
 
+            {/* Gönderi Medyası */}
             {media && (
                 <div
-                    className="mb-3 md:mb-4 -mx-4 md:-mx-6 bg-black flex justify-center"
+                    className={`mb-4 -mx-4 md:-mx-6 bg-neutral-800/50 flex justify-center overflow-hidden rounded-md ${
+                        !isImageLoaded ? "min-h-[250px] animate-pulse" : ""
+                    }`}
                     onClick={handleNavigateToPost}
                 >
                     <LazyLoadImage
                         src={media}
                         alt="Gönderi Medyası"
                         effect="blur"
-                        className="w-full max-h-[75vh] object-cover cursor-pointer"
+                        className={`w-full max-h-[75vh] object-cover cursor-pointer transition-opacity duration-300 ${
+                            isImageLoaded ? "opacity-100" : "opacity-0"
+                        }`}
                         threshold={300}
                         wrapperClassName="w-full"
+                        afterLoad={handleImageLoad}
                     />
                 </div>
             )}
 
-            <div className="flex items-center justify-between text-xs md:text-sm text-gray-400 mb-3 md:mb-4 px-1">
-                <div className="flex items-center gap-4">
+            {/* Beğeni ve Yorum Sayıları */}
+            <div className="flex items-center justify-between text-xs md:text-xs text-gray-400 mb-3 px-2">
+                <div className="flex items-center gap-5">
                     <span className="flex items-center gap-1.5">
-                        <FaHeart />
-                        <span>{likesCount || 0}</span>
+                        <FaHeart
+                            className={`${isLiked ? "text-pink-500" : ""} ${
+                                isMobile ? "text-lg" : "text-[15px]"
+                            }`}
+                        />
+                        <span className={`${isMobile ? "text-sm" : "text-md"}`}>
+                            {likesCount || 0}
+                        </span>
                     </span>
                     <span
                         className="flex items-center gap-1.5 cursor-pointer hover:text-white"
                         onClick={handleNavigateToPost}
                     >
-                        <FaComment />
-                        <span>{comments.length}</span>
+                        <FaComment
+                            className={`${
+                                isMobile ? "text-lg" : "text-[15px]"
+                            }`}
+                        />
+                        <span className={`${isMobile ? "text-sm" : "text-xs"}`}>
+                            {comments.length}
+                        </span>
                     </span>
                 </div>
             </div>
 
-            <div className="flex items-center justify-around border-t border-neutral-700 pt-3 md:pt-4">
+            {/* Aksiyon Butonları */}
+            <div className="flex items-center justify-around border-t border-neutral-700/50 pt-3">
+                {/* Beğen Butonu */}
                 <button
                     onClick={handleLikeToggle}
-                    className={`flex flex-col md:flex-row items-center md:space-x-1.5 transition-colors duration-200 p-2 rounded-md ${
+                    className={`flex items-center gap-2 p-2 rounded-md touch-target ${
                         isLiked
                             ? "text-pink-500"
-                            : "text-gray-400 hover:text-pink-500 hover:bg-neutral-700/50"
+                            : "text-gray-400 hover:text-pink-500 hover:bg-neutral-700/30"
                     }`}
                     aria-label={isLiked ? "Beğeniyi kaldır" : "Beğen"}
                     aria-pressed={isLiked}
                 >
-                    <FaHeart className="text-sm md:text-lg" />
-                    <span className="hidden md:inline text-xs md:text-sm mt-0.5 md:mt-0">
-                        {isLiked ? "Beğenildi" : "Beğen"}
-                    </span>
+                    <FaHeart
+                        className={`${isMobile ? "text-xl" : "text-[15px]"}`}
+                    />
+                    {!isMobile && (
+                        <span className="text-sm font-medium">
+                            {isLiked ? "Beğenildi" : "Beğen"}
+                        </span>
+                    )}
                 </button>
 
+                {/* Yorum Butonu */}
                 <button
                     onClick={handleNavigateToPost}
-                    className="flex flex-col md:flex-row items-center md:space-x-1.5 text-gray-400 hover:text-blue-400 hover:bg-neutral-700/50 transition-colors duration-200 p-2 rounded-md"
+                    className="flex items-center gap-2 text-gray-400 hover:text-blue-400 hover:bg-neutral-700/30 p-2 rounded-md touch-target"
                     aria-label="Yorum yap"
                 >
-                    <FaComment className="text-sm md:text-lg" />
-                    <span className="hidden md:inline text-xs md:text-sm mt-0.5 md:mt-0">
-                        Yorum
-                    </span>
+                    <FaComment
+                        className={`${isMobile ? "text-xl" : "text-[15px]"}`}
+                    />
+                    {!isMobile && (
+                        <span className="text-sm font-medium">Yorum</span>
+                    )}
                 </button>
 
+                {/* Paylaş Butonu */}
                 <button
                     onClick={handleSharePost}
-                    className="flex flex-col md:flex-row items-center md:space-x-1.5 text-gray-400 hover:text-green-400 hover:bg-neutral-700/50 transition-colors duration-200 p-2 rounded-md"
+                    className="flex items-center gap-2 text-gray-400 hover:text-green-400 hover:bg-neutral-700/30 p-2 rounded-md touch-target"
                     aria-label="Paylaş"
                 >
-                    <FaShare className="text-sm md:text-lg" />
-                    <span className="hidden md:inline text-xs md:text-sm mt-0.5 md:mt-0">
-                        Paylaş
-                    </span>
+                    <FaShare
+                        className={`${isMobile ? "text-xl" : "text-[15px]"}`}
+                    />
+                    {!isMobile && (
+                        <span className="text-sm font-medium">Paylaş</span>
+                    )}
                 </button>
 
+                {/* Kaydet Butonu */}
                 <button
                     onClick={handleSaveToggle}
-                    className={`flex flex-col md:flex-row items-center md:space-x-1.5 transition-colors duration-200 p-2 rounded-md ${
+                    className={`flex items-center gap-2 p-2 rounded-md touch-target ${
                         isSaved
-                            ? "text-yellow-400"
-                            : "text-gray-400 hover:text-yellow-400 hover:bg-neutral-700/50"
+                            ? "text-yellow-500"
+                            : "text-gray-400 hover:text-yellow-500 hover:bg-neutral-700/30"
                     }`}
                     aria-label={isSaved ? "Kaydetmeyi kaldır" : "Kaydet"}
                     aria-pressed={isSaved}
                 >
                     {isSaved ? (
-                        <FaBookmark className="text-sm md:text-lg" />
+                        <FaBookmark
+                            className={`${
+                                isMobile ? "text-xl" : "text-[15px]"
+                            }`}
+                        />
                     ) : (
-                        <FaRegBookmark className="text-sm md:text-lg" />
+                        <FaRegBookmark
+                            className={`${
+                                isMobile ? "text-xl" : "text-[15px]"
+                            }`}
+                        />
                     )}
-                    <span className="hidden md:inline text-xs md:text-sm mt-0.5 md:mt-0">
-                        {isSaved ? "Kaydedildi" : "Kaydet"}
-                    </span>
+                    {!isMobile && (
+                        <span className="text-sm font-medium">
+                            {isSaved ? "Kaydedildi" : "Kaydet"}
+                        </span>
+                    )}
                 </button>
             </div>
         </div>
@@ -328,6 +419,7 @@ const PostCard = ({ postData, onPostRemove }) => {
 
 export default PostCard;
 
+// Hashtagleri algilayip link haline getiren fonksiyon
 const renderHashtags = (text) => {
     const hashtagRegex = /#(\w+)/g;
     const parts = text.split(hashtagRegex);
@@ -337,7 +429,7 @@ const renderHashtags = (text) => {
                 <a
                     key={index}
                     href={`/search?q=${part}`}
-                    className="text-blue-500 hover:underline"
+                    className="text-pink-400 hover:underline"
                 >
                     #{part}
                 </a>

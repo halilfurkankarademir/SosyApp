@@ -204,9 +204,35 @@ const adminService = (
             throw createHttpError(500, "Failed to update user role.");
         }
     },
+
     /**
      * Kullanıcıyı siler.
-     * @param {string} userId - Kullanıcı ID'si.
+     * @param {string} userId - Silinecek Kullanıcı ID'si.
+     * @param {string} userRole - Kullanıcının rolü.
+     * @returns {Promise<void>} Silme işlemi tamamlandığında döner.
+     */
+    deleteUser: async (userId, userRole) => {
+        try {
+            if (!userId) {
+                throw createHttpError(400, "User ID is required.");
+            }
+
+            if (userRole === "admin") {
+                throw createHttpError(403, "Cannot delete admin user.");
+            }
+
+            await userRepository.delete(userId);
+
+            return { message: "User deleted successfully." };
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            throw createHttpError(500, "Failed to delete user.");
+        }
+    },
+
+    /**
+     * Gonderiyi siler.
+     * @param {string} postId - Gönderi ID'si.
      * @returns {Promise<void>} Silme işlemi tamamlandığında döner.
      */
     deletePost: async (postId) => {

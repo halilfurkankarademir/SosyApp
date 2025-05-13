@@ -83,7 +83,17 @@ router.put(
 );
 
 /**
- * Kullanıcıyı siler.
+ * Kullaniciyi siler.
+ */
+router.delete(
+    "/users/:userId",
+    authenticateToken,
+    checkAdminMiddleware,
+    adminController.deleteUser
+);
+
+/**
+ * Gonderiyi siler.
  */
 router.delete(
     "/posts/:postId",

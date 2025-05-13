@@ -3,9 +3,23 @@ import { FaUserTimes } from "react-icons/fa";
 import { useNavigation } from "../../../context/NavigationContext";
 import { removeFollower, unfollowUser } from "../../../api/followApi";
 import { ShowToast } from "../toasts/ShowToast";
+import {
+    UserCardSkeleton,
+    UserCardListSkeleton,
+} from "../../../utils/SkeletonGenerator";
 
-const UserCard = ({ user, isFollowerCard, isFollowingCard, onRemoveClick }) => {
+const UserCard = ({
+    user,
+    isFollowerCard,
+    isFollowingCard,
+    onRemoveClick,
+    loading = false,
+}) => {
     const { navigateToPage } = useNavigation();
+
+    if (loading || !user) {
+        return <UserCardSkeleton />;
+    }
 
     // Veri varsa ve yüklenmiyorsa gerçek kartı göster
     const handleClick = () => {
@@ -95,6 +109,21 @@ const UserCard = ({ user, isFollowerCard, isFollowingCard, onRemoveClick }) => {
                     <FaUserTimes size={16} />
                 </button>
             )} */}
+        </div>
+    );
+};
+
+// UserCardList - birden fazla kullanıcıyı göstermek için kullanılabilir
+export const UserCardList = ({ users = [], loading = false }) => {
+    if (loading) {
+        return <UserCardListSkeleton count={3} />;
+    }
+
+    return (
+        <div>
+            {users.map((user) => (
+                <UserCard key={user.uid} user={user} />
+            ))}
         </div>
     );
 };

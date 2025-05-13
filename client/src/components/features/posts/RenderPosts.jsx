@@ -3,6 +3,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { PostCard, NewPost } from "./";
 import { FiGlobe, FiInbox } from "react-icons/fi";
 import { useNavigation } from "../../../context/NavigationContext";
+import {
+    PostSkeletonList,
+    PostCardSkeleton,
+} from "../../../utils/SkeletonGenerator";
 
 // filters prop'unu tekrar ekledik ve kullanacağız
 const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
@@ -11,12 +15,14 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
     const [hasMore, setHasMore] = useState(true);
     const [totalPostsCount, setTotalPostsCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
 
     const { navigateToPage } = useNavigation();
 
     // loadInitialPosts, fetchOptions VE filters'a bağlı olmalı
     const loadInitialPosts = useCallback(async () => {
         setIsLoading(true);
+        setInitialLoading(true);
         setPosts([]);
         setPage(1);
         setHasMore(true);
@@ -36,6 +42,7 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
             setHasMore(false);
         } finally {
             setIsLoading(false);
+            setInitialLoading(false);
         }
     }, [fetchOptions, filters]);
 
@@ -84,6 +91,12 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
     }, [loadInitialPosts]);
 
     const renderContent = () => {
+        // İlk yükleme sırasında skeleton göster
+        if (initialLoading) {
+            return <PostSkeletonList count={3} />;
+        }
+
+        // Veri yok ve yükleme tamamlandı
         if (!isLoading && posts.length === 0 && !hasMore) {
             if (activePage === "homepage") {
                 return (
@@ -151,9 +164,11 @@ const RenderPosts = ({ fetchOptions, canCreatePost, filters, activePage }) => {
                 next={fetchMoreData}
                 hasMore={hasMore}
                 loader={
-                    <h4 className="text-center text-white py-4">
-                        Yükleniyor...
-                    </h4>
+                    !initialLoading && (
+                        <div className="mt-4">
+                            <PostCardSkeleton />
+                        </div>
+                    )
                 }
                 endMessage={
                     !hasMore && posts.length > 0 ? (

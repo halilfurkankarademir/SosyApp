@@ -12,7 +12,7 @@ import { requestValidator } from "./joiValidator.js";
 const registerSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(), // Şifre için daha karmaşık kurallar eklenebilir (pattern vb.)
-    username: Joi.string().alphanum().min(3).max(20).required(), // Alfanümerik varsayımı
+    username: Joi.string().min(3).max(20).required(), // Alfanümerik varsayımı
     firstName: Joi.string().min(2).max(20).required(),
     lastName: Joi.string().min(2).max(20).required(),
 });

@@ -1,9 +1,10 @@
 import React from "react";
-import { MdMenu, MdSearch } from "react-icons/md";
+import { MdMenu, MdSearch, MdHome } from "react-icons/md";
 import { IoMdNotificationsOutline } from "react-icons/io"; // Bildirim ikonu import edildi
 import NavSearchInput from "../../ui/inputs/NavSearchInput"; // Path'i ayarlayın
 import useUserStore from "../../../hooks/useUserStore"; // Path'i ayarlayın
 import { BiDotsHorizontal, BiDotsVerticalRounded } from "react-icons/bi";
+import { useNavigation } from "../../../context/NavigationContext";
 
 const NavbarActions = ({
     isAuthenticated,
@@ -21,9 +22,16 @@ const NavbarActions = ({
     settingsButtonRef,
     mobileMenuButtonRef,
 }) => {
+    const { navigateToPage } = useNavigation();
+
     if (!isAuthenticated) {
         return null;
     }
+
+    const handleHomeClick = () => {
+        window.scrollTo(0, 0);
+        navigateToPage("/");
+    };
 
     return (
         <div className="flex items-center gap-4 md:gap-6">
@@ -64,8 +72,18 @@ const NavbarActions = ({
             </div>
             {/* --- Masaüstü Sağ İkonlar Sonu --- */}
 
-            {/* --- Mobil Sağ İkonlar (Değişiklik Yok) --- */}
+            {/* --- Mobil Sağ İkonlar --- */}
             <div className="flex md:hidden items-center space-x-4">
+                {/* Ana Sayfa Butonu (Yeni Eklendi) */}
+                <button
+                    className="text-neutral-100 hover:text-pink-500 transition duration-300"
+                    onClick={handleHomeClick}
+                    aria-label="Ana Sayfa"
+                >
+                    <MdHome size={22} />
+                </button>
+
+                {/* Arama Butonu */}
                 <button
                     className="text-neutral-100 hover:text-pink-500 transition duration-300"
                     onClick={onToggleMobileSearch}
@@ -73,6 +91,8 @@ const NavbarActions = ({
                 >
                     <MdSearch size={22} />
                 </button>
+
+                {/* Menü Butonu */}
                 <button
                     ref={mobileMenuButtonRef} // Ref ana bileşenden geliyor
                     className="text-neutral-100 hover:text-pink-500 transition duration-300"

@@ -1,26 +1,46 @@
-import React, { memo } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { useNavigation } from "../../context/NavigationContext";
 import { BsPeopleFill, BsPersonAdd } from "react-icons/bs";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { followUser } from "../../api/followApi";
 import { ShowToast } from "../ui/toasts/ShowToast";
+import { SuggestionsCardSkeleton } from "../../utils/SkeletonGenerator";
 
-const SuggestionsCard = ({ suggestions, onFollow }) => {
+const SuggestionsCard = ({
+    suggestions,
+    onFollow,
+    loading = false,
+    compact = false,
+}) => {
     const { navigateToPage } = useNavigation();
+    const [isLoading, setIsLoading] = useState(
+        loading || !suggestions || suggestions.length === 0
+    );
+
+    useEffect(() => {
+        // Öneriler yüklendiğinde loading durumunu güncelle
+        if (suggestions && suggestions.length > 0) {
+            setIsLoading(false);
+        }
+    }, [suggestions]);
 
     const handleFollow = async (userId, username) => {
         try {
             await followUser(userId);
             ShowToast("success", `${username} takip edildi.`);
-            onFollow();
+            if (onFollow) onFollow();
         } catch (error) {
             console.error("Error following user:", error);
         }
     };
 
+    if (isLoading) {
+        return <SuggestionsCardSkeleton itemCount={compact ? 3 : 5} />;
+    }
+
     return (
-        <div className="hidden md:block w-64 bg-neutral-800 h-auto text-white rounded-xl fixed ">
+        <div className="hidden md:block w-64 bg-neutral-800 h-auto text-white rounded-xl fixed">
             <div className="flex flex-row gap-2 p-4 text-sm">
                 <BsPeopleFill size={16} />
                 <h2 className="font-semibold">Tanıyor Olabilirsin</h2>

@@ -132,9 +132,7 @@ const AdminDashboardPage = () => {
                     <QuickActionCard
                         icon={FiSettings}
                         title="Bakım Modu"
-                        description={`Bakım modunu ${
-                            stats.isMaintenanceMode ? "kapat" : "aç"
-                        }`}
+                        description={`Bakım modunu aç/kapat`}
                         onClick={() => navigate("/admin/settings")}
                         iconColor="text-pink-500"
                     />

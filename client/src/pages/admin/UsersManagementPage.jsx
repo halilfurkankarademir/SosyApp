@@ -8,8 +8,10 @@ import {
     FiShield,
     FiFileText,
     FiUserCheck,
+    FiTrash,
 } from "react-icons/fi";
 import {
+    deleteUserForAdmin,
     getAllUsersForAdmin,
     updateUserRoleForAdmin,
 } from "../../api/adminApi";
@@ -127,6 +129,22 @@ const UsersManagementPage = () => {
         }
     };
 
+    const handleRemoveClick = async (user) => {
+        const confirmDelete = window.confirm(
+            "Bu kullanıcıyı silmek istediğinize emin misiniz?"
+        );
+        if (confirmDelete) {
+            try {
+                console.log("Deleting user:", user);
+                await deleteUserForAdmin(user.uid, user.role);
+                refreshUsers();
+                ShowToast("success", "Kullanıcı basarıyla silindi");
+            } catch (error) {
+                ShowToast("error", "Kullanıcı silinirken bir hata oluştu");
+            }
+        }
+    };
+
     // Rol renkleri ve metinleri
     const roleStyles = {
         admin: {
@@ -168,9 +186,7 @@ const UsersManagementPage = () => {
                         <tr className="border-b border-neutral-700 text-left text-neutral-400 text-sm bg-neutral-700/20">
                             <th className="py-3 px-4 font-medium">Kullanıcı</th>
                             <th className="py-3 px-4 font-medium">Rol</th>
-                            <th className="py-3 px-4 font-medium">
-                                İstatistikler
-                            </th>
+                            <th className="py-3 px-4 font-medium">Email</th>
                             <th className="py-3 px-4 font-medium">Ip Adresi</th>
                             <th className="py-3 px-4 font-medium">Son Giriş</th>
                             <th className="py-3 px-4 font-medium">İşlemler</th>
@@ -208,32 +224,13 @@ const UsersManagementPage = () => {
                                         {roleStyles[user.role].text}
                                     </span>
                                 </td>
-                                <td className="py-3 px-4 text-neutral-300">
-                                    <div className="flex flex-col text-sm">
-                                        <span className="mb-1">
-                                            <span className="font-medium text-pink-500">
-                                                {user.Followers.length}
-                                            </span>{" "}
-                                            takipçi
-                                        </span>
-                                        <span className="mb-1">
-                                            <span className="font-medium text-blue-500">
-                                                {user.Following.length}
-                                            </span>{" "}
-                                            takip edilen
-                                        </span>
-                                        <span>
-                                            <span className="font-medium text-green-500">
-                                                {user.posts.length}
-                                            </span>{" "}
-                                            gönderi
-                                        </span>
-                                    </div>
+                                <td className="py-3 px-4 text-neutral-300 text-sm">
+                                    {user.email}
                                 </td>
-                                <td className="py-3 px-4 text-neutral-300">
+                                <td className="py-3 px-4 text-neutral-300 text-sm">
                                     {user.ipAdress || "Bilinmiyor"}
                                 </td>
-                                <td className="py-3 px-4 text-neutral-300">
+                                <td className="py-3 px-4 text-neutral-300 text-sm">
                                     {dateFormatter(user.lastLoginAt)}
                                 </td>
                                 <td className="py-3 px-4">
@@ -257,6 +254,15 @@ const UsersManagementPage = () => {
                                             }
                                         >
                                             <FiEdit />
+                                        </button>
+                                        <button
+                                            className="text-white hover:text-red-500 p-1"
+                                            title="Kullanıcıyı Sil"
+                                            onClick={() =>
+                                                handleRemoveClick(user)
+                                            }
+                                        >
+                                            <FiTrash />
                                         </button>
                                     </div>
                                 </td>

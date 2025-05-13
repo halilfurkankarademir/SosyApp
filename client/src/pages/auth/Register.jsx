@@ -41,7 +41,7 @@ const RegisterPage = () => {
             navigateToPage("/");
         } catch (error) {
             console.log("Kayıt işlemi basarısız!", error);
-            const errorMessage = error.response.data.details;
+            const errorMessage = error.response.data.message;
             ShowToast("error", errorMessage);
         }
     };

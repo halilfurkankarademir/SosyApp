@@ -67,6 +67,18 @@ export const deleteCommentForAdmin = async (commentId) => {
     }
 };
 
+export const deleteUserForAdmin = async (userId, userRole) => {
+    try {
+        console.log("Deleting user with ID:", userId);
+        return apiClient
+            .delete(`/admin/users/${userId}?role=${userRole}`)
+            .then((res) => res.data);
+    } catch (error) {
+        isDevMode && console.log("Error deleting user:", error);
+        throw error;
+    }
+};
+
 export const getAppSettingsForAdmin = () => {
     try {
         return apiClient.get("/admin/settings").then((res) => res.data);

@@ -29,8 +29,10 @@ const ExplorePage = () => {
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
-            await fetchUser();
-            const popularUsers = await getRandomUsers();
+            const [user, popularUsers] = await Promise.all([
+                fetchUser(),
+                getRandomUsers(),
+            ]);
             setTrendingUsers(popularUsers);
         } catch (error) {
             console.error("Error fetching explore data:", error);

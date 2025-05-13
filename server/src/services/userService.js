@@ -46,7 +46,7 @@ const userService = (userRepository) => ({
                 error: error.message,
                 operation: "createUser",
             });
-            throw new Error(ErrorMessages.USER_CREATION_FAILED);
+            throw error;
         }
     },
 
