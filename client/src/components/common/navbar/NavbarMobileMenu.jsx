@@ -6,7 +6,9 @@ import {
     MdSettings,
     MdLogout,
     MdAdminPanelSettings,
+    MdHome,
 } from "react-icons/md";
+import { FiGlobe } from "react-icons/fi";
 import { BsPeopleFill } from "react-icons/bs";
 import { GoHeartFill } from "react-icons/go";
 import { BiBookmark } from "react-icons/bi";
@@ -92,9 +94,14 @@ const NavbarMobileMenu = ({
                         </button>
                     </div>
 
-                    {/* Profil başlığı */}
+                    {/* Profil başlığı - kullanıcıya tıklandığında profile gitme özelliği eklendi */}
                     {user && (
-                        <div className="flex items-center space-x-3 p-2 mb-2">
+                        <div
+                            className="flex items-center space-x-3 p-2 mb-2 cursor-pointer hover:bg-neutral-800 rounded-lg"
+                            onClick={() =>
+                                handleNavigate(`/profile/${user?.username}`)
+                            }
+                        >
                             <img
                                 src={
                                     user?.profilePicture ||
@@ -137,6 +144,13 @@ const NavbarMobileMenu = ({
                         </button>
                     )}
                     <button
+                        onClick={() => handleNavigate("/")}
+                        className={buttonClass}
+                    >
+                        <MdHome size={24} className={iconClass} />
+                        <span className={textClass}>Ana Sayfa</span>
+                    </button>
+                    <button
                         onClick={() =>
                             handleNavigate(`/profile/${user?.username}`)
                         }
@@ -144,6 +158,13 @@ const NavbarMobileMenu = ({
                     >
                         <MdAccountCircle size={24} className={iconClass} />
                         <span className={textClass}>Profilim</span>
+                    </button>
+                    <button
+                        onClick={() => handleNavigate("/explore")}
+                        className={buttonClass}
+                    >
+                        <FiGlobe size={22} className={iconClass} />
+                        <span className={textClass}>Keşfet</span>
                     </button>
                     <button
                         onClick={() => handleNavigate("/connections")}

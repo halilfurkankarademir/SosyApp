@@ -33,14 +33,13 @@ const SavedPage = () => {
 
     return (
         <>
-            <div className="page-container py-24  px-4 md:px-0">
-                {/* Grid Layout */}
+            <div className="page-container py-24 px-4 md:px-0">
                 <div className="page-grid-layout-large">
                     {/* Sidebar - Mobilde gizli */}
                     <Sidebar />
 
-                    {/* Kaydedilmiş Gönderiler Bölümü */}
-                    <div className="md:col-span-3 md:ml-72 w-full">
+                    {/* Kaydettiklerim Bölümü */}
+                    <div className="col-span-1 md:col-span-3 md:ml-72 w-full">
                         <div className="bg-neutral-800 p-4 md:p-6 rounded-lg mb-4 md:mb-6">
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 md:mb-6">
                                 <div className="flex items-center mb-4 md:mb-0">

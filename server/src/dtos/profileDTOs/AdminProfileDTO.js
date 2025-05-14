@@ -10,6 +10,7 @@ class AdminProfileDTO {
             "email",
             "username",
             "profilePicture",
+            "bio",
             "ipAdress",
             "lastLoginAt",
             "Followers",

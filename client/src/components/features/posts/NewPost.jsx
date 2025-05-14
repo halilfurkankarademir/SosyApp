@@ -118,6 +118,7 @@ const NewPost = ({ onPostCreated }) => {
                     onChange={(e) => setPostContent(e.target.value)}
                     placeholder={`Ne düşünüyorsun, ${user.firstName}?`}
                     className="bg-neutral-700 text-white rounded-full py-1.5 md:py-2 px-3 md:px-4 w-full text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    maxLength={300}
                     rows={1}
                 />
             </div>

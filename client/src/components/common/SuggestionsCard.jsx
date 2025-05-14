@@ -11,7 +11,7 @@ const SuggestionsCard = ({
     suggestions,
     onFollow,
     loading = false,
-    compact = false,
+    isCompact = false,
 }) => {
     const { navigateToPage } = useNavigation();
     const [isLoading, setIsLoading] = useState(
@@ -36,19 +36,37 @@ const SuggestionsCard = ({
     };
 
     if (isLoading) {
-        return <SuggestionsCardSkeleton itemCount={compact ? 3 : 5} />;
+        return (
+            <SuggestionsCardSkeleton
+                itemCount={isCompact ? 3 : 5}
+                isCompact={isCompact}
+            />
+        );
     }
 
+    const cardWidthClass = isCompact ? "w-20" : "w-full";
+
     return (
-        <div className="hidden md:block w-64 bg-neutral-800 h-auto text-white rounded-xl fixed">
-            <div className="flex flex-row gap-2 p-4 text-sm">
-                <BsPeopleFill size={16} />
-                <h2 className="font-semibold">Tanıyor Olabilirsin</h2>
-            </div>
+        <div
+            className={`hidden md:block ${cardWidthClass} bg-neutral-800 h-auto text-white rounded-xl transition-all duration-300`}
+        >
+            {!isCompact && (
+                <div className="flex flex-row gap-2 p-4 text-sm">
+                    <BsPeopleFill size={16} />
+                    <h2 className="font-semibold">Tanıyor Olabilirsin</h2>
+                </div>
+            )}
+            {isCompact && (
+                <div className="flex justify-center p-3 border-b border-neutral-700/50">
+                    <BsPeopleFill size={16} />
+                </div>
+            )}
             {/* Kullanıcı Bilgileri */}
             {suggestions.map((user) => (
                 <div
-                    className="flex items-center p-3 cursor-pointer"
+                    className={`flex items-center p-3 cursor-pointer ${
+                        isCompact ? "flex-col space-y-2 justify-center" : ""
+                    }`}
                     key={user.uid}
                 >
                     <LazyLoadImage
@@ -60,26 +78,29 @@ const SuggestionsCard = ({
                             navigateToPage(`profile/${user.username}`)
                         }
                     />
-                    <div
-                        className="ml-3"
-                        onClick={() =>
-                            navigateToPage(`profile/${user.username}`)
-                        }
-                    >
-                        <p className="text-sm font-semibold">
-                            {user.firstName + " " + user.lastName}
-                        </p>{" "}
-                        {/* Kullanıcı adı */}
-                        <p className="text-xs text-neutral-400">
-                            @{user.username}
-                        </p>{" "}
-                        {/* Kullanıcı etiketi */}
-                    </div>
+                    {!isCompact && (
+                        <div
+                            className="ml-3"
+                            onClick={() =>
+                                navigateToPage(`profile/${user.username}`)
+                            }
+                        >
+                            <p className="text-sm font-semibold">
+                                {user.firstName + " " + user.lastName}
+                            </p>
+                            <p className="text-xs text-neutral-400">
+                                @{user.username}
+                            </p>
+                        </div>
+                    )}
                     <button
-                        className="ml-auto cursor-pointer hover:text-pink-500 duration-200 transition-all"
+                        className={`${
+                            isCompact ? "mt-1" : "ml-auto"
+                        } cursor-pointer hover:text-pink-500 duration-200 transition-all`}
                         onClick={() => handleFollow(user.uid, user.username)}
+                        title={`${user.firstName} ${user.lastName} kullanıcısını takip et`}
                     >
-                        <BsPersonAdd size={20} />
+                        <BsPersonAdd size={isCompact ? 16 : 20} />
                     </button>
                 </div>
             ))}

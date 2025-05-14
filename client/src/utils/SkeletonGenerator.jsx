@@ -90,30 +90,46 @@ export const SkeletonText = ({ lines = 3, className = "", widths = [] }) => {
 /**
  * NavigationPanel için skeleton
  */
-export const NavigationPanelSkeleton = () => {
+export const NavigationPanelSkeleton = ({ isCompact = false }) => {
+    const widthClass = isCompact ? "w-20" : "w-64";
+
     return (
-        <div className="w-64 bg-neutral-800 h-auto text-white rounded-xl animate-pulse">
+        <div
+            className={`${widthClass} bg-neutral-800 h-auto text-white rounded-xl animate-pulse transition-all duration-300`}
+        >
             {/* Kullanıcı Bilgileri */}
             <div className="flex items-center p-4 border-b border-neutral-700">
                 <SkeletonCircle size="40px" />
-                <div className="ml-3 flex flex-col gap-2">
-                    <SkeletonRect width="120px" height="14px" />
-                    <SkeletonRect width="80px" height="10px" />
-                </div>
+                {!isCompact && (
+                    <div className="ml-3 flex flex-col gap-2">
+                        <SkeletonRect width="120px" height="14px" />
+                        <SkeletonRect width="80px" height="10px" />
+                    </div>
+                )}
             </div>
 
             {/* Ana Menü Öğeleri */}
-            <div className="p-3">
+            <div
+                className={`p-3 ${
+                    isCompact ? "flex flex-col items-center" : ""
+                }`}
+            >
                 {/* Menü öğeleri için skeleton */}
                 {Array(5)
                     .fill(0)
                     .map((_, index) => (
                         <div
                             key={`nav-item-${index}`}
-                            className="flex items-center space-x-3 mb-1 p-2"
+                            className={`flex items-center ${
+                                isCompact
+                                    ? "justify-center mb-3"
+                                    : "space-x-3 mb-1"
+                            } p-2`}
                         >
                             <SkeletonCircle size="32px" />
-                            <SkeletonRect width="100px" height="14px" />
+                            {!isCompact && (
+                                <SkeletonRect width="100px" height="14px" />
+                            )}
                         </div>
                     ))}
             </div>
@@ -124,14 +140,28 @@ export const NavigationPanelSkeleton = () => {
 /**
  * SuggestionsCard için skeleton
  */
-export const SuggestionsCardSkeleton = ({ itemCount = 3 }) => {
+export const SuggestionsCardSkeleton = ({
+    itemCount = 3,
+    isCompact = false,
+}) => {
+    const widthClass = isCompact ? "w-20" : "w-64";
+
     return (
-        <div className="hidden md:block w-64 bg-neutral-800 h-auto text-white rounded-xl fixed animate-pulse">
+        <div
+            className={`hidden md:block ${widthClass} bg-neutral-800 h-auto text-white rounded-xl fixed animate-pulse transition-all duration-300`}
+        >
             {/* Başlık */}
-            <div className="flex flex-row gap-2 p-4">
-                <SkeletonCircle size="16px" />
-                <SkeletonRect width="140px" height="16px" />
-            </div>
+            {!isCompact && (
+                <div className="flex flex-row gap-2 p-4">
+                    <SkeletonCircle size="16px" />
+                    <SkeletonRect width="140px" height="16px" />
+                </div>
+            )}
+            {isCompact && (
+                <div className="flex justify-center p-3 border-b border-neutral-700/50">
+                    <SkeletonCircle size="16px" />
+                </div>
+            )}
 
             {/* Öneri öğeleri */}
             {Array(itemCount)
@@ -139,15 +169,23 @@ export const SuggestionsCardSkeleton = ({ itemCount = 3 }) => {
                 .map((_, index) => (
                     <div
                         key={`suggestion-${index}`}
-                        className="flex items-center p-3"
+                        className={`flex p-3 ${
+                            isCompact
+                                ? "flex-col items-center space-y-2"
+                                : "items-center"
+                        }`}
                     >
                         <SkeletonCircle size="40px" />
-                        <div className="ml-3 flex flex-col gap-1">
-                            <SkeletonRect width="100px" height="14px" />
-                            <SkeletonRect width="70px" height="10px" />
-                        </div>
-                        <div className="ml-auto">
-                            <SkeletonCircle size="20px" />
+                        {!isCompact && (
+                            <div className="ml-3 flex flex-col gap-1">
+                                <SkeletonRect width="100px" height="14px" />
+                                <SkeletonRect width="70px" height="10px" />
+                            </div>
+                        )}
+                        <div className={isCompact ? "mt-1" : "ml-auto"}>
+                            <SkeletonCircle
+                                size={isCompact ? "16px" : "20px"}
+                            />
                         </div>
                     </div>
                 ))}

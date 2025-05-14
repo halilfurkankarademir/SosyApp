@@ -144,7 +144,7 @@ const PostPage = () => {
                     <Sidebar />
 
                     {/* Post detayları ve yorumlar */}
-                    <div className="md:col-span-3 w-full space-y-4 md:ml-72">
+                    <div className="col-span-1 md:col-span-3 w-full space-y-4 md:ml-72">
                         {" "}
                         <button
                             onClick={() => navigateToPage(-1)}

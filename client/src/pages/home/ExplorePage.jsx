@@ -16,30 +16,36 @@ const ExplorePage = () => {
     const setUser = useUserStore((state) => state.setUser);
 
     // Kullanıcı bilgilerini yükleme
-    const fetchUser = async () => {
+    const fetchUser = useCallback(async () => {
         try {
             const user = await getCurrentUser();
             setUser(user);
         } catch (error) {
             console.error("Error fetching user:", error);
         }
-    };
+    }, [setUser]);
+
+    // Popüler kullanıcıları yükle
+    const fetchTrendingUsers = useCallback(async () => {
+        try {
+            const popularUsers = await getRandomUsers();
+            setTrendingUsers(popularUsers);
+        } catch (error) {
+            console.error("Error fetching popular users:", error);
+        }
+    }, []);
 
     // Verileri yükle
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
-            const [user, popularUsers] = await Promise.all([
-                fetchUser(),
-                getRandomUsers(),
-            ]);
-            setTrendingUsers(popularUsers);
+            await Promise.all([fetchUser(), fetchTrendingUsers()]);
         } catch (error) {
             console.error("Error fetching explore data:", error);
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [fetchUser, fetchTrendingUsers]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -64,7 +70,7 @@ const ExplorePage = () => {
                 <div className="page-grid-layout-large">
                     <Sidebar />
 
-                    <div className="md:col-span-3 md:ml-72 w-full">
+                    <div className="col-span-1 md:col-span-3 md:ml-72 w-full">
                         <div className="bg-neutral-800 rounded-lg mb-4 md:mb-6">
                             <div className="p-4 md:p-6">
                                 <div className="flex flex-col md:flex-row md:items-center md:justify-between">

@@ -421,7 +421,7 @@ export default PostCard;
 
 // Hashtagleri algilayip link haline getiren fonksiyon
 const renderHashtags = (text) => {
-    const hashtagRegex = /#(\w+)/g;
+    const hashtagRegex = /#(\p{L}+)/gu;
     const parts = text.split(hashtagRegex);
     return parts.map((part, index) => {
         if (index % 2 === 1) {

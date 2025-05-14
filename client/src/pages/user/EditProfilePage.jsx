@@ -25,6 +25,7 @@ const EditProfilePage = () => {
         setIsLoading(true);
         try {
             const userData = await getCurrentUser();
+            console.log(userData);
             setUser({
                 firstName: userData.firstName || "",
                 lastName: userData.lastName || "",

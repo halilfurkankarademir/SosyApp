@@ -114,11 +114,28 @@ button {
     .space-responsive {
         @apply my-6 space-y-6;
     }
+
+    /* Masaüstü için ml-72 ayarı */
+    .md\:ml-72 {
+        margin-left: 18rem !important;
+    }
+}
+
+/* Tablet için sidebar küçük modda margin ayarı */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .md\:ml-72 {
+        margin-left: 6.5rem !important;
+    }
 }
 
 @media (min-width: 1024px) {
     .title-lg {
         @apply text-3xl;
+    }
+
+    .page-grid-layout,
+    .page-grid-layout-large {
+        @apply gap-8;
     }
 }
 
@@ -148,5 +165,19 @@ button {
 @media (prefers-color-scheme: dark) {
     body {
         @apply bg-neutral-900;
+    }
+}
+
+/* Sayfa düzenleri için responsive ayarlar */
+@media (max-width: 767px) {
+    .page-grid-layout > div,
+    .page-grid-layout-large > div {
+        width: 100% !important;
+        margin-bottom: 1rem;
+    }
+
+    /* Mobilde kenar boşluğu sıfırlama */
+    .md\:ml-72 {
+        margin-left: 0 !important;
     }
 }

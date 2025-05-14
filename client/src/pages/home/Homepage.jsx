@@ -10,11 +10,16 @@ const HomePage = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(true);
+    const [isTablet, setIsTablet] = useState(
+        window.innerWidth >= 768 && window.innerWidth < 1024
+    );
 
     // Pencere boyutunu izle
     useEffect(() => {
         const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
+            const width = window.innerWidth;
+            setIsMobile(width < 768);
+            setIsTablet(width >= 768 && width < 1024);
         };
 
         window.addEventListener("resize", handleResize);
@@ -53,24 +58,15 @@ const HomePage = () => {
     return (
         <div className="page-container pt-16 md:pt-24 md:py-24 md:px-6">
             <div className="page-grid-layout">
-                {/* Sidebar sadece mobil olmayan ekranlarda görünür */}
-                <div className="hidden md:block sticky top-24 h-fit self-start">
-                    <Sidebar />
+                {/* Sidebar - sadece masaüstünde görünür */}
+                <div className="hidden md:block md:col-span-1">
+                    <div className="md:sticky md:top-24">
+                        <Sidebar />
+                    </div>
                 </div>
 
-                {/* Mobil cihazlarda öneri kartı içerik üstünde gösteriliyor */}
-                {isMobile && (
-                    <div className="mb-4 w-full">
-                        <SuggestionsCard
-                            suggestions={suggestions}
-                            loading={isSuggestionsLoading}
-                            compact={true}
-                        />
-                    </div>
-                )}
-
                 {/* Ana içerik - tüm ekranlarda */}
-                <div className="col-span-1 md:col-span-3 w-full md:order-2 pb-4">
+                <div className="col-span-1 md:col-span-3 w-full pb-4">
                     <RenderPosts
                         fetchOptions={fetchFeedPosts}
                         canCreatePost={true}
@@ -78,12 +74,15 @@ const HomePage = () => {
                     />
                 </div>
 
-                {/* Öneriler - sadece büyük ekranlarda sağ barda */}
-                <div className="hidden md:block col-span-1 w-full sticky top-24 h-fit self-start md:order-3">
-                    <SuggestionsCard
-                        suggestions={suggestions}
-                        loading={isSuggestionsLoading}
-                    />
+                {/* Öneriler - sadece masaüstünde görünür */}
+                <div className="hidden md:block md:col-span-1 w-full">
+                    <div className="md:sticky md:top-24">
+                        <SuggestionsCard
+                            suggestions={suggestions}
+                            loading={isSuggestionsLoading}
+                            isCompact={isTablet}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

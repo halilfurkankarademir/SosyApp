@@ -74,15 +74,6 @@ const NavbarActions = ({
 
             {/* --- Mobil Sağ İkonlar --- */}
             <div className="flex md:hidden items-center space-x-4">
-                {/* Ana Sayfa Butonu (Yeni Eklendi) */}
-                <button
-                    className="text-neutral-100 hover:text-pink-500 transition duration-300"
-                    onClick={handleHomeClick}
-                    aria-label="Ana Sayfa"
-                >
-                    <MdHome size={22} />
-                </button>
-
                 {/* Arama Butonu */}
                 <button
                     className="text-neutral-100 hover:text-pink-500 transition duration-300"

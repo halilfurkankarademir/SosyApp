@@ -90,7 +90,7 @@ const AdminSidebar = () => {
             {/* Mobil Menü Butonu */}
             <button
                 ref={toggleButtonRef}
-                className={`fixed top-4 left-4 md:hidden z-50 bg-neutral-800 p-2 rounded-lg text-neutral-100 hover:text-pink-500 transition-all duration-300 ${
+                className={`absolute top-4 left-4 md:hidden z-50 bg-neutral-800 p-2 rounded-lg text-neutral-100 hover:text-pink-500 transition-all duration-300 ${
                     showMobileMenu ? "opacity-0" : "opacity-100"
                 }`}
                 onClick={toggleMobileMenu}

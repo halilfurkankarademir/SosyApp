@@ -98,11 +98,9 @@ const SearchPage = () => {
                 <div className="page-grid-layout-large">
                     <Sidebar />
 
-                    <div className="md:col-span-3 md:ml-72 w-full">
-                        {/* ... Üst Kısım (Başlık vs.) ... */}
+                    <div className="col-span-1 md:col-span-3 md:ml-72 w-full">
                         <div className="bg-neutral-800 rounded-lg mb-4 md:mb-6">
                             <div className="p-4 md:p-6">
-                                {/* ... Başlık içeriği ... */}
                                 <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                                     <div className="flex items-center mb-4 md:mb-0 min-w-0 mr-4">
                                         <div
@@ -128,7 +126,6 @@ const SearchPage = () => {
                             {(searchQuery || isLoading || error) && (
                                 <div className="px-4 md:px-6">
                                     <nav className="flex space-x-1 sm:space-x-4 border-b border-neutral-700">
-                                        {/* Gönderiler Tab */}
                                         <button
                                             onClick={() =>
                                                 setActiveTab("posts")
@@ -150,12 +147,10 @@ const SearchPage = () => {
                                             </span>
                                             {!isLoading && (
                                                 <span className="ml-1.5 sm:ml-2 text-xs bg-neutral-600 text-neutral-200 rounded-full px-2 py-0.5 flex-shrink-0">
-                                                    {/* Doğrudan postResults.count'u kullan */}
                                                     {postResults.count}
                                                 </span>
                                             )}
                                         </button>
-                                        {/* Kullanıcılar Tab */}
                                         <button
                                             onClick={() =>
                                                 setActiveTab("users")
@@ -188,7 +183,6 @@ const SearchPage = () => {
 
                         {(searchQuery || isLoading || error) && (
                             <div className=" ">
-                                {/* Results Content Area */}
                                 <div>
                                     {isLoading ? (
                                         <div className="text-center py-10">
@@ -202,32 +196,27 @@ const SearchPage = () => {
                                         </div>
                                     ) : (
                                         <>
-                                            {/* Gönderiler İçeriği */}
                                             {activeTab === "posts" && (
                                                 <div>
-                                                    {/* postResults.posts array'inin uzunluğunu kontrol et */}
                                                     {postResults.posts &&
                                                     postResults.posts.length >
                                                         0 ? (
                                                         <div className="space-y-4">
-                                                            {/* postResults.posts üzerinde map yap */}
                                                             {postResults.posts.map(
-                                                                (
-                                                                    post // postData değişkenine gerek yok, doğrudan post'u kullan
-                                                                ) => (
+                                                                (post) => (
                                                                     <PostCard
                                                                         key={
                                                                             post.id
-                                                                        } // Post objesinin bir 'id'si olduğunu varsayıyoruz
+                                                                        }
                                                                         postData={
                                                                             post
-                                                                        } // Tüm post objesini PostCard'a gönder
+                                                                        }
                                                                     />
-                                                                ) // Return ifadesi map içinde olmalı
+                                                                )
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        searchQuery && ( // Sadece arama yapıldıysa "bulunamadı" göster
+                                                        searchQuery && (
                                                             <div className="text-center py-8 md:py-10">
                                                                 <div className="flex justify-center mb-3 md:mb-4">
                                                                     <FaSearchMinus className="text-5xl md:text-6xl text-neutral-600" />
@@ -252,7 +241,6 @@ const SearchPage = () => {
                                                 </div>
                                             )}
 
-                                            {/* Kullanıcılar İçeriği */}
                                             {activeTab === "users" && (
                                                 <div>
                                                     {userResults.length > 0 ? (
@@ -261,7 +249,7 @@ const SearchPage = () => {
                                                                 (user) => (
                                                                     <UserCard
                                                                         key={
-                                                                            user.uid // User objesinin bir 'uid'si olduğunu varsayıyoruz
+                                                                            user.uid
                                                                         }
                                                                         user={
                                                                             user
@@ -271,7 +259,7 @@ const SearchPage = () => {
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        searchQuery && ( // Sadece arama yapıldıysa "bulunamadı" göster
+                                                        searchQuery && (
                                                             <div className="text-center py-8 md:py-10">
                                                                 <div className="flex justify-center mb-3 md:mb-4">
                                                                     <FaSearchMinus className="text-5xl md:text-6xl text-neutral-600" />
@@ -301,7 +289,6 @@ const SearchPage = () => {
                             </div>
                         )}
 
-                        {/* ... Arama yapılmadığında gösterilen mesaj ... */}
                         {!searchQuery && !isLoading && !error && (
                             <div className="bg-neutral-800 p-4 md:p-6 rounded-lg text-center text-neutral-400">
                                 Aramak istediğiniz kelimeyi yukarıdaki arama
