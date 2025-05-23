@@ -156,8 +156,8 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 1. Repoyu klonlayın
 
 ```bash
-git clone https://github.com/halilfurkankarademir/sosyapp.git
-cd sosyapp
+git clone https://github.com/halilfurkankarademir/SosyApp.git
+cd SosyApp
 ```
 
 2. Backend için bağımlılıkları yükleyin ve başlatın
