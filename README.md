@@ -77,6 +77,7 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 -   **Winston** - Loglama
 -   **Helmet** - Güvenlik başlıkları
 -   **Joi** - Veri doğrulama
+-   **NodeMailer** - E-posta gönderme
 
 ## 🏗️ Proje Yapısı
 
@@ -224,7 +225,9 @@ Bu proje MIT lisansı altında lisanslanmıştır - daha fazla bilgi için [LICE
 
 ## 📞 İletişim
 
-Github: [github.com/yourusername](https://github.com/halilfurkankarademir)
+Github: [github.com/halilfurkankarademir](https://github.com/halilfurkankarademir)
+
+LinkedIn: [linkedin.com/halilfurkankarademir](https://www.linkedin.com/in/halilfurkankarademir)
 
 ---
 
