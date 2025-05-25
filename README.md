@@ -2,6 +2,12 @@
 
 ![logo](https://github.com/user-attachments/assets/c4a83553-09bb-42b4-8221-8485e57e8889)
 
+## 🌐 Canlı Demo ve Önizlemeler
+
+https://www.auroratones.online/
+
+![image](https://github.com/user-attachments/assets/f8ebf56c-c5da-4c27-8b6a-fa01eb85f163) ![image](https://github.com/user-attachments/assets/97233d2e-d4ec-4e41-a7e0-14f1c13dd94c)
+
 ## 📋 Proje Hakkında
 
 SosyApp, kullanıcıların gönderi paylaşabildiği, beğeni yapabildiği, yorum ekleyebildiği, diğer kullanıcıları takip edebildiği ve içerikleri kaydedip daha sonra erişebildiği modern bir sosyal medya platformudur.
