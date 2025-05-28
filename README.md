@@ -193,13 +193,19 @@ DB_HOST = localhost
 DB_PORT = 5432
 PORT = 3000
 NODE_ENV = development
+TEST_USER_COOKIE = Test kullanicisi icin gecerli access token
+ADMIN_USER_COOKIE = Admin kullanicisi icin gecerli access token
+MAIL_USER = Gmail uygulamasi kullanici adi
+MAIL_PASS = Gmail uygulamasi kullanici sifresi
 ```
 
 Frontend için `.env` dosyasında aşağıdaki değişkenleri ayarlayın:
 
 ```env
-VITE_API_URL=http://localhost:3000/api
-VITE_SOCKET_URL=http://localhost:3000
+VITE_CLOUDINARY_CLOUD_NAME = Cloudinary api cloud ismi
+VITE_CLOUDINARY_UPLOAD_PRESET = Cloudinary api yukleme preseti
+VITE_BACKEND_API_LINK = Backend linki
+VITE_NODE_ENV = development
 ```
 
 ## 📝 API Dokümantasyonu
