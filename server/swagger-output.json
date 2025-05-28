@@ -18,34 +18,10 @@
     { "name": "Likes", "description": "Beğeni İşlemleri" },
     { "name": "Comments", "description": "Yorum İşlemleri" },
     { "name": "Saved", "description": "Kaydedilenler İşlemleri" },
-    { "name": "Search", "description": "Arama İşlemleri" }
+    { "name": "Search", "description": "Arama İşlemleri" },
+    { "name": "Admin", "description": "Admin İşlemleri" }
   ],
   "paths": {
-    "/api/users/": {
-      "get": {
-        "description": "Tüm kayıtlı kullanıcıları getirir (Yetkilendirme gerekebilir).",
-        "tags": [
-          "Users"
-        ],
-        "responses": {
-          "200": {
-            "description": "Kullanıcı listesi.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/UserResponse"
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-    }
-    },
     "/api/users/me":{
       "get": {
         "description": "Oturum açmış olan mevcut kullanıcıyı getirir.",
@@ -88,16 +64,20 @@
         }
       },
       "put": {
-        "description": "Mevcut kullanıcının (oturum açmış) bilgilerini günceller.",
-        "tags": [
-          "Users"
-        ],
+        "description": "Mevcut kullanıcının bilgilerini günceller.",
+        "tags": ["Users"],
         "parameters": [
           {
             "name": "cookie",
             "in": "header",
             "type": "string",
             "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "type": "string",
+            "description": "CSRF token"
           },
           {
             "name": "body",
@@ -117,20 +97,16 @@
             }
           },
           "400": {
-             "description": "Bad Request - Geçersiz veri",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-           },
+            "description": "Bad Request - Geçersiz veri",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
           "403": {
-            "description": "Forbidden - Yetkisiz erişim",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
+            "description": "Forbidden - Yetkisiz erişim veya CSRF token eksik/geçersiz",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
           "500": {
             "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           }
         }
       },
@@ -169,10 +145,8 @@
 
     "/api/users/id/{userId}": {
       "get": {
-        "description": "Belirtilen UID'ye sahip kullanıcıyı getirir.",
-        "tags": [
-          "Users"
-        ],
+        "description": "Belirtilen UID'ye sahip kullanıcıyı getirir (Sadece admin erişebilir).",
+        "tags": ["Users"],
         "parameters": [
           {
             "name": "userId",
@@ -181,6 +155,12 @@
             "type": "string",
             "format": "uuid",
             "description": "Getirilecek kullanıcının UID'si."
+          },
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
           }
         ],
         "responses": {
@@ -190,17 +170,17 @@
               "$ref": "#/definitions/UserResponse"
             }
           },
+          "403": {
+            "description": "Forbidden - Yetkisiz erişim (Admin değil)",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
           "404": {
             "description": "Not Found - Kullanıcı bulunamadı",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
           "500": {
             "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           }
         }
       }
@@ -638,6 +618,111 @@
         }
       }
     },
+    "/api/auth/send-verification-email": {
+      "post": {
+        "description": "E-posta adresine doğrulama linki gönderir.",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Doğrulama e-postası başarıyla gönderildi."
+          },
+          "403": {
+            "description": "Forbidden - Yetkisiz erişim",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/auth/verify-user-with-otp": {
+      "post": {
+        "description": "Kullanıcıyı OTP kodu ile doğrular.",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "OTP kodu",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "otp": {
+                  "type": "string",
+                  "description": "Doğrulama kodu"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kullanıcı başarıyla doğrulandı."
+          },
+          "403": {
+            "description": "Forbidden - Yetkisiz erişim",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/auth/csrf-token": {
+      "get": {
+        "description": "CSRF token alır.",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSRF token başarıyla alındı.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "csrfToken": {
+                  "type": "string",
+                  "description": "CSRF token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Yetkisiz erişim",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
     "/api/likes/post/{postId}": {
       "get": {
         "description": "Belirtilen gönderiyi beğenen kullanıcıların listesini getirir.",
@@ -687,12 +772,10 @@
         }
       }
     },
-    "/api/likes/user": {
+    "/api/likes/me": {
       "get": {
-        "description": "Mevcut kullanıcının beğendiği tüm gönderileri listeler.",
-        "tags": [
-          "Likes"
-        ],
+        "description": "Aktif kullanıcının beğendiği gönderileri listeler.",
+        "tags": ["Likes"],
         "parameters": [
           {
             "name": "cookie",
@@ -700,26 +783,24 @@
             "type": "string",
             "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
           }
-        
         ],
         "responses": {
           "200": {
             "description": "Kullanıcının beğendiği gönderilerin listesi.",
-             "schema": {
-               "type": "array",
-               "items": {
-                  
-                 "$ref": "#/definitions/LikeResponse" 
-               }
-             }
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LikeResponse"
+              }
+            }
           },
           "403": {
             "description": "Forbidden - Yetkisiz erişim",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
           "500": {
             "description": "Internal Server Error",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           }
         }
       }
@@ -966,42 +1047,50 @@
     },
     "/api/follows/follower/{followerId}": {
       "delete": {
-        "description" : "Mevcut kulanicinin belirtilen takipcini siler.",
-        "tags": [
-          "Follows"
-        ],
-        "parameters" : [
+        "description": "Aktif kullanıcıyı takip eden birini takipçi listesinden kaldırır (Takipçiyi engeller).",
+        "tags": ["Follows"],
+        "parameters": [
           {
             "name": "followerId",
             "in": "path",
             "required": true,
             "type": "string",
             "format": "uuid",
-            "description": "Takipcini silinecek kullanıcının UID'si."
+            "description": "Takipçi listesinden çıkarılacak kullanıcının UID'si."
           },
           {
             "name": "cookie",
             "in": "header",
             "type": "string",
             "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "x-csrf-token",
+            "in": "header",
+            "type": "string",
+            "description": "CSRF token"
           }
         ],
-        "responses" : {
+        "responses": {
           "200": {
-            "description": "Kullanıcı başarıyla takipcilerden silindi."
+            "description": "Kullanıcı başarıyla takipçi listesinden çıkarıldı."
           },
           "403": {
-            "description": "Forbidden - Yetkisiz erişim",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
+            "description": "Forbidden - Yetkisiz erişim veya CSRF token eksik/geçersiz",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
           "404": {
-             "description": "Not Found - Kullanıcı veya takipcilik ilişkisi bulunamadı",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-           }
+            "description": "Not Found - Kullanıcı veya takipçilik ilişkisi bulunamadı",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
         }
       }
     },
-    "/api/saved/": {
+    "/api/saved/me": {
       "get": {
         "description": "Mevcut kullanıcının kaydettiği tüm gönderileri listeler.",
         "tags": [
@@ -1198,7 +1287,7 @@
             "name": "cookie",
             "in": "header",
             "type": "string",
-            "description": "Kimlik doğrulama için kullanıcı oturum çerezi (isteğe bağlı)."
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
           }
         ],
         "responses": {
@@ -1212,7 +1301,7 @@
              }
           },
           "403": {
-            "description": "Forbidden - Yetkisiz erişim (Gerekliyse)",
+            "description": "Forbidden - Yetkisiz erişim",
              "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
            "404": {
@@ -1267,59 +1356,10 @@
         }
       }
     },
-    "/api/comments/count/{postId}": {
-      "get": {
-        "description": "Belirtilen gönderiye ait yorum sayısını getirir.",
-        "tags": [
-          "Comments"
-        ],
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-             "type": "integer",
-             "format": "int32",
-            "description": "Yorum sayısı alınacak gönderinin ID'si."
-          },
-          {
-            "name": "cookie",
-            "in": "header",
-            "type": "string",
-            "description": "Kimlik doğrulama için kullanıcı oturum çerezi (isteğe bağlı)."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Yorum sayısını içeren bir nesne döner.",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "count": { "type": "integer", "format": "int32", "example": 5 }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - Yetkisiz erişim (Gerekliyse)",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-          },
-           "404": {
-             "description": "Not Found - Gönderi bulunamadı",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-           },
-          "500": {
-            "description": "Internal Server Error",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-          }
-        }
-      }
-    },
     "/api/search/users": {
       "get": {
         "description": "Belirtilen sorgu parametresine göre kullanıcıları arar (kullanıcı adı, ad, soyad).",
-        "tags": [
-          "Search"
-        ],
+        "tags": ["Search"],
         "parameters": [
           {
             "name": "cookie",
@@ -1332,35 +1372,34 @@
             "in": "query",
             "type": "string",
             "required": true,
+            "minLength": 1,
             "description": "Arama yapılacak metin (kullanıcı adı, isim vb.)."
           }
         ],
         "responses": {
           "200": {
             "description": "Eşleşen kullanıcıların listesi.",
-             "schema": {
-               "type": "array",
-               "items": {
-                 "$ref": "#/definitions/UserResponse"
-               }
-             }
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserResponse"
+              }
+            }
           },
           "400": {
-             "description": "Bad Request - Sorgu parametresi eksik",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
-           },
+            "description": "Bad Request - Sorgu parametresi eksik veya geçersiz",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
           "403": {
             "description": "Forbidden - Yetkisiz erişim",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
           "404": {
-            "description": "Not Found - Eşleşen kullanıcı bulunamadı (Boş liste dönebilir)",
+            "description": "Not Found - Eşleşen kullanıcı bulunamadı",
             "schema": {
-               "type": "array",
-               "items": {
-                 "$ref": "#/definitions/UserResponse"
-               }
-             }
+              "type": "array",
+              "items": []
+            }
           }
         }
       }
@@ -1368,9 +1407,7 @@
     "/api/search/posts": {
       "get": {
         "description": "Belirtilen sorgu parametresine göre gönderileri arar (içerik).",
-        "tags": [
-          "Search"
-        ],
+        "tags": ["Search"],
         "parameters": [
           {
             "name": "cookie",
@@ -1383,6 +1420,7 @@
             "in": "query",
             "type": "string",
             "required": true,
+            "minLength": 1,
             "description": "Arama yapılacak metin (gönderi içeriği)."
           }
         ],
@@ -1390,38 +1428,34 @@
           "200": {
             "description": "Eşleşen gönderilerin listesi.",
             "schema": {
-               "type": "array",
-               "items": {
-                 "$ref": "#/definitions/PostResponse"
-               }
-             }
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PostResponse"
+              }
+            }
           },
-           "400": {
-              "description": "Bad Request - Sorgu parametresi eksik",
-              "schema": { "$ref": "#/definitions/ErrorResponse" }
-            },
+          "400": {
+            "description": "Bad Request - Sorgu parametresi eksik veya geçersiz",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
           "403": {
             "description": "Forbidden - Yetkisiz erişim",
-             "schema": { "$ref": "#/definitions/ErrorResponse" }
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
           },
           "404": {
-            "description": "Not Found - Eşleşen gönderi bulunamadı (Boş liste dönebilir)",
+            "description": "Not Found - Eşleşen gönderi bulunamadı",
             "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/PostResponse"
-                }
-              }
+              "type": "array",
+              "items": []
+            }
           }
         }
       }
     },
     "/api/posts/trendings": {
       "get": {
-        "description": "Trend gönderileri getirir (en çok beğeni alan içerikler).",
-        "tags": [
-          "Posts"
-        ],
+        "description": "Trend gönderileri getirir (en çok beğeni alan içerikler). Cache kullanır.",
+        "tags": ["Posts"],
         "parameters": [
           {
             "name": "cookie",
@@ -1446,7 +1480,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Trend gönderiler başarıyla getirildi.",
+            "description": "Trend gönderiler başarıyla getirildi (Cache'den veya veritabanından).",
             "schema": {
               "type": "object",
               "properties": {
@@ -1473,6 +1507,609 @@
           },
           "500": {
             "description": "Internal Server Error",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "description": "Tüm kullanıcıları listeler (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "Sayfa numarası",
+            "default": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "description": "Sayfa başına kullanıcı sayısı",
+            "default": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kullanıcı listesi başarıyla getirildi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/UserResponse"
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Toplam kullanıcı sayısı"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{userId}": {
+      "delete": {
+        "description": "Belirtilen kullanıcıyı siler (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "description": "Silinecek kullanıcının UID'si"
+          },
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kullanıcı başarıyla silindi."
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "404": {
+            "description": "Not Found - Kullanıcı bulunamadı",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      },
+      "put": {
+        "description": "Belirtilen kullanıcının rolünü günceller (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "description": "Güncellenecek kullanıcının UID'si"
+          },
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "enum": ["user", "admin"],
+                  "description": "Yeni kullanıcı rolü"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kullanıcı rolü başarıyla güncellendi.",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "404": {
+            "description": "Not Found - Kullanıcı bulunamadı",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/posts": {
+      "get": {
+        "description": "Tüm gönderileri listeler (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "Sayfa numarası",
+            "default": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "description": "Sayfa başına gönderi sayısı",
+            "default": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gönderi listesi başarıyla getirildi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "posts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/PostResponse"
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Toplam gönderi sayısı"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/posts/{postId}": {
+      "delete": {
+        "description": "Belirtilen gönderiyi siler (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "description": "Silinecek gönderinin ID'si"
+          },
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gönderi başarıyla silindi."
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "404": {
+            "description": "Not Found - Gönderi bulunamadı",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/stats": {
+      "get": {
+        "description": "Sistem istatistiklerini getirir (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "İstatistikler başarıyla getirildi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "totalUsers": {
+                  "type": "integer",
+                  "description": "Toplam kullanıcı sayısı"
+                },
+                "totalPosts": {
+                  "type": "integer",
+                  "description": "Toplam gönderi sayısı"
+                },
+                "totalComments": {
+                  "type": "integer",
+                  "description": "Toplam yorum sayısı"
+                },
+                "totalLikes": {
+                  "type": "integer",
+                  "description": "Toplam beğeni sayısı"
+                },
+                "activeUsers": {
+                  "type": "integer",
+                  "description": "Son 30 gündeki aktif kullanıcı sayısı"
+                },
+                "newUsers": {
+                  "type": "integer",
+                  "description": "Son 30 gündeki yeni kullanıcı sayısı"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/dashboard": {
+      "get": {
+        "description": "Admin paneli için dashboard verilerini getirir.",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard verileri başarıyla getirildi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "totalUsers": {
+                  "type": "integer",
+                  "description": "Toplam kullanıcı sayısı"
+                },
+                "totalPosts": {
+                  "type": "integer",
+                  "description": "Toplam gönderi sayısı"
+                },
+                "totalComments": {
+                  "type": "integer",
+                  "description": "Toplam yorum sayısı"
+                },
+                "totalLikes": {
+                  "type": "integer",
+                  "description": "Toplam beğeni sayısı"
+                },
+                "activeUsers": {
+                  "type": "integer",
+                  "description": "Son 30 gündeki aktif kullanıcı sayısı"
+                },
+                "newUsers": {
+                  "type": "integer",
+                  "description": "Son 30 gündeki yeni kullanıcı sayısı"
+                },
+                "userStats": {
+                  "type": "object",
+                  "description": "Kullanıcı istatistikleri (aylık dağılım)"
+                },
+                "postStats": {
+                  "type": "object",
+                  "description": "Gönderi istatistikleri (aylık dağılım)"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/comments": {
+      "get": {
+        "description": "Tüm yorumları listeler (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "Sayfa numarası",
+            "default": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "description": "Sayfa başına yorum sayısı",
+            "default": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Yorum listesi başarıyla getirildi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "comments": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/CommentResponse"
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Toplam yorum sayısı"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/comments/{commentId}": {
+      "delete": {
+        "description": "Belirtilen yorumu siler (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "description": "Silinecek yorumun ID'si"
+          },
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Yorum başarıyla silindi."
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "404": {
+            "description": "Not Found - Yorum bulunamadı",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/settings": {
+      "get": {
+        "description": "Uygulama ayarlarını getirir (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uygulama ayarları başarıyla getirildi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "maintenanceMode": {
+                  "type": "boolean",
+                  "description": "Bakım modu durumu"
+                },
+                "allowRegistration": {
+                  "type": "boolean",
+                  "description": "Yeni kayıt izni durumu"
+                },
+                "maxFileSize": {
+                  "type": "integer",
+                  "description": "Maksimum dosya boyutu (byte)"
+                },
+                "allowedFileTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "İzin verilen dosya türleri"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      },
+      "put": {
+        "description": "Uygulama ayarlarını günceller (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "maintenanceMode": {
+                  "type": "boolean",
+                  "description": "Bakım modu durumu"
+                },
+                "allowRegistration": {
+                  "type": "boolean",
+                  "description": "Yeni kayıt izni durumu"
+                },
+                "maxFileSize": {
+                  "type": "integer",
+                  "description": "Maksimum dosya boyutu (byte)"
+                },
+                "allowedFileTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "İzin verilen dosya türleri"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ayarlar başarıyla güncellendi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Ayarlar başarıyla güncellendi"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "/api/admin/check-maintenance": {
+      "get": {
+        "description": "Uygulamanın bakımda olup olmadığını kontrol eder.",
+        "tags": ["Admin"],
+        "responses": {
+          "200": {
+            "description": "Bakım durumu başarıyla getirildi.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "maintenance": {
+                  "type": "boolean",
+                  "description": "Bakım modu durumu"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{userId}/role": {
+      "put": {
+        "description": "Belirtilen kullanıcının rolünü günceller (Admin yetkisi gerekli).",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "description": "Rolü güncellenecek kullanıcının UID'si"
+          },
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string",
+            "description": "Kimlik doğrulama için kullanıcı oturum çerezi."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "enum": ["user", "admin"],
+                  "description": "Yeni kullanıcı rolü"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kullanıcı rolü başarıyla güncellendi.",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin yetkisi yok",
+            "schema": { "$ref": "#/definitions/ErrorResponse" }
+          },
+          "404": {
+            "description": "Not Found - Kullanıcı bulunamadı",
             "schema": { "$ref": "#/definitions/ErrorResponse" }
           }
         }

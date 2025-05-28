@@ -46,7 +46,6 @@ router.get(
 /**
  * Belirli bir kullanıcının gönderilerini getirir.
  */
-// Eğer userId için ayrı validator varsa eklenmeli: validateUserId
 router.get(
     "/user/:userId",
     authenticateToken,

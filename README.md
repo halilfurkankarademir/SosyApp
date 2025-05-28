@@ -2,6 +2,13 @@
 
 ![logo](https://github.com/user-attachments/assets/c4a83553-09bb-42b4-8221-8485e57e8889)
 
+![GitHub stars](https://img.shields.io/github/stars/halilfurkankarademir/SosyApp)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)
+![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js)
+![Express](https://img.shields.io/badge/API-Express-black?logo=express)
+![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-316192?logo=postgresql)
+
 ## 🌐 Canlı Demo ve Önizlemeler
 
 https://www.auroratones.online/
