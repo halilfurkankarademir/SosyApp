@@ -2,6 +2,12 @@
 
 ![logo](https://github.com/user-attachments/assets/c4a83553-09bb-42b4-8221-8485e57e8889)
 
+## 🌐 Canlı Demo ve Önizlemeler
+
+https://www.auroratones.online/
+
+![image](https://github.com/user-attachments/assets/f8ebf56c-c5da-4c27-8b6a-fa01eb85f163) ![image](https://github.com/user-attachments/assets/97233d2e-d4ec-4e41-a7e0-14f1c13dd94c)
+
 ## 📋 Proje Hakkında
 
 SosyApp, kullanıcıların gönderi paylaşabildiği, beğeni yapabildiği, yorum ekleyebildiği, diğer kullanıcıları takip edebildiği ve içerikleri kaydedip daha sonra erişebildiği modern bir sosyal medya platformudur.
@@ -77,6 +83,7 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 -   **Winston** - Loglama
 -   **Helmet** - Güvenlik başlıkları
 -   **Joi** - Veri doğrulama
+-   **NodeMailer** - E-posta gönderme
 
 ## 🏗️ Proje Yapısı
 
@@ -155,8 +162,8 @@ Bu proje, tam kapsamlı bir sosyal medya deneyimi sunmak için React 19 ve Expre
 1. Repoyu klonlayın
 
 ```bash
-git clone https://github.com/halilfurkankarademir/sosyapp.git
-cd sosyapp
+git clone https://github.com/halilfurkankarademir/SosyApp.git
+cd SosyApp
 ```
 
 2. Backend için bağımlılıkları yükleyin ve başlatın
@@ -230,7 +237,9 @@ Bu proje MIT lisansı altında lisanslanmıştır - daha fazla bilgi için [LICE
 
 ## 📞 İletişim
 
-Github: [github.com/yourusername](https://github.com/halilfurkankarademir)
+Github: [github.com/halilfurkankarademir](https://github.com/halilfurkankarademir)
+
+LinkedIn: [linkedin.com/halilfurkankarademir](https://www.linkedin.com/in/halilfurkankarademir)
 
 ---
 
