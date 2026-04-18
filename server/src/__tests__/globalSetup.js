@@ -8,8 +8,6 @@ export default async () => {
         );
         const serverObj = await initializeServer();
 
-        console.log(serverObj);
-
         global.__SERVER_APP__ = serverObj.app;
 
         await new Promise((resolve) => setTimeout(resolve, 500));

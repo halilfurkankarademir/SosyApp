@@ -18,7 +18,6 @@ import { initializeNotificationService } from "./services/notificationService.js
 import { corsConfig } from "./config/corsOptions.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import { socketAuthMiddleware } from "./middlewares/socketAuth.js";
-import swaggerUi from "swagger-ui-express";
 import { readFile } from "fs/promises";
 import logger from "./utils/logger.js";
 
@@ -86,23 +85,6 @@ export async function initializeServer() {
     if (initPromise) return initPromise;
     initPromise = (async () => {
         try {
-            // Swagger dokümanını yükle
-            try {
-                const swaggerDocument = JSON.parse(
-                    await readFile(
-                        new URL("../swagger-output.json", import.meta.url)
-                    )
-                );
-                app.use(
-                    "/api-docs",
-                    swaggerUi.serve,
-                    swaggerUi.setup(swaggerDocument)
-                );
-                logger.info("✅ Swagger API dokümantasyonu yüklendi");
-            } catch (swaggerError) {
-                logger.error("❌ Swagger dokümanı yüklenemedi:", swaggerError);
-            }
-
             logger.info("Veritabanı ve modeller yukleniyor...");
             // Veritabanı bağlantısı ve modelleri senkronize et
             await initializeDatabase();

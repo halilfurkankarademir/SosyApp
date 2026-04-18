@@ -61,7 +61,6 @@ router.get("/random", authenticateToken, userController.getRandomUsers);
 /**
  * Aktif kullanıcının bilgilerini günceller.
  */
-// Belki validateUpdateUser gibi bir middleware eklenmeli
 router.put("/me", authenticateToken, verifyCSRF, userController.updateUserById);
 
 /**

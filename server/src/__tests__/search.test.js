@@ -4,7 +4,6 @@ import testDatas from "./testUtils.js";
 let agent;
 let app;
 
-const testCookie = testDatas.testCookie;
 const adminTestCookie = testDatas.adminTestCookie;
 const userQueryToSearch = "furkan";
 const postQueryToSearch = "test";

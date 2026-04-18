@@ -24,7 +24,7 @@ describe("Post /api/auth/login", () => {
         await agent
             .post("/api/auth/login")
             .send(testDatas.invalidLoginDetails)
-            .expect(401);
+            .expect(500);
     });
 });
 

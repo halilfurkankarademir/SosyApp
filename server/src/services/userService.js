@@ -2,10 +2,6 @@ import AdminProfileDTO from "../dtos/profileDTOs/AdminProfileDTO.js";
 import OwnProfileDTO from "../dtos/profileDTOs/OwnProfileDTO.js";
 import userDTO from "../dtos/userDTO.js";
 import { ErrorMessages } from "../utils/constants.js";
-import {
-    getPermissionLevel,
-    getUserDTOInstanceByPermissionLevel,
-} from "../utils/helpers.js";
 import logger from "../utils/logger.js";
 
 /**

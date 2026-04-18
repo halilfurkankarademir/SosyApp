@@ -1,5 +1,5 @@
 /**
- * ullanici kimlik dogrulama ve oturum yonetimi route'lari.
+ * Kullanici kimlik dogrulama ve oturum yonetimi route'lari.
  */
 
 import express from "express";

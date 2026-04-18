@@ -44,7 +44,7 @@ describe("Post /follows/:userId", () => {
             .post(`/api/follows/${userIdToFollow}`)
             .set("Cookie", testCookie)
             .send(testDatas.followDetails)
-            .expect(200);
+            .expect(201);
     });
 });
 

@@ -1,7 +1,6 @@
 import { getCookie } from "../utils/helpers";
 import apiClient from "./apiClient";
 
-// 1. KULLANICI BİLGİSİ GETİRME FONKSİYONLARI
 export const getCurrentUser = async () => {
     // Cookieleri kullanarak aktif giris yapan kullanıcının bilgilerini getirme
     try {

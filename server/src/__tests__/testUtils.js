@@ -59,7 +59,7 @@ const testDatas = {
         content: "",
     },
     followDetails: {
-        userId: "7e3bae73-ea95-4b00-989e-10b6927ddf08",
+        userId: "042e9c33-696b-456b-a344-83068524ce40",
         followerId: "a8aab1b2-45a7-42a8-8fde-756529cd9893",
     },
     userIdToGetPosts: "a8aab1b2-45a7-42a8-8fde-756529cd9893",
@@ -69,7 +69,7 @@ const testDatas = {
         media: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Test.svg/1200px-Test.svg.png",
     },
     savedDetails: {
-        postId: "69",
+        postId: "100",
     },
     updatedUserDetails: {
         bio: "test bio",

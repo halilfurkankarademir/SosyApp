@@ -31,7 +31,7 @@ const followController = {
 
             logger.info("Follow created successfully");
 
-            res.json(follow);
+            res.status(201).json(follow);
         } catch (error) {
             logger.error("Error in followController.createFollow:", error);
             next(error);
@@ -47,14 +47,11 @@ const followController = {
             const { userId } = req.params;
             const followerId = req.user.uid;
 
-            const follower = await followService.unfollowUser(
-                followerId,
-                userId
-            );
+            await followService.unfollowUser(followerId, userId);
 
             logger.info("Follow deleted successfully");
 
-            res.status(200).json(follower);
+            res.status(200).json({ message: "Unfollowed successfully." });
         } catch (error) {
             logger.error("Error in followController.deleteFollow:", error);
             next(error);
@@ -129,7 +126,7 @@ const followController = {
 
             logger.info("Authenticated user following fetched successfully");
 
-            res.json(following);
+            res.status(200).json(following);
         } catch (error) {
             logger.error(
                 "Error in followController.getAuthenticatedUserFollowing:",

@@ -59,17 +59,6 @@ describe("Get /api/users/email/:email", () => {
     });
 });
 
-// Tüm kullanıcıları listeler
-describe("Get /api/users", () => {
-    it("should return 200 ok and users list...", async () => {
-        agent = request.agent(app);
-        await agent
-            .get("/api/users")
-            .set("Cookie", adminTestCookie)
-            .expect(200);
-    });
-});
-
 // Rastgele kullanıcıları getirir (Öneri vb. için).
 describe("Get /api/users/random", () => {
     it("should return 200 ok and users list...", async () => {

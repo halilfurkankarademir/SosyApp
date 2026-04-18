@@ -14,7 +14,7 @@ describe("Post /api/comments/:postId", () => {
     it("should return 201 ok and comment details...", async () => {
         agent = request.agent(app);
         const commentRes = await agent
-            .post("/api/comments/69")
+            .post("/api/comments/100")
             .set("Cookie", testDatas.testCookie)
             .send(testDatas.commentDetails)
             .expect(201);
@@ -24,7 +24,7 @@ describe("Post /api/comments/:postId", () => {
     it("should return 500 error if comment details are invalid", async () => {
         agent = request.agent(app);
         await agent
-            .post("/api/comments/69")
+            .post("/api/comments/100")
             .set("Cookie", testDatas.testCookie)
             .send(testDatas.invalidCommentDetails)
             .expect(500);
@@ -36,7 +36,7 @@ describe("Get /api/comments/:postId", () => {
     it("should return 200 ok and comment details...", async () => {
         agent = request.agent(app);
         await agent
-            .get("/api/comments/69")
+            .get("/api/comments/100")
             .set("Cookie", testDatas.testCookie)
             .expect(200);
     });

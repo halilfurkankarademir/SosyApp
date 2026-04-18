@@ -13,7 +13,7 @@ let createdPostId;
 // Sunucuyu baslat ve gonderiye ait tum likelari sil
 beforeAll(async () => {
     app = global.__SERVER_APP__;
-    await deleteLikesForPost(69);
+    await deleteLikesForPost(100);
 });
 
 // Aktif kullanicin feed gonderilerini getirir
@@ -32,7 +32,7 @@ describe("Get /api/posts/:postId", () => {
     it("should return 200 ok and post details...", async () => {
         agent = request.agent(app);
         await agent
-            .get("/api/posts/69")
+            .get("/api/posts/100")
             .set("Cookie", adminTestCookie)
             .expect(200);
     });

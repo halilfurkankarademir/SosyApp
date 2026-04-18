@@ -15,7 +15,6 @@ const savedRepository = {
      * @throws {Error} Veritabanı hatası durumunda.
      */
     async createSaved(userId, postId) {
-        // Not: Zaten kaydedilmişse Sequelize hata fırlatabilir (unique constraint varsa).
         return await Saved.create({ userId, postId });
     },
 

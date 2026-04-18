@@ -10,7 +10,7 @@ const adminTestCookie = testDatas.adminTestCookie;
 // Sunucuyu baslat ve gonderiye ait tum likelari sil
 beforeAll(async () => {
     app = global.__SERVER_APP__;
-    await deleteSavedForPost(69);
+    await deleteSavedForPost(100);
 });
 
 // Aktif kullanıcının kaydettiği gönderileri getirir.
@@ -28,7 +28,10 @@ describe("Get /api/saved/me", () => {
 describe("Post /api/saved/:postId", () => {
     it("should return 201 ok and saved details...", async () => {
         agent = request.agent(app);
-        await agent.post("/api/saved/69").set("Cookie", testCookie).expect(201);
+        await agent
+            .post("/api/saved/100")
+            .set("Cookie", testCookie)
+            .expect(201);
     });
 });
 
@@ -37,7 +40,7 @@ describe("Delete /api/saved/:postId", () => {
     it("should return 200 ok...", async () => {
         agent = request.agent(app);
         await agent
-            .delete("/api/saved/69")
+            .delete("/api/saved/100")
             .set("Cookie", testCookie)
             .expect(200);
     });

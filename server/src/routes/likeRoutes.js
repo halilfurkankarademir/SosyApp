@@ -13,16 +13,6 @@ import { validatePostId } from "../middlewares/validators/postValidator.js";
 const router = express.Router();
 
 /**
- * Bir gönderinin tüm beğenilerini getirir.
- */
-router.get(
-    "/post/:postId",
-    authenticateToken,
-    validatePostId,
-    likeController.getAllLikesByPostId
-);
-
-/**
  * Aktif kullanıcının beğendiği gönderileri getirir.
  */
 router.get("/me", authenticateToken, likeController.getLikesByUserId);

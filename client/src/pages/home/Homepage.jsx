@@ -30,6 +30,7 @@ const HomePage = () => {
     const fetchUser = async () => {
         try {
             const user = await getCurrentUser();
+            console.log("Active user data:", user);
             setUser(user);
         } catch (error) {
             console.error("Error fetching user:", error);
